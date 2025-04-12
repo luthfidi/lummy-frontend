@@ -1,16 +1,12 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Box } from '@chakra-ui/react';
-import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
-import { HomePage } from './pages/HomePage';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
+import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
+import { HomePage } from "./pages/HomePage";
+import { EventDetailPage } from "./pages/EventDetail";
 
 // Placeholder components for routes we haven't built yet
-const EventDetailPage = () => (
-  <Box p={8}>
-    <h1>Event Detail Page (Coming Soon)</h1>
-  </Box>
-);
 
 const EventsPage = () => (
   <Box p={8}>

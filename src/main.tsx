@@ -1,14 +1,20 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
-import { ChakraProvider } from "@chakra-ui/react";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import theme from "./styles/theme";
-import "./index.css";
+import ReactDOM from 'react-dom/client';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import theme from './styles/theme';
+import './index.css';
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
+    {/* Force light mode */}
+    <ColorModeScript initialColorMode="light" />
+    <ChakraProvider theme={theme} colorModeManager={{ 
+      get: () => 'light',
+      set: () => {}, 
+      type: 'localStorage'
+    }}>
       <BrowserRouter>
         <App />
       </BrowserRouter>

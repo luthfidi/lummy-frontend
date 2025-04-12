@@ -14,6 +14,7 @@ import {
   Button,
   Flex,
   Image,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { EventCard } from "../../components/core/Card";
@@ -29,47 +30,84 @@ export const HomePage = () => {
   return (
     <Box>
       {/* Hero Section */}
-      <Box
-        bg="purple.500"
-        color="white"
-        py={20}
-        backgroundImage="linear-gradient(to right, #A78BFA, #FF9EC3)"
-      >
+      <Box bg="white" py={10}>
         <Container maxW="container.xl">
-          <VStack spacing={6} align="flex-start">
-            <Heading size="2xl" fontWeight="bold" color="white">
-              Discover Events, <br /> Collect Memories
-            </Heading>
-            <Text fontSize="xl" maxW="2xl" color="white">
-              Secure blockchain-powered tickets for the best events. No more
-              fakes, no more hassles. Just unforgettable experiences.
-            </Text>
-            <InputGroup
-              maxW="md"
-              bg="white"
-              borderRadius="full"
-              overflow="hidden"
-            >
-              <InputLeftElement pointerEvents="none">
-                <SearchIcon color="gray.400" />
-              </InputLeftElement>
-              <Input
-                placeholder="Search events, artists, or venues"
-                border="none"
-                _focus={{ boxShadow: "none" }}
-              />
-              <Button
-                borderRadius="full"
-                bg="lummy.pink"
-                color="lummy.dark"
-                _hover={{ bg: "pink.200" }}
-                mr={1}
-                my={1}
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            align="center"
+            justify="space-between"
+            gap={8}
+          >
+            <VStack spacing={6} align="flex-start" maxW={{ md: "550px" }}>
+              <Heading
+                size="2xl"
+                fontWeight="bold"
+                lineHeight="1.2"
+                bgGradient="linear(to-r, lummy.purple.600, lummy.pink.500)"
+                bgClip="text"
               >
-                Search
-              </Button>
-            </InputGroup>
-          </VStack>
+                Discover Events, Collect Memories
+              </Heading>
+              <Text fontSize="lg" color="gray.600">
+                Secure blockchain-powered tickets for the best events. No more
+                fakes, no more hassles. Just unforgettable experiences.
+              </Text>
+              <Box w="100%">
+                <InputGroup
+                  size="lg"
+                  boxShadow="sm"
+                  borderRadius="md"
+                  overflow="hidden"
+                >
+                  <InputLeftElement pointerEvents="none">
+                    <SearchIcon color="gray.400" />
+                  </InputLeftElement>
+                  <Input
+                    placeholder="Search events, artists, or venues"
+                    borderRadius="md"
+                    borderWidth="1px"
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: "lummy.purple.400",
+                      boxShadow: "0 0 0 1px #A48BFA",
+                    }}
+                    bg="white"
+                  />
+                  <InputRightElement width="auto">
+                    <Button
+                      h="100%"
+                      size="md"
+                      borderLeftRadius="0"
+                      colorScheme="purple"
+                    >
+                      Search
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </Box>
+            </VStack>
+
+            <Box
+              display={{ base: "none", md: "block" }}
+              w={{ md: "400px", lg: "500px" }}
+              h={{ md: "300px", lg: "350px" }}
+              position="relative"
+            >
+              {/* This would be a hero illustration or image */}
+              <Box
+                w="full"
+                h="full"
+                bg="lummy.purple.100"
+                borderRadius="md"
+                position="relative"
+                overflow="hidden"
+              >
+                <Text textAlign="center" pt="40%">
+                  Lummy Mascot Image Placeholder
+                </Text>
+              </Box>
+            </Box>
+          </Flex>
         </Container>
       </Box>
 
