@@ -66,7 +66,7 @@ export const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTier, setSelectedTier] = useState<TicketTier | null>(null);
   const [quantity, setQuantity] = useState<number>(checkoutState?.quantity || 1);
-  const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+  const [_isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
   const [isWalletLoading, setIsWalletLoading] = useState<boolean>(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string>("");

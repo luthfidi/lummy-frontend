@@ -1,5 +1,4 @@
 import XellarSDK, {
-  TransactionParams,
   TransactionResult,
 } from "./XellarIntegration";
 
