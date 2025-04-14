@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -7,13 +6,11 @@ import {
   Container,
   SimpleGrid,
   VStack,
-  HStack,
   Input,
   InputGroup,
   InputLeftElement,
   Button,
   Flex,
-  Image,
   InputRightElement,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";

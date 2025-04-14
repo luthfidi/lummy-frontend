@@ -4,6 +4,7 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import theme from './styles/theme';
+import { WalletProvider } from './context/WalletContext';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -15,9 +16,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       set: () => {}, 
       type: 'localStorage'
     }}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <WalletProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </WalletProvider>
     </ChakraProvider>
   </React.StrictMode>
 );

@@ -11,7 +11,6 @@ import {
   HStack,
   SimpleGrid,
   Button,
-  Divider,
   useToast,
   Flex,
   Badge,
@@ -35,7 +34,6 @@ import {
   FaClock,
   FaUsers,
   FaInfoCircle,
-  FaShare,
   FaTicketAlt,
 } from "react-icons/fa";
 import { mockEvents } from "../../data/mockEvents";
@@ -73,6 +71,7 @@ export const EventDetailPage: React.FC = () => {
     id: string;
     quantity: number;
   } | null>(null);
+  const ticketSectionRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getEvent = async () => {
@@ -225,11 +224,16 @@ export const EventDetailPage: React.FC = () => {
                 width="100%"
                 onClick={() => {
                   if (event.ticketTiers && event.ticketTiers.length > 0) {
-                    setSelectedTier({
-                      id: event.ticketTiers[0].id,
-                      quantity: 1,
+                    // Scroll to ticket section
+                    ticketSectionRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "center",
                     });
-                    handleProceedToCheckout();
+
+                    // If we already have a selected tier, proceed to checkout
+                    if (selectedTier) {
+                      handleProceedToCheckout();
+                    }
                   }
                 }}
               >
@@ -312,7 +316,7 @@ export const EventDetailPage: React.FC = () => {
         </Box>
 
         {/* Ticket Selection - Clean and Organized */}
-        <Box my={10}>
+        <Box my={10} ref={ticketSectionRef}>
           <Heading
             size="md"
             mb={6}
