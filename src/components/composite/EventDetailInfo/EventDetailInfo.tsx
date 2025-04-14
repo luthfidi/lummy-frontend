@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, VStack, HStack, Text, Badge, Icon } from "@chakra-ui/react";
-import { CalendarIcon, TimeIcon, InfoIcon } from "@chakra-ui/icons";
+import { VStack, HStack, Text, Badge, Icon } from "@chakra-ui/react";
+import { CalendarIcon, TimeIcon } from "@chakra-ui/icons";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 interface EventDetailInfoProps {

@@ -89,10 +89,18 @@ export const Footer = () => {
 
           <Stack align={"flex-start"}>
             <ListHeader>Connect</ListHeader>
-            <Link href={"#"}>Discord</Link>
-            <Link href={"#"}>Twitter</Link>
-            <Link href={"#"}>Instagram</Link>
-            <Link href={"#"}>Facebook</Link>
+            <SocialButton label="Discord" href="#">
+              <Link href={"#"}>Discord</Link>
+            </SocialButton>
+            <SocialButton label="Twitter" href="#">
+              <Link href={"#"}>Twitter</Link>
+            </SocialButton>
+            <SocialButton label="Instagram" href="#">
+              <Link href={"#"}>Instagram</Link>
+            </SocialButton>
+            <SocialButton label="Facebook" href="#">
+              <Link href={"#"}>Facebook</Link>
+            </SocialButton>
           </Stack>
         </SimpleGrid>
       </Container>
