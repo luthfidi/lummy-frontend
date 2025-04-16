@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 import {
   Box,
   Container,
@@ -6,12 +6,13 @@ import {
   SimpleGrid,
   Text,
   Link,
-  VisuallyHidden,
-  chakra,
+  HStack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { FaDiscord, FaInstagram, FaFacebook } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
-const ListHeader = ({ children }: { children: React.ReactNode }) => {
+const ListHeader = ({ children }: { children: ReactNode }) => {
   return (
     <Text fontWeight={"500"} fontSize={"lg"} mb={2}>
       {children}
@@ -19,36 +20,35 @@ const ListHeader = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Social Media Icon Component
-const SocialButton = ({
-  children,
-  label,
-  href,
-}: {
-  children: React.ReactNode;
+// Social Media Icon Component using React Icons
+interface SocialIconProps {
+  icon: ReactNode;
   label: string;
   href: string;
-}) => {
+}
+
+const SocialIcon = ({ icon, label, href }: SocialIconProps) => {
   return (
-    <chakra.button
-      bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
+    <Link
+      href={href}
+      isExternal
+      aria-label={label}
       rounded={"full"}
       w={8}
       h={8}
-      cursor={"pointer"}
-      as={"a"}
-      href={href}
       display={"inline-flex"}
       alignItems={"center"}
       justifyContent={"center"}
-      transition={"background 0.3s ease"}
+      bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
+      color={useColorModeValue("gray.700", "gray.200")}
+      transition={"all 0.3s ease"}
       _hover={{
         bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200"),
+        color: useColorModeValue("gray.900", "white"),
       }}
     >
-      <VisuallyHidden>{label}</VisuallyHidden>
-      {children}
-    </chakra.button>
+      {icon}
+    </Link>
   );
 };
 
@@ -89,18 +89,28 @@ export const Footer = () => {
 
           <Stack align={"flex-start"}>
             <ListHeader>Connect</ListHeader>
-            <SocialButton label="Discord" href="#">
-              <Link href={"#"}>Discord</Link>
-            </SocialButton>
-            <SocialButton label="Twitter" href="#">
-              <Link href={"#"}>Twitter</Link>
-            </SocialButton>
-            <SocialButton label="Instagram" href="#">
-              <Link href={"#"}>Instagram</Link>
-            </SocialButton>
-            <SocialButton label="Facebook" href="#">
-              <Link href={"#"}>Facebook</Link>
-            </SocialButton>
+            <HStack spacing={4}>
+              <SocialIcon
+                icon={<FaDiscord size="20px" />}
+                label="Discord"
+                href="#"
+              />
+              <SocialIcon
+                icon={<FaXTwitter size="20px" />}
+                label="Twitter"
+                href="#"
+              />
+              <SocialIcon
+                icon={<FaInstagram size="20px" />}
+                label="Instagram"
+                href="#"
+              />
+              <SocialIcon
+                icon={<FaFacebook size="20px" />}
+                label="Facebook"
+                href="#"
+              />
+            </HStack>
           </Stack>
         </SimpleGrid>
       </Container>
