@@ -7,6 +7,11 @@ import { EventDetailPage } from "./pages/EventDetail";
 import { CheckoutPage } from "./pages/Checkout";
 import { MyTicketsPage } from "./pages/MyTickets";
 import { MarketplacePage } from "./pages/Marketplace";
+import {
+  AdminDashboard,
+  CreateEventForm,
+  EventManagement,
+} from "./pages/Admin";
 
 // Placeholder components for routes we haven't built yet
 
@@ -36,6 +41,11 @@ function App() {
           <Route path="/tickets" element={<MyTicketsPage />} />
           <Route path="/tickets/:id" element={<MyTicketsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+
+          {/* Admin routes */}
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/events/create" element={<CreateEventForm />} />
+          <Route path="/admin/events/:id" element={<EventManagement />} />
         </Routes>
       </Box>
       <Footer />

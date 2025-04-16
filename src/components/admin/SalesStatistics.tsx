@@ -1,0 +1,266 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  Select,
+  Badge,
+  Tab,
+  Tabs,
+  TabList,
+  TabPanel,
+  TabPanels,
+  useColorModeValue,
+  SimpleGrid,
+} from "@chakra-ui/react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
+export interface SalesData {
+  totalRevenue: number;
+  soldTickets: number;
+  availableTickets: number;
+  totalTransactions: number;
+  averageTicketPrice: number;
+  revenueByTier: { [tierName: string]: number };
+  salesByDay: { date: string; sales: number }[];
+  currency: string;
+  percentChange: number;
+}
+
+interface SalesStatisticsProps {
+  salesData: SalesData;
+  eventName: string;
+}
+
+// Helper component for stat cards
+interface StatCardProps {
+  label: string;
+  value: string;
+  helpText?: string;
+  isIncrease?: boolean;
+  icon?: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({
+  label,
+  value,
+  helpText,
+  isIncrease,
+  icon,
+}) => {
+  const cardBg = useColorModeValue("white", "gray.700");
+
+  return (
+    <Box p={4} bg={cardBg} borderRadius="md" shadow="sm">
+      <Flex justify="space-between" mb={2}>
+        <Text fontWeight="medium">{label}</Text>
+        {icon && <Text fontSize="xl">{icon}</Text>}
+      </Flex>
+      <Text fontSize="2xl" fontWeight="bold">
+        {value}
+      </Text>
+      {helpText && (
+        <Text fontSize="sm" color="gray.500" mt={1}>
+          {isIncrease !== undefined && <span>{isIncrease ? "↑" : "↓"} </span>}
+          {helpText}
+        </Text>
+      )}
+    </Box>
+  );
+};
+
+const SalesStatistics: React.FC<SalesStatisticsProps> = ({
+  salesData,
+  eventName,
+}) => {
+  const [timeRange, setTimeRange] = useState<string>("7d");
+  const cardBg = useColorModeValue("white", "gray.700");
+
+  // In a real implementation, this would update the data based on time range
+  const handleTimeRangeChange = (range: string) => {
+    setTimeRange(range);
+    // Would typically fetch new data here
+  };
+
+  const calculatePercentage = (sold: number, total: number): number => {
+    return total > 0 ? (sold / total) * 100 : 0;
+  };
+
+  const renderSalesChart = () => {
+    return (
+      <Box height="300px" width="100%">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={salesData.salesByDay}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="date"
+              tickFormatter={(value) => {
+                // Format tanggal menjadi dd/MM
+                const date = new Date(value);
+                return `${date.getDate()}/${date.getMonth() + 1}`;
+              }}
+            />
+            <YAxis />
+            <Tooltip
+              formatter={(value) => [`${value} tickets`, "Sales"]}
+              labelFormatter={(label) => {
+                const date = new Date(label);
+                return date.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                });
+              }}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="sales"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+              name="Ticket Sales"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+    );
+  };
+
+  // Defensively handle data
+  if (!salesData) {
+    return <Box>No sales data available</Box>;
+  }
+
+  return (
+    <Box>
+      <Flex justify="space-between" align="center" mb={4}>
+        <Heading size="md">Sales Statistics - {eventName || "Event"}</Heading>
+        <Select
+          value={timeRange}
+          onChange={(e) => handleTimeRangeChange(e.target.value)}
+          width="120px"
+          size="sm"
+        >
+          <option value="7d">Last 7 days</option>
+          <option value="30d">Last 30 days</option>
+          <option value="90d">Last 90 days</option>
+          <option value="all">All time</option>
+        </Select>
+      </Flex>
+
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} mb={6}>
+        <StatCard
+          label="Total Revenue"
+          value={`${salesData.currency || "IDRX"} ${(
+            salesData.totalRevenue || 0
+          ).toLocaleString()}`}
+          helpText={`${salesData.percentChange || 0}% from previous period`}
+          isIncrease={(salesData.percentChange || 0) > 0}
+          icon="💰"
+        />
+        <StatCard
+          label="Tickets Sold"
+          value={(salesData.soldTickets || 0).toLocaleString()}
+          helpText={`${calculatePercentage(
+            salesData.soldTickets || 0,
+            (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
+          ).toFixed(1)}% of total`}
+          icon="🎟️"
+        />
+        <StatCard
+          label="Transactions"
+          value={(salesData.totalTransactions || 0).toLocaleString()}
+          helpText="Total purchases"
+          icon="💳"
+        />
+        <StatCard
+          label="Avg. Ticket Price"
+          value={`${salesData.currency || "IDRX"} ${(
+            salesData.averageTicketPrice || 0
+          ).toLocaleString()}`}
+          helpText="Per ticket"
+          icon="📊"
+        />
+      </SimpleGrid>
+
+      <Tabs variant="enclosed" colorScheme="purple" mb={6}>
+        <TabList>
+          <Tab>Sales Overview</Tab>
+          <Tab>By Ticket Tier</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel p={0} pt={4}>
+            <Box
+              bg={cardBg}
+              borderRadius="md"
+              overflow="hidden"
+              shadow="sm"
+              p={4}
+            >
+              <Heading size="sm" mb={4}>
+                Sales Trend
+              </Heading>
+              {renderSalesChart()}
+            </Box>
+          </TabPanel>
+          <TabPanel p={0} pt={4}>
+            <Box
+              bg={cardBg}
+              borderRadius="md"
+              overflow="hidden"
+              shadow="sm"
+              p={4}
+            >
+              <Heading size="sm" mb={4}>
+                Revenue by Ticket Tier
+              </Heading>
+              <VStack spacing={3} align="stretch">
+                {Object.entries(salesData.revenueByTier || {}).map(
+                  ([tier, revenue]) => (
+                    <Flex key={tier} justify="space-between" align="center">
+                      <HStack>
+                        <Badge colorScheme="purple" px={2} py={1}>
+                          {tier}
+                        </Badge>
+                      </HStack>
+                      <Text fontWeight="bold">
+                        {salesData.currency || "IDRX"}{" "}
+                        {(revenue || 0).toLocaleString()}
+                      </Text>
+                    </Flex>
+                  )
+                )}
+                {Object.keys(salesData.revenueByTier || {}).length === 0 && (
+                  <Text color="gray.500">No revenue data available</Text>
+                )}
+              </VStack>
+            </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Box>
+  );
+};
+
+export default SalesStatistics;
