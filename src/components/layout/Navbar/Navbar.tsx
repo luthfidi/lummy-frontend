@@ -1,4 +1,5 @@
 // src/components/layout/Navbar/Navbar.tsx
+import {ConnectButton} from "@xellar/kit";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
@@ -13,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { useWallet } from "../../../hooks/useWallet";
-import { ConnectButton, WalletButton } from "../../../components/wallet";
+import {WalletButton } from "../../../components/wallet";
 
 // Define Navigation Links
 const Links = [
@@ -90,9 +91,9 @@ export const Navbar = () => {
               ))}
             </HStack>
           </HStack>
-          <Flex alignItems={"center"}>
-            {isConnected ? <WalletButton /> : <ConnectButton />}
-          </Flex>
+          <div className="auth-buttons">
+            <ConnectButton/>
+        </div>
         </Flex>
 
         {isOpen ? (

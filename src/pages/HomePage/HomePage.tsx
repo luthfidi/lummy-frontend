@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import {ConnectButton} from "@xellar/kit";
 import {
   Box,
   Heading,
