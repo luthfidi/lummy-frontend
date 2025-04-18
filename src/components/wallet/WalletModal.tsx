@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -8,178 +8,77 @@ import {
   ModalBody,
   ModalCloseButton,
   Button,
+  Text,
   VStack,
   HStack,
-  Text,
   Box,
+  Heading,
   Divider,
-  Flex,
-  Badge,
-  Icon,
-  Tooltip,
   useClipboard,
-} from '@chakra-ui/react';
-import { CopyIcon, CheckIcon, ExternalLinkIcon } from '@chakra-ui/icons';
-import { FaWallet, FaCoins, FaNetworkWired } from 'react-icons/fa';
-import { useWallet } from '../../hooks/useWallet';
+} from "@chakra-ui/react";
+import { useBalance } from "wagmi";
 
 interface WalletModalProps {
   isOpen: boolean;
   onClose: () => void;
+  address: `0x${string}`;
 }
 
-export const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
-  const { wallet, balance, disconnect } = useWallet();
-  const { hasCopied, onCopy } = useClipboard(wallet?.address || '');
-
-  if (!wallet) {
-    return null;
-  }
+export const WalletModal: React.FC<WalletModalProps> = ({
+  isOpen,
+  onClose,
+  address,
+}) => {
+  const { data: balanceData } = useBalance({ address });
+  const { hasCopied, onCopy } = useClipboard(address);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="md">
+    <Modal isOpen={isOpen} onClose={onClose} size="md">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Wallet Details</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <VStack spacing={6} align="stretch">
-            <Flex
-              bg="purple.50"
-              p={4}
-              borderRadius="md"
-              justify="center"
-              align="center"
-              direction="column"
-            >
-              <Icon as={FaWallet} boxSize={10} color="purple.500" mb={2} />
-              <Text fontWeight="bold" fontSize="lg">
-                Xellar Wallet
-              </Text>
-              <Badge colorScheme="green" mt={1}>
-                Connected
-              </Badge>
-            </Flex>
-
+          <VStack spacing={4} align="stretch">
             <Box>
-              <Text fontWeight="medium" fontSize="sm" color="gray.500" mb={2}>
-                Wallet Address
-              </Text>
-              <Flex
-                bg="gray.50"
-                p={3}
-                borderRadius="md"
-                justify="space-between"
-                align="center"
-              >
-                <Text
-                  fontSize="sm"
-                  fontFamily="monospace"
-                  isTruncated
-                  maxW="80%"
-                >
-                  {wallet.address}
+              <Heading size="sm" mb={2}>
+                Address
+              </Heading>
+              <HStack>
+                <Text fontSize="sm" fontFamily="monospace">
+                  {address}
                 </Text>
-                <HStack>
-                  <Tooltip
-                    label={hasCopied ? 'Copied!' : 'Copy address'}
-                    closeOnClick={false}
-                  >
-                    <Box
-                      as="button"
-                      onClick={onCopy}
-                      color="gray.500"
-                      _hover={{ color: 'blue.500' }}
-                    >
-                      {hasCopied ? <CheckIcon /> : <CopyIcon />}
-                    </Box>
-                  </Tooltip>
-                  <Tooltip label="View on explorer">
-                    <Box
-                      as="a"
-                      href={`https://explorer.lisk.com/address/${wallet.address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      color="gray.500"
-                      _hover={{ color: 'blue.500' }}
-                    >
-                      <ExternalLinkIcon />
-                    </Box>
-                  </Tooltip>
-                </HStack>
-              </Flex>
+                <Button size="xs" onClick={onCopy}>
+                  {hasCopied ? "Copied!" : "Copy"}
+                </Button>
+              </HStack>
             </Box>
 
             <Divider />
 
             <Box>
-              <Text fontWeight="medium" fontSize="sm" color="gray.500" mb={2}>
-                Balances
+              <Heading size="sm" mb={2}>
+                Balance
+              </Heading>
+              <Text>
+                {balanceData ? `${balanceData.formatted} ${balanceData.symbol}` : "Loading..."}
               </Text>
-              <VStack spacing={3} align="stretch">
-                <Flex
-                  justify="space-between"
-                  align="center"
-                  bg="blue.50"
-                  p={3}
-                  borderRadius="md"
-                >
-                  <HStack>
-                    <Icon as={FaCoins} color="blue.500" />
-                    <Text fontWeight="medium">IDRX</Text>
-                  </HStack>
-                  <Text>{balance.IDRX.toLocaleString()}</Text>
-                </Flex>
-
-                <Flex
-                  justify="space-between"
-                  align="center"
-                  bg="gray.50"
-                  p={3}
-                  borderRadius="md"
-                >
-                  <HStack>
-                    <Icon as={FaCoins} color="gray.500" />
-                    <Text fontWeight="medium">LSK</Text>
-                  </HStack>
-                  <Text>{balance.LSK.toLocaleString()}</Text>
-                </Flex>
-              </VStack>
             </Box>
 
+            <Divider />
+
             <Box>
-              <Text fontWeight="medium" fontSize="sm" color="gray.500" mb={2}>
-                Network
-              </Text>
-              <Flex
-                justify="space-between"
-                align="center"
-                bg="gray.50"
-                p={3}
-                borderRadius="md"
-              >
-                <HStack>
-                  <Icon as={FaNetworkWired} color="green.500" />
-                  <Text>{wallet.network}</Text>
-                </HStack>
-                <Badge colorScheme="green">Connected</Badge>
-              </Flex>
+              <Heading size="sm" mb={2}>
+                Recent Transactions
+              </Heading>
+              <Text>Transaction history not available</Text>
             </Box>
           </VStack>
         </ModalBody>
-
         <ModalFooter>
-          <HStack spacing={3}>
-            <Button variant="ghost" onClick={onClose}>
-              Close
-            </Button>
-            <Button colorScheme="red" variant="outline" onClick={() => {
-              disconnect();
-              onClose();
-            }}>
-              Disconnect
-            </Button>
-          </HStack>
+          <Button colorScheme="blue" mr={3} onClick={onClose}>
+            Close
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

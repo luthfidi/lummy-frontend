@@ -7,6 +7,7 @@ import { EventDetailPage } from "./pages/EventDetail";
 import { CheckoutPage } from "./pages/Checkout";
 import { MyTicketsPage } from "./pages/MyTickets";
 import { MarketplacePage } from "./pages/Marketplace";
+import { Web3Provider } from "./Web3Provider";
 
 // Placeholder components for routes we haven't built yet
 
@@ -24,6 +25,7 @@ const ProfilePage = () => (
 
 function App() {
   return (
+    <Web3Provider>
     <Box minH="100vh" display="flex" flexDirection="column">
       <Navbar />
       <Box flex="1">
@@ -40,6 +42,7 @@ function App() {
       </Box>
       <Footer />
     </Box>
+    </Web3Provider>
   );
 }
 

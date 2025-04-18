@@ -18,8 +18,7 @@ import {
   FaExchangeAlt,
   FaUserCircle,
 } from "react-icons/fa";
-import { useWallet } from "../../hooks/useWallet";
-import { TokenBalance } from "./TokenBalance";
+import { useAccount, useDisconnect, useBalance } from "wagmi";
 import { WalletModal } from "./WalletModal";
 
 interface WalletButtonProps {
@@ -33,14 +32,21 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
   variant = "outline",
   colorScheme = "purple",
 }) => {
-  const { isConnected, wallet, disconnect, formatAddress } = useWallet();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { data: balanceData } = useBalance({ address });
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDisconnect = async () => {
-    await disconnect();
+    disconnect();
   };
 
-  if (!isConnected || !wallet) {
+  const formatAddress = (address: string | undefined): string => {
+    if (!address) return "";
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
+
+  if (!isConnected || !address) {
     return null;
   }
 
@@ -57,12 +63,14 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
           borderRadius="full"
         >
           <HStack spacing={2}>
-            <Text>{formatAddress(wallet.address)}</Text>
+            <Text>{formatAddress(address)}</Text>
           </HStack>
         </MenuButton>
         <MenuList>
           <HStack px={3} py={2}>
-            <TokenBalance />
+            <Text fontWeight="bold">
+              Balance: {balanceData ? `${balanceData.formatted} ${balanceData.symbol}` : "Loading..."}
+            </Text>
           </HStack>
           <MenuDivider />
           <MenuItem onClick={onOpen} icon={<Icon as={FaUserCircle} />}>
@@ -81,7 +89,7 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
         </MenuList>
       </Menu>
 
-      <WalletModal isOpen={isOpen} onClose={onClose} />
+      <WalletModal isOpen={isOpen} onClose={onClose} address={address} />
     </>
   );
 };

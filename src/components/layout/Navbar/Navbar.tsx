@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { useWallet } from "../../../hooks/useWallet";
-import {WalletButton } from "../../../components/wallet";
+// import { ConnectButton, WalletButton } from "../../../components/wallet";
 
 // Define Navigation Links
 const Links = [
@@ -22,6 +22,7 @@ const Links = [
   { name: "Events", path: "/events" },
   { name: "Marketplace", path: "/marketplace" },
   { name: "My Tickets", path: "/tickets" },
+  { name: "Admin", path: "/admin" },
 ];
 
 const NavLink = ({
@@ -91,9 +92,9 @@ export const Navbar = () => {
               ))}
             </HStack>
           </HStack>
-          <div className="auth-buttons">
-            <ConnectButton/>
-        </div>
+          <Flex alignItems={"center"}>
+             <ConnectButton />
+          </Flex>
         </Flex>
 
         {isOpen ? (
