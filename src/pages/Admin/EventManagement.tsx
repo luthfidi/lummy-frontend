@@ -3,19 +3,18 @@ import {
   Box,
   Container,
   Heading,
-  VStack,
-  HStack,
   Text,
   Button,
+  HStack,
+  VStack,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
-  Skeleton,
-  Badge,
+  Icon,
   Flex,
-  IconButton,
+  Badge,
   Divider,
   useToast,
   useDisclosure,
@@ -25,10 +24,18 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  Icon,
+  IconButton,
+  Skeleton,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
-import { FaTicketAlt, FaChartBar, FaUsers, FaCog } from "react-icons/fa";
+import {
+  FaTicketAlt,
+  FaChartBar,
+  FaUsers,
+  FaCog,
+  FaQrcode,
+  FaUserCheck,
+} from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import SalesStatistics, {
   SalesData,
@@ -310,9 +317,26 @@ const EventManagement: React.FC = () => {
               <Divider />
 
               <Box>
-                <Heading size="md" mb={4}>
-                  Ticket Sales Performance
-                </Heading>
+                <Flex justify="space-between" align="center" mb={4}>
+                  <Heading size="md">Ticket Sales Performance</Heading>
+                  <HStack>
+                    <Button
+                      leftIcon={<Icon as={FaUserCheck} />}
+                      colorScheme="purple"
+                      variant="outline"
+                      onClick={() => navigate(`/admin/events/${id}/check-in`)}
+                    >
+                      Check-in Dashboard
+                    </Button>
+                    <Button
+                      leftIcon={<Icon as={FaQrcode} />}
+                      colorScheme="purple"
+                      onClick={() => navigate(`/admin/events/${id}/scanner`)}
+                    >
+                      Scan Tickets
+                    </Button>
+                  </HStack>
+                </Flex>
                 <EventStats stats={event} />
               </Box>
             </VStack>
@@ -370,6 +394,18 @@ const EventManagement: React.FC = () => {
 
           {/* Attendees Tab */}
           <TabPanel px={0}>
+            <Flex justify="space-between" align="center" mb={6}>
+              <Heading size="md">Attendee Management</Heading>
+              <HStack>
+                <Button
+                  leftIcon={<Icon as={FaUserCheck} />}
+                  colorScheme="purple"
+                  onClick={() => navigate(`/admin/events/${id}/check-in`)}
+                >
+                  Check-in Dashboard
+                </Button>
+              </HStack>
+            </Flex>
             <AttendeeList
               attendees={attendees}
               onCheckIn={handleCheckIn}

@@ -110,8 +110,8 @@ const HeroSection: React.FC = () => {
               {/* Ticket Mock Overlays */}
               <Box
                 position="absolute"
-                top="10%"
-                left="-5%"
+                top="15%"
+                left="10%"
                 width="60%"
                 height="auto"
                 bg="white"
@@ -139,7 +139,7 @@ const HeroSection: React.FC = () => {
               <Box
                 position="absolute"
                 bottom="15%"
-                right="-5%"
+                right="10%"
                 width="70%"
                 height="auto"
                 bg="white"

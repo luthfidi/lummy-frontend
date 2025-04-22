@@ -9,7 +9,6 @@ import {
   Avatar,
   Flex,
   Text,
-  Divider,
   useToast,
   HStack,
   IconButton,

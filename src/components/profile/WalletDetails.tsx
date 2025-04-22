@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   VStack,
@@ -6,7 +6,6 @@ import {
   Text,
   Button,
   Flex,
-  Badge,
   Divider,
   Icon,
   useClipboard,
@@ -19,7 +18,7 @@ import { useWallet } from "../../hooks/useWallet";
 import { TokenBalance } from "../../components/wallet";
 
 const WalletDetails: React.FC = () => {
-  const { wallet, isConnected, formatAddress, hasEnoughBalance } = useWallet();
+  const { wallet, isConnected, formatAddress } = useWallet();
   const { hasCopied, onCopy } = useClipboard(wallet?.address || "");
 
   const bgColor = useColorModeValue("white", "gray.700");

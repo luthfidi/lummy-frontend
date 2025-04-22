@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Box,
   Container,
   Tabs,
   TabList,
@@ -9,9 +8,7 @@ import {
   TabPanel,
   Heading,
   Text,
-  VStack,
   Icon,
-  Flex,
 } from "@chakra-ui/react";
 import { FaUser, FaWallet, FaHistory, FaCog } from "react-icons/fa";
 import {

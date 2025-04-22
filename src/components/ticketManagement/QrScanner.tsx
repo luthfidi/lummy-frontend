@@ -5,13 +5,12 @@ import {
   VStack,
   Text,
   Flex,
-  Badge,
   Icon,
   useToast,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
-import { FaQrcode, FaTicketAlt } from "react-icons/fa";
+import { FaQrcode } from "react-icons/fa";
 
 interface QrScannerProps {
   onScan: (ticketData: any) => void;
@@ -58,7 +57,6 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScan, isLoading = false }) => {
 
   const scanIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const bgColor = useColorModeValue("white", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
   const handleToggleCamera = () => {

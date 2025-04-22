@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Flex,
@@ -14,11 +14,11 @@ import {
   StatHelpText,
   StatArrow,
   useColorModeValue,
-} from '@chakra-ui/react';
-import { FaUsers, FaUserCheck, FaPercentage, FaClock } from 'react-icons/fa';
+} from "@chakra-ui/react";
+import { FaUsers, FaUserCheck, FaPercentage, FaClock } from "react-icons/fa";
 
 interface CheckInStatsProps {
-  eventId: string;
+  eventId?: string;
   stats: {
     totalAttendees: number;
     checkedIn: number;
@@ -33,11 +33,52 @@ interface CheckInStatsProps {
   };
 }
 
-const CheckInStats: React.FC<CheckInStatsProps> = ({ 
-  eventId, 
-  stats 
+// StatCard component for displaying stat metrics
+interface StatCardProps {
+  label: string;
+  value: number | string;
+  icon: React.ElementType;
+  color: string;
+  helpText?: string;
+  isPercentage?: boolean;
+}
+
+const StatCard: React.FC<StatCardProps> = ({
+  label,
+  value,
+  icon,
+  color,
+  helpText,
+  isPercentage = false,
 }) => {
-  const cardBg = useColorModeValue('white', 'gray.700');
+  const cardBg = useColorModeValue("white", "gray.700");
+
+  return (
+    <Box p={4} bg={cardBg} borderRadius="lg" boxShadow="sm">
+      <Stat>
+        <Flex justify="space-between" align="center">
+          <StatLabel fontWeight="medium" color="gray.600">
+            {label}
+          </StatLabel>
+          <Icon as={icon} color={`${color}.500`} boxSize={6} />
+        </Flex>
+        <StatNumber fontSize="3xl" fontWeight="bold" mt={2}>
+          {isPercentage ? `${value}%` : value}
+        </StatNumber>
+        {helpText && (
+          <StatHelpText>
+            <StatArrow type="increase" />
+            {helpText}
+          </StatHelpText>
+        )}
+      </Stat>
+    </Box>
+  );
+};
+
+const CheckInStats: React.FC<CheckInStatsProps> = ({ stats }) => {
+  const cardBg = useColorModeValue("white", "gray.700");
+  const progressTrackBg = useColorModeValue("gray.100", "gray.600");
 
   return (
     <Box>
@@ -51,3 +92,89 @@ const CheckInStats: React.FC<CheckInStatsProps> = ({
         <StatCard
           label="Checked In"
           value={stats.checkedIn}
+          icon={FaUserCheck}
+          color="green"
+          helpText={`${stats.recentActivity} in the last hour`}
+        />
+        <StatCard
+          label="Check-in Rate"
+          value={stats.checkInRate}
+          icon={FaPercentage}
+          color="purple"
+          isPercentage={true}
+        />
+        <StatCard
+          label="Peak Time"
+          value={stats.peakCheckInTime}
+          icon={FaClock}
+          color="orange"
+        />
+      </SimpleGrid>
+
+      <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="sm" mb={8}>
+        <Text fontWeight="medium" fontSize="lg" mb={4}>
+          Check-in Progress
+        </Text>
+
+        <VStack spacing={6} align="stretch">
+          {stats.tierStats.map((tier, index) => {
+            const percentage =
+              tier.total > 0
+                ? Math.round((tier.checkedIn / tier.total) * 100)
+                : 0;
+
+            return (
+              <Box key={index}>
+                <Flex justify="space-between" mb={2}>
+                  <Text fontWeight="medium">{tier.name}</Text>
+                  <HStack>
+                    <Text>
+                      {tier.checkedIn} / {tier.total}
+                    </Text>
+                    <Text
+                      fontWeight="bold"
+                      color={
+                        percentage > 80
+                          ? "green.500"
+                          : percentage > 50
+                          ? "blue.500"
+                          : "gray.500"
+                      }
+                    >
+                      {percentage}%
+                    </Text>
+                  </HStack>
+                </Flex>
+                <Progress
+                  value={percentage}
+                  size="md"
+                  colorScheme={
+                    percentage > 80
+                      ? "green"
+                      : percentage > 50
+                      ? "blue"
+                      : "gray"
+                  }
+                  bg={progressTrackBg}
+                  borderRadius="full"
+                />
+              </Box>
+            );
+          })}
+        </VStack>
+      </Box>
+
+      <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="sm">
+        <Text fontWeight="medium" fontSize="lg" mb={4}>
+          Check-in Timeline
+        </Text>
+        <Text color="gray.500">
+          Timeline visualization would appear here, showing check-ins over time.
+        </Text>
+        {/* In a real implementation, this would include a time-based chart using Recharts */}
+      </Box>
+    </Box>
+  );
+};
+
+export default CheckInStats;

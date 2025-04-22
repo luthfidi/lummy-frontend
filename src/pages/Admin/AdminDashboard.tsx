@@ -20,7 +20,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, CalendarIcon } from "@chakra-ui/icons";
-import { FaTicketAlt, FaChartLine, FaUsers } from "react-icons/fa";
+import { FaTicketAlt, FaChartLine, FaUsers, FaUserCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 // SECTION 1: Uncomment to test importing the SalesStatistics component
@@ -250,12 +250,25 @@ const AdminDashboard: React.FC = () => {
                         </HStack>
                       </HStack>
                     </Box>
-                    <Button
-                      colorScheme="purple"
-                      onClick={() => handleManageEvent(event.eventId)}
-                    >
-                      Manage
-                    </Button>
+                    <HStack>
+                      <Button
+                        colorScheme="blue"
+                        variant="outline"
+                        size="sm"
+                        leftIcon={<Icon as={FaUserCheck} />}
+                        onClick={() =>
+                          navigate(`/admin/events/${event.eventId}/check-in`)
+                        }
+                      >
+                        Check-in
+                      </Button>
+                      <Button
+                        colorScheme="purple"
+                        onClick={() => handleManageEvent(event.eventId)}
+                      >
+                        Manage
+                      </Button>
+                    </HStack>
                   </Flex>
                 </Box>
               ))}

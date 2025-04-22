@@ -3,36 +3,28 @@ import { Box } from "@chakra-ui/react";
 import { Navbar } from "./components/layout/Navbar";
 import { Footer } from "./components/layout/Footer";
 import { HomePage } from "./pages/HomePage";
+import { EventsPage } from "./pages/Events";
 import { EventDetailPage } from "./pages/EventDetail";
 import { CheckoutPage } from "./pages/Checkout";
 import { MyTicketsPage } from "./pages/MyTickets";
 import { MarketplacePage } from "./pages/Marketplace";
+import { ProfilePage } from "./pages/Profile";
 import {
   AdminDashboard,
   CreateEventForm,
   EventManagement,
 } from "./pages/Admin";
-
-// Placeholder components for routes we haven't built yet
-
-const EventsPage = () => (
-  <Box p={8}>
-    <h1>All Events Page (Coming Soon)</h1>
-  </Box>
-);
-
-const ProfilePage = () => (
-  <Box p={8}>
-    <h1>Profile Page (Coming Soon)</h1>
-  </Box>
-);
+import {
+  CheckInDashboard,
+  ScannerPage,
+} from "./pages/TicketManagement";
 
 function App() {
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
       <Navbar />
       <Box flex="1">
-        <Routes>
+      <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailPage />} />
@@ -46,6 +38,10 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/events/create" element={<CreateEventForm />} />
           <Route path="/admin/events/:id" element={<EventManagement />} />
+          
+          {/* Ticket Management routes */}
+          <Route path="/admin/events/:eventId/check-in" element={<CheckInDashboard />} />
+          <Route path="/admin/events/:eventId/scanner" element={<ScannerPage />} />
         </Routes>
       </Box>
       <Footer />

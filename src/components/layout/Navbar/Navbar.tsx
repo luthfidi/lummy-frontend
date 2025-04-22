@@ -22,6 +22,7 @@ const Links = [
   { name: "Marketplace", path: "/marketplace" },
   { name: "My Tickets", path: "/tickets" },
   { name: "Admin", path: "/admin" },
+  { name: "Profile", path: "/profile" },
 ];
 
 const NavLink = ({
