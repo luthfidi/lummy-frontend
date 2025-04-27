@@ -11,16 +11,19 @@ import {
   Badge,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { Address, erc20Abi, formatUnits } from "viem";
+import { useReadContract } from "wagmi";
+
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
-
+import { ConnectButton } from "@xellar/kit";
 interface WalletConnectProps {
   onConnect: () => void;
   isLoading: boolean;
   isConnected?: boolean;
   walletAddress?: string;
-}
-
+};
+  
 export const WalletConnect: React.FC<WalletConnectProps> = ({
   onConnect,
   isLoading,
@@ -160,17 +163,30 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
               Don't have a wallet yet? No problem! Download the Xellar Wallet
               app to get started with crypto and NFT tickets.
             </Text>
-            <Button
-              variant="outline"
-              colorScheme="purple"
-              size="sm"
-              as="a"
-              href="https://xellar.co"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Get Xellar Wallet
-            </Button>
+            <ConnectButton.Custom>
+                          {({
+                            openConnectModal,
+                            isConnected,
+                            openProfileModal,
+                            account,
+                          }) => {
+                            if (!isConnected) {
+                              return (
+                                <Button
+                                  variant="outline"
+                                  colorScheme="purple"
+                                  px={4}
+                                  py={2}
+                                  borderRadius="lg"
+                                  onClick={openConnectModal}
+                                >
+                                  Get Xellar Wallet
+                                </Button>
+                              );
+                            }
+
+                          }}
+                        </ConnectButton.Custom>
           </VStack>
         </Box>
       </VStack>

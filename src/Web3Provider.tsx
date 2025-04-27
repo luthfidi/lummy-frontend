@@ -10,7 +10,7 @@ const config = defaultConfig({
   walletConnectProjectId: 'd2fcae952e3bd7b4e51fb295883cacdf',
  
   // Required for Xellar Passport
-  xellarAppId: 'ca96fce5-cf74-4e2d-ac94-45cb9f8a874b',
+  xellarAppId: 'b41d718f-a1e9-4d61-8f76-25f3742c93b1',
   xellarEnv: "sandbox",
   chains: [polygonAmoy, sepolia, liskSepolia]
 }) as Config;

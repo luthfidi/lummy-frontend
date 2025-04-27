@@ -51,6 +51,9 @@ const steps = [
 export interface CheckoutState {
   tierId: string;
   quantity: number;
+  isCompact?: boolean;
+  showRefresh?: boolean;
+
 }
 
 export const CheckoutPage: React.FC = () => {
@@ -72,10 +75,7 @@ export const CheckoutPage: React.FC = () => {
   const [transactionHash, setTransactionHash] = useState<string>("");
   
   // Stepper control
-  const { activeStep, setActiveStep } = useSteps({
-    index: 0,
-    count: steps.length,
-  });
+ 
 
   // Wallet integration
   const { 
@@ -85,6 +85,10 @@ export const CheckoutPage: React.FC = () => {
     buyTicket 
   } = useWallet();
 
+ const { activeStep, setActiveStep } = useSteps({
+    index: isConnected ? 1 : 0,
+    count: steps.length,
+  });
   useEffect(() => {
     const getEvent = async () => {
       if (eventId) {
@@ -140,22 +144,30 @@ export const CheckoutPage: React.FC = () => {
     }
   }, [isConnected, wallet, activeStep, setActiveStep]);
 
-  const handleConnectWallet = () => {
-    setIsWalletLoading(true);
-    
-    // If connection is successful, we'll move to the next step
-    if (isConnected && wallet) {
-      setIsWalletConnected(true);
-      setIsWalletLoading(false);
-      toast({
-        title: "Wallet connected",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      setActiveStep(1); // Move to the next step
-    }
-  };
+  const handleConnectWallet = async () => {
+  setIsWalletLoading(true);
+
+  try {
+    await connectWallet(); // <== explicitly trigger wallet connection
+    toast({
+      title: "Wallet connected",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    setIsWalletConnected(true);
+    setActiveStep(1); // move to Review Order step
+  } catch (error) {
+    toast({
+      title: "Failed to connect wallet",
+      status: "error",
+      duration: 3000,
+      isClosable: true,
+    });
+  } finally {
+    setIsWalletLoading(false);
+  }
+};
 
   const handleBackToReview = () => {
     setActiveStep(1); // Go back to review step
@@ -287,7 +299,7 @@ export const CheckoutPage: React.FC = () => {
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
             {/* Left side - Step content */}
             <Box>
-              {activeStep === 0 && (
+              {activeStep === 0 && !isConnected && (
                 <WalletConnect 
                   onConnect={handleConnectWallet}
                   isLoading={isWalletLoading}
@@ -376,3 +388,7 @@ export const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
+
+function connectWallet() {
+  throw new Error("Function not implemented.");
+}
