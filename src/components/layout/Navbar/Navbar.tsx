@@ -14,11 +14,13 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, RepeatIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@xellar/kit";
-import { useWallet } from "../../../hooks/useWallet";
 import { Address, erc20Abi, formatUnits } from "viem";
 import { useReadContract } from "wagmi";
 import { IDRX_SEPOLIA } from "../../../constants";
 import { truncateAddress } from "../../../utils/string";
+
+// Kalo mau pake wallet nanti uncomment ini
+// import { useWallet } from "../../../hooks/useWallet";
 
 // Navigation links
 const Links = [
@@ -92,19 +94,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   onRefresh = () => console.log("Refreshing data..."),
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isConnected } = useWallet();
+  // Removed unused variable: const { isConnected: walletIsConnected } = useWallet();
 
   return (
-    <Box 
-      bg="white" 
-      px={4} 
-      boxShadow="sm"
-      py={isCompact ? 1 : 2}
-    >
+    <Box bg="white" px={4} boxShadow="sm" py={isCompact ? 1 : 2}>
       <Container maxW="container.xl">
-        <Flex 
-          h={isCompact ? "48px" : "64px"} 
-          align="center" 
+        <Flex
+          h={isCompact ? "48px" : "64px"}
+          align="center"
           justify="space-between"
         >
           {/* Mobile Menu Button */}
@@ -156,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 />
               </Tooltip>
             )}
-            
+
             <ConnectButton.Custom>
               {({
                 openConnectModal,

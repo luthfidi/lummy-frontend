@@ -11,12 +11,10 @@ import {
   Badge,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Address, erc20Abi, formatUnits } from "viem";
-import { useReadContract } from "wagmi";
-
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
 import { ConnectButton } from "@xellar/kit";
+
 interface WalletConnectProps {
   onConnect: () => void;
   isLoading: boolean;
@@ -164,27 +162,18 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
               app to get started with crypto and NFT tickets.
             </Text>
             <ConnectButton.Custom>
-              {({
-                openConnectModal,
-                isConnected,
-                openProfileModal,
-                account,
-              }) => {
-                if (!isConnected) {
-                  return (
-                    <Button
-                      variant="outline"
-                      colorScheme="purple"
-                      px={4}
-                      py={2}
-                      borderRadius="lg"
-                      onClick={openConnectModal}
-                    >
-                      Get Xellar Wallet
-                    </Button>
-                  );
-                }
-              }}
+              {({ openConnectModal }) => (
+                <Button
+                  variant="outline"
+                  colorScheme="purple"
+                  px={4}
+                  py={2}
+                  borderRadius="lg"
+                  onClick={openConnectModal}
+                >
+                  Get Xellar Wallet
+                </Button>
+              )}
             </ConnectButton.Custom>
           </VStack>
         </Box>

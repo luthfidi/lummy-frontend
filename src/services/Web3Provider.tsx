@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   XellarKitProvider,
   defaultConfig,
-  darkTheme,
   lightTheme,
 } from "@xellar/kit";
 import { liskSepolia, polygonAmoy, sepolia } from "viem/chains";
