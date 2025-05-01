@@ -97,7 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Removed unused variable: const { isConnected: walletIsConnected } = useWallet();
 
   return (
-    <Box bg="white" px={4} boxShadow="sm" py={isCompact ? 1 : 2}>
+    <Box bg="white" px={4} boxShadow="sm">
       <Container maxW="container.xl">
         <Flex
           h={isCompact ? "48px" : "64px"}
