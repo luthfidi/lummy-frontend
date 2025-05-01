@@ -18,34 +18,37 @@ import {
   CheckInDashboard,
   ScannerPage,
 } from "./pages/TicketManagement";
+import { Web3Provider } from "./services/Web3Provider";
 
 function App() {
   return (
-    <Box minH="100vh" display="flex" flexDirection="column">
-      <Navbar />
-      <Box flex="1">
-      <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/event/:id" element={<EventDetailPage />} />
-          <Route path="/checkout/:id" element={<CheckoutPage />} />
-          <Route path="/marketplace" element={<MarketplacePage />} />
-          <Route path="/tickets" element={<MyTicketsPage />} />
-          <Route path="/tickets/:id" element={<MyTicketsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+    <Web3Provider>
+      <Box minH="100vh" display="flex" flexDirection="column">
+        <Navbar />
+        <Box flex="1">
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/event/:id" element={<EventDetailPage />} />
+            <Route path="/checkout/:id" element={<CheckoutPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/tickets" element={<MyTicketsPage />} />
+            <Route path="/tickets/:id" element={<MyTicketsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
 
-          {/* Admin routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/events/create" element={<CreateEventForm />} />
-          <Route path="/admin/events/:id" element={<EventManagement />} />
-          
-          {/* Ticket Management routes */}
-          <Route path="/admin/events/:eventId/check-in" element={<CheckInDashboard />} />
-          <Route path="/admin/events/:eventId/scanner" element={<ScannerPage />} />
-        </Routes>
+            {/* Admin routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/events/create" element={<CreateEventForm />} />
+            <Route path="/admin/events/:id" element={<EventManagement />} />
+            
+            {/* Ticket Management routes */}
+            <Route path="/admin/events/:eventId/check-in" element={<CheckInDashboard />} />
+            <Route path="/admin/events/:eventId/scanner" element={<ScannerPage />} />
+          </Routes>
+        </Box>
+        <Footer />
       </Box>
-      <Footer />
-    </Box>
+    </Web3Provider>
   );
 }
 

@@ -10,6 +10,7 @@ import { FeaturedEvents, CategoryNav } from "../../components/events";
 import { mockEvents } from "../../data/mockEvents";
 import { useEffect, useState } from "react";
 import { Event } from "../../types/Event";
+import {ConnectButton} from "@xellar/kit";
 
 export const HomePage = () => {
   const navigate = useNavigate();

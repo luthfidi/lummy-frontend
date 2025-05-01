@@ -45,12 +45,14 @@ const steps = [
   { title: "Connect Wallet" },
   { title: "Review Order" },
   { title: "Payment" },
-  { title: "Confirmation" }
+  { title: "Confirmation" },
 ];
 
 export interface CheckoutState {
   tierId: string;
   quantity: number;
+  isCompact?: boolean;
+  showRefresh?: boolean;
 }
 
 export const CheckoutPage: React.FC = () => {
@@ -61,37 +63,35 @@ export const CheckoutPage: React.FC = () => {
 
   // Get checkout state from navigation or fallback
   const checkoutState = location.state as CheckoutState | null;
-  
+
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTier, setSelectedTier] = useState<TicketTier | null>(null);
-  const [quantity, setQuantity] = useState<number>(checkoutState?.quantity || 1);
+  const [quantity, setQuantity] = useState<number>(
+    checkoutState?.quantity || 1
+  );
   const [_isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
   const [isWalletLoading, setIsWalletLoading] = useState<boolean>(false);
-  const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
+  const [isProcessingPayment, setIsProcessingPayment] =
+    useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
-  
+
   // Stepper control
-  const { activeStep, setActiveStep } = useSteps({
-    index: 0,
-    count: steps.length,
-  });
 
   // Wallet integration
-  const { 
-    isConnected, 
-    wallet, 
-    hasEnoughBalance, 
-    buyTicket 
-  } = useWallet();
+  const { isConnected, wallet, hasEnoughBalance, buyTicket } = useWallet();
 
+  const { activeStep, setActiveStep } = useSteps({
+    index: isConnected ? 1 : 0,
+    count: steps.length,
+  });
   useEffect(() => {
     const getEvent = async () => {
       if (eventId) {
         try {
           const eventData = await fetchEventById(eventId);
           setEvent(eventData || null);
-          
+
           // Set the selected tier if we have one from navigation
           if (eventData && checkoutState?.tierId) {
             const tier = eventData.ticketTiers?.find(
@@ -101,7 +101,7 @@ export const CheckoutPage: React.FC = () => {
               setSelectedTier(tier);
             }
           }
-          
+
           setLoading(false);
         } catch (error) {
           console.error("Error fetching event:", error);
@@ -140,20 +140,28 @@ export const CheckoutPage: React.FC = () => {
     }
   }, [isConnected, wallet, activeStep, setActiveStep]);
 
-  const handleConnectWallet = () => {
+  const handleConnectWallet = async () => {
     setIsWalletLoading(true);
-    
-    // If connection is successful, we'll move to the next step
-    if (isConnected && wallet) {
-      setIsWalletConnected(true);
-      setIsWalletLoading(false);
+
+    try {
+      await connectWallet(); // <== explicitly trigger wallet connection
       toast({
         title: "Wallet connected",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
-      setActiveStep(1); // Move to the next step
+      setIsWalletConnected(true);
+      setActiveStep(1); // move to Review Order step
+    } catch (error) {
+      toast({
+        title: "Failed to connect wallet",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsWalletLoading(false);
     }
   };
 
@@ -163,7 +171,7 @@ export const CheckoutPage: React.FC = () => {
 
   const handlePayment = async () => {
     setIsProcessingPayment(true);
-    
+
     if (!eventId || !selectedTier) {
       toast({
         title: "Error processing payment",
@@ -175,7 +183,7 @@ export const CheckoutPage: React.FC = () => {
       setIsProcessingPayment(false);
       return;
     }
-    
+
     // Check balance
     const totalPrice = getTotalPrice();
     if (!hasEnoughBalance(totalPrice)) {
@@ -189,7 +197,7 @@ export const CheckoutPage: React.FC = () => {
       setIsProcessingPayment(false);
       return;
     }
-    
+
     // Process payment via wallet
     const result = await buyTicket(
       eventId,
@@ -197,13 +205,13 @@ export const CheckoutPage: React.FC = () => {
       selectedTier.price,
       quantity
     );
-    
+
     setIsProcessingPayment(false);
-    
+
     if (result.success) {
       setTransactionHash(result.transactionHash || "");
       setActiveStep(3); // Move to confirmation step
-      
+
       toast({
         title: "Payment successful",
         description: "Your tickets have been minted as NFTs",
@@ -217,7 +225,7 @@ export const CheckoutPage: React.FC = () => {
         description: result.error || "An unknown error occurred",
         status: "error",
         duration: 5000,
-        isClosable: true, 
+        isClosable: true,
       });
     }
   };
@@ -247,7 +255,7 @@ export const CheckoutPage: React.FC = () => {
     <Container maxW="container.lg" py={8}>
       <VStack spacing={8} align="stretch">
         <Heading size="lg">Checkout</Heading>
-        
+
         {/* Stepper */}
         <Box>
           <Stepper index={activeStep} colorScheme="purple">
@@ -287,15 +295,15 @@ export const CheckoutPage: React.FC = () => {
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
             {/* Left side - Step content */}
             <Box>
-              {activeStep === 0 && (
-                <WalletConnect 
+              {activeStep === 0 && !isConnected && (
+                <WalletConnect
                   onConnect={handleConnectWallet}
                   isLoading={isWalletLoading}
                   isConnected={isConnected}
                   walletAddress={wallet?.address}
                 />
               )}
-              
+
               {activeStep === 1 && (
                 <VStack spacing={4} align="stretch">
                   <Heading size="md">Review Your Order</Heading>
@@ -305,9 +313,9 @@ export const CheckoutPage: React.FC = () => {
                     quantity={quantity}
                     onQuantityChange={setQuantity}
                   />
-                  <Button 
-                    colorScheme="purple" 
-                    size="lg" 
+                  <Button
+                    colorScheme="purple"
+                    size="lg"
                     onClick={() => setActiveStep(2)}
                     mt={4}
                   >
@@ -315,7 +323,7 @@ export const CheckoutPage: React.FC = () => {
                   </Button>
                 </VStack>
               )}
-              
+
               {activeStep === 2 && (
                 <PaymentMethod
                   totalAmount={getTotalPrice()}
@@ -326,7 +334,7 @@ export const CheckoutPage: React.FC = () => {
                 />
               )}
             </Box>
-            
+
             {/* Right side - Order summary */}
             <Box
               borderWidth="1px"
@@ -345,24 +353,25 @@ export const CheckoutPage: React.FC = () => {
                     </Box>
                   </Box>
                   <Box fontWeight="bold">
-                    {selectedTier.currency} {(selectedTier.price * quantity).toLocaleString()}
+                    {selectedTier.currency}{" "}
+                    {(selectedTier.price * quantity).toLocaleString()}
                   </Box>
                 </HStack>
-                
+
                 <Divider />
-                
+
                 <HStack justify="space-between">
                   <Box fontWeight="bold">Total</Box>
                   <Box fontWeight="bold">
                     {selectedTier.currency} {getTotalPrice().toLocaleString()}
                   </Box>
                 </HStack>
-                
+
                 {isConnected && (
                   <Box mt={2} bg="gray.50" p={3} borderRadius="md">
                     <HStack justify="space-between">
                       <Text fontSize="sm">Your Balance:</Text>
-                      <TokenBalance isCompact showRefresh={false} />
+                      <TokenBalance />
                     </HStack>
                   </Box>
                 )}
@@ -376,3 +385,7 @@ export const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
+
+function connectWallet() {
+  throw new Error("Function not implemented.");
+}
