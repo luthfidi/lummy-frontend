@@ -1,9 +1,15 @@
-import React from 'react';
-import { HStack, Text, Icon, Spinner } from '@chakra-ui/react';
-import { FaCoins } from 'react-icons/fa';
-import { useBalance, useAccount } from 'wagmi';
+import React from "react";
+import { HStack, Text, Icon, Spinner } from "@chakra-ui/react";
+import { FaCoins } from "react-icons/fa";
+import { useBalance, useAccount } from "wagmi";
 
-export const TokenBalance: React.FC = () => {
+interface TokenBalanceProps {
+  tokenType?: string; // Make this prop optional
+}
+
+export const TokenBalance: React.FC<TokenBalanceProps> = ({
+  tokenType = "IDRX",
+}) => {
   const { address } = useAccount();
   const { data: balance, isLoading } = useBalance({
     address,
@@ -20,7 +26,11 @@ export const TokenBalance: React.FC = () => {
       <Icon as={FaCoins} color="blue.500" />
       <Text fontWeight="medium">Balance:</Text>
       <Text ml="auto">
-        {balance ? `${parseFloat(balance.formatted).toLocaleString()} ${balance.symbol}` : '0'}
+        {balance
+          ? `${parseFloat(balance.formatted).toLocaleString()} ${
+              balance.symbol
+            }`
+          : `0 ${tokenType}`}
       </Text>
     </HStack>
   );
