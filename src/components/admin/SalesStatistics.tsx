@@ -26,6 +26,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { motion } from "framer-motion";
+
+const MotionBox = motion(Box);
+const MotionText = motion(Text);
 
 export interface SalesData {
   totalRevenue: number;
@@ -52,7 +56,6 @@ interface StatCardProps {
   isIncrease?: boolean;
   icon?: string;
 }
-
 const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
@@ -61,21 +64,41 @@ const StatCard: React.FC<StatCardProps> = ({
   icon,
 }) => {
   const cardBg = useColorModeValue("white", "gray.700");
+  const arrowColor = isIncrease ? "green.500" : "red.500";
+  const arrowSymbol = isIncrease ? "↑" : "↓";
 
   return (
-    <Box p={4} bg={cardBg} borderRadius="md" shadow="sm">
-      <Flex justify="space-between" mb={2}>
+    <Box p={4} bg={cardBg} borderRadius="md" shadow="sm" aria-label={label}>
+      <Flex justify="space-between" align="center" mb={2}>
         <Text fontWeight="medium">{label}</Text>
-        {icon && <Text fontSize="xl">{icon}</Text>}
+        {icon && (
+          <Box fontSize="xl" aria-hidden="true">
+            {icon}
+          </Box>
+        )}
       </Flex>
-      <Text fontSize="2xl" fontWeight="bold">
+
+      <MotionText
+        fontSize="2xl"
+        fontWeight="bold"
+        initial={{ opacity: 0, y: -5 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {value}
-      </Text>
+      </MotionText>
+
       {helpText && (
-        <Text fontSize="sm" color="gray.500" mt={1}>
-          {isIncrease !== undefined && <span>{isIncrease ? "↑" : "↓"} </span>}
-          {helpText}
-        </Text>
+        <Flex align="center" mt={1}>
+          {isIncrease !== undefined && (
+            <Text fontSize="md" color={arrowColor} fontWeight="bold" mr={1}>
+              {arrowSymbol}
+            </Text>
+          )}
+          <Text fontSize="sm" color="gray.500">
+            {helpText}
+          </Text>
+        </Flex>
       )}
     </Box>
   );
@@ -114,7 +137,7 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="date"
-              tickFormatter={(value) => {
+              tickFormatter={(value: string | number | Date) => {
                 // Format tanggal menjadi dd/MM
                 const date = new Date(value);
                 return `${date.getDate()}/${date.getMonth() + 1}`;
@@ -122,8 +145,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
             />
             <YAxis />
             <Tooltip
-              formatter={(value) => [`${value} tickets`, "Sales"]}
-              labelFormatter={(label) => {
+              formatter={(value: any) => [`${value} tickets`, "Sales"]}
+              labelFormatter={(label: string | number | Date) => {
                 const date = new Date(label);
                 return date.toLocaleDateString("en-US", {
                   weekday: "short",
@@ -169,40 +192,53 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
         </Select>
       </Flex>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} mb={6}>
-        <StatCard
-          label="Total Revenue"
-          value={`${salesData.currency || "IDRX"} ${(
-            salesData.totalRevenue || 0
-          ).toLocaleString()}`}
-          helpText={`${salesData.percentChange || 0}% from previous period`}
-          isIncrease={(salesData.percentChange || 0) > 0}
-          icon="💰"
-        />
-        <StatCard
-          label="Tickets Sold"
-          value={(salesData.soldTickets || 0).toLocaleString()}
-          helpText={`${calculatePercentage(
-            salesData.soldTickets || 0,
-            (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
-          ).toFixed(1)}% of total`}
-          icon="🎟️"
-        />
-        <StatCard
-          label="Transactions"
-          value={(salesData.totalTransactions || 0).toLocaleString()}
-          helpText="Total purchases"
-          icon="💳"
-        />
-        <StatCard
-          label="Avg. Ticket Price"
-          value={`${salesData.currency || "IDRX"} ${(
-            salesData.averageTicketPrice || 0
-          ).toLocaleString()}`}
-          helpText="Per ticket"
-          icon="📊"
-        />
-      </SimpleGrid>
+      <Box>
+        <MotionBox
+          border="2.5px solid"
+          borderColor={useColorModeValue("gray.200", "purple.600")}
+          borderRadius="md"
+          p={4}
+          mb={6}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+            <StatCard
+              label="Total Revenue"
+              value={`${salesData.currency || "IDRX"} ${(
+                salesData.totalRevenue || 0
+              ).toLocaleString()}`}
+              helpText={`${salesData.percentChange || 0}% from previous period`}
+              isIncrease={(salesData.percentChange || 0) > 0}
+              icon="💰"
+            />
+            <StatCard
+              label="Tickets Sold"
+              value={(salesData.soldTickets || 0).toLocaleString()}
+              helpText={`${calculatePercentage(
+                salesData.soldTickets || 0,
+                (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
+              ).toFixed(1)}% of total`}
+              icon="🎟️"
+            />
+            <StatCard
+              label="Transactions"
+              value={(salesData.totalTransactions || 0).toLocaleString()}
+              helpText="Total purchases"
+              icon="💳"
+            />
+            <StatCard
+              label="Avg. Ticket Price"
+              value={`${salesData.currency || "IDRX"} ${(
+                salesData.averageTicketPrice || 0
+              ).toLocaleString()}`}
+              helpText="Per ticket"
+              icon="📊"
+            />
+          </SimpleGrid>
+        </MotionBox>
+      </Box>
 
       <Tabs variant="enclosed" colorScheme="purple" mb={6}>
         <TabList>

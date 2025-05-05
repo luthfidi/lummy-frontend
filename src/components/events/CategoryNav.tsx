@@ -40,36 +40,40 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ onCategorySelect }) => {
     { name: "Theater", icon: FaTheaterMasks, color: "teal.500" },
   ];
 
-  const bgColor = useColorModeValue("white", "gray.800");
-  const hoverBg = useColorModeValue("gray.50", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const hoverBorder = useColorModeValue("gray.400", "gray.500");
+  const bgHover = useColorModeValue("gray.50", "gray.700");
 
   return (
     <SimpleGrid columns={{ base: 2, md: 4, lg: 8 }} spacing={4}>
       {categories.map((category) => (
         <Box
           key={category.name}
-          bg={bgColor}
-          p={4}
+          border="2px solid"
+          borderColor={borderColor}
           borderRadius="lg"
+          p={4}
           textAlign="center"
           cursor="pointer"
-          boxShadow="sm"
           transition="all 0.3s"
-          onClick={() => onCategorySelect(category.name)}
+          boxShadow="sm"
           _hover={{
-            transform: "translateY(-3px)",
+            transform: "translateY(-4px)",
+            borderColor: hoverBorder,
             boxShadow: "md",
-            bg: hoverBg,
+            bg: bgHover,
           }}
+          onClick={() => onCategorySelect(category.name)}
         >
           <Flex
             justify="center"
             align="center"
             h="50px"
             w="50px"
-            bg={`${category.color}20`}
-            color={category.color}
             borderRadius="full"
+            border="2px solid"
+            borderColor={category.color}
+            color={category.color}
             mx="auto"
             mb={2}
           >
