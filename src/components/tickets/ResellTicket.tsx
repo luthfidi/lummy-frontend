@@ -93,7 +93,7 @@ export const ResellTicket: React.FC<ResellTicketProps> = ({
               </Text>
             </Box>
 
-            <Alert status="info" borderRadius="md">
+            <Alert status="error" borderRadius="md">
               <AlertIcon />
               <Text fontSize="sm">
                 Your ticket will be listed on the marketplace for resale. You
