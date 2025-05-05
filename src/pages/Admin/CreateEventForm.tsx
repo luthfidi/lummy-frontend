@@ -130,8 +130,8 @@ const CreateEventForm: React.FC = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
-      <VStack spacing={8} align="stretch">
+    <Container maxW="container.md" py={10}>
+      <VStack align="stretch" spacing={6}>
         <HStack>
           <IconButton
             aria-label="Go back"
@@ -141,211 +141,109 @@ const CreateEventForm: React.FC = () => {
           />
           <Heading size="lg">Create New Event</Heading>
         </HStack>
-
-        <Box as="form" onSubmit={handleSubmit}>
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={8}>
-            {/* Left column - Event details */}
-            <VStack spacing={6} align="stretch">
-              <Box bg={cardBg} p={6} borderRadius="md" shadow="sm">
-                <Heading size="md" mb={4}>
-                  Event Details
-                </Heading>
-
-                <VStack spacing={4} align="stretch">
-                  <FormControl isRequired>
-                    <FormLabel>Event Title</FormLabel>
-                    <Input
-                      value={eventData.title}
-                      onChange={(e) =>
-                        handleInputChange("title", e.target.value)
-                      }
-                      placeholder="Enter event title"
-                    />
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      value={eventData.description}
-                      onChange={(e) =>
-                        handleInputChange("description", e.target.value)
-                      }
-                      placeholder="Describe your event"
-                      rows={5}
-                    />
-                  </FormControl>
-
-                  <SimpleGrid columns={2} spacing={4}>
-                    <FormControl isRequired>
-                      <FormLabel>Category</FormLabel>
-                      <Select
-                        placeholder="Select category"
-                        value={eventData.category}
-                        onChange={(e) =>
-                          handleInputChange("category", e.target.value)
-                        }
-                      >
-                        <option value="music">Music</option>
-                        <option value="technology">Technology</option>
-                        <option value="sport">Sport</option>
-                        <option value="arts">Arts & Theater</option>
-                        <option value="education">Education</option>
-                        <option value="other">Other</option>
-                      </Select>
-                    </FormControl>
-                  </SimpleGrid>
-                </VStack>
-              </Box>
-
-              <Box bg={cardBg} p={6} borderRadius="md" shadow="sm">
-                <Heading size="md" mb={4}>
-                  Location & Time
-                </Heading>
-
-                <VStack spacing={4} align="stretch">
-                  <FormControl isRequired>
-                    <FormLabel>Venue</FormLabel>
-                    <Input
-                      value={eventData.venue}
-                      onChange={(e) =>
-                        handleInputChange("venue", e.target.value)
-                      }
-                      placeholder="Enter venue name"
-                    />
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Address</FormLabel>
-                    <Textarea
-                      value={eventData.address}
-                      onChange={(e) =>
-                        handleInputChange("address", e.target.value)
-                      }
-                      placeholder="Full venue address"
-                      rows={2}
-                    />
-                  </FormControl>
-
-                  <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={4}>
-                    <FormControl isRequired>
-                      <FormLabel>Event Date</FormLabel>
-                      <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <CalendarIcon color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          type="date"
-                          value={eventData.date}
-                          onChange={(e) =>
-                            handleInputChange("date", e.target.value)
-                          }
-                        />
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel>Start Time</FormLabel>
-                      <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <TimeIcon color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          type="time"
-                          value={eventData.time}
-                          onChange={(e) =>
-                            handleInputChange("time", e.target.value)
-                          }
-                        />
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormLabel>End Time</FormLabel>
-                      <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                          <TimeIcon color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          type="time"
-                          value={eventData.endTime}
-                          onChange={(e) =>
-                            handleInputChange("endTime", e.target.value)
-                          }
-                        />
-                      </InputGroup>
-                    </FormControl>
-                  </SimpleGrid>
-                </VStack>
-              </Box>
-
-              <Box bg={cardBg} p={6} borderRadius="md" shadow="sm">
-                <Heading size="md" mb={4}>
-                  Event Images
-                </Heading>
-
-                <VStack spacing={4} align="stretch">
-                  <FormControl>
-                    <FormLabel>Banner Image</FormLabel>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange("bannerImage", e)}
-                      p={1}
-                    />
-                    <FormHelperText>
-                      Recommended size: 1200×400px
-                    </FormHelperText>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel>Featured Image</FormLabel>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange("featuredImage", e)}
-                      p={1}
-                    />
-                    <FormHelperText>Recommended size: 600×400px</FormHelperText>
-                  </FormControl>
-                </VStack>
-              </Box>
-            </VStack>
-
-            {/* Right column - Ticket tiers and resell settings */}
-            <VStack spacing={6} align="stretch">
-              <Box bg={cardBg} p={6} borderRadius="md" shadow="sm">
-                <TicketTierCreator
-                  tiers={ticketTiers}
-                  onChange={setTicketTiers}
-                  currency="IDRX"
-                />
-              </Box>
-
-              <Box bg={cardBg} p={6} borderRadius="md" shadow="sm">
-                <ResellSettings
-                  settings={resellSettings}
-                  onSave={setResellSettings}
-                />
-              </Box>
-            </VStack>
-          </SimpleGrid>
-
-          <Divider my={8} />
-
-          <Flex justify="flex-end">
-            <HStack spacing={4}>
-              <Button variant="outline" onClick={() => navigate("/admin")}>
-                Cancel
-              </Button>
-              <Button colorScheme="purple" type="submit">
-                Create Event
-              </Button>
-            </HStack>
-          </Flex>
+  
+        {/* Event Info */}
+        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
+          <Heading size="md" mb={4}>Event Info</Heading>
+          <VStack spacing={4}>
+            <FormControl isRequired>
+              <FormLabel>Title</FormLabel>
+              <Input
+                value={eventData.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+                placeholder="Enter event title"
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Description</FormLabel>
+              <Textarea
+                value={eventData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                placeholder="Event description"
+                rows={4}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Category</FormLabel>
+              <Select
+                placeholder="Select category"
+                value={eventData.category}
+                onChange={(e) => handleInputChange("category", e.target.value)}
+              >
+                <option value="music">Music</option>
+                <option value="technology">Technology</option>
+                <option value="sport">Sport</option>
+                <option value="arts">Arts & Theater</option>
+                <option value="education">Education</option>
+                <option value="other">Other</option>
+              </Select>
+            </FormControl>
+          </VStack>
         </Box>
+  
+        {/* Date & Time */}
+        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
+          <Heading size="md" mb={4}>Date & Time</Heading>
+          <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={4}>
+            <FormControl isRequired>
+              <FormLabel>Date</FormLabel>
+              <Input type="date" value={eventData.date} onChange={(e) => handleInputChange("date", e.target.value)} />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Start Time</FormLabel>
+              <Input type="time" value={eventData.time} onChange={(e) => handleInputChange("time", e.target.value)} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>End Time</FormLabel>
+              <Input type="time" value={eventData.endTime} onChange={(e) => handleInputChange("endTime", e.target.value)} />
+            </FormControl>
+          </SimpleGrid>
+          <FormControl mt={4}>
+            <FormLabel>Venue</FormLabel>
+            <Input value={eventData.venue} onChange={(e) => handleInputChange("venue", e.target.value)} />
+          </FormControl>
+          <FormControl mt={2}>
+            <FormLabel>Address</FormLabel>
+            <Textarea value={eventData.address} onChange={(e) => handleInputChange("address", e.target.value)} rows={2} />
+          </FormControl>
+        </Box>
+  
+        {/* Images */}
+        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
+          <Heading size="md" mb={4}>Images</Heading>
+          <VStack spacing={4}>
+            <FormControl>
+              <FormLabel>Banner Image</FormLabel>
+              <Input type="file" accept="image/*" onChange={(e) => handleFileChange("bannerImage", e)} />
+              <FormHelperText>Recommended: 1200x400px</FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Featured Image</FormLabel>
+              <Input type="file" accept="image/*" onChange={(e) => handleFileChange("featuredImage", e)} />
+              <FormHelperText>Recommended: 600x400px</FormHelperText>
+            </FormControl>
+          </VStack>
+        </Box>
+  
+        {/* Tickets */}
+        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
+          <TicketTierCreator tiers={ticketTiers} onChange={setTicketTiers} currency="IDRX" />
+        </Box>
+  
+        {/* Resell Settings */}
+        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
+          <ResellSettings settings={resellSettings} onSave={setResellSettings} />
+        </Box>
+  
+        {/* Submit Buttons */}
+        <Flex justify="flex-end">
+          <HStack spacing={4}>
+            <Button variant="outline" onClick={() => navigate("/admin")}>Cancel</Button>
+            <Button colorScheme="purple" type="submit">Create Event</Button>
+          </HStack>
+        </Flex>
       </VStack>
     </Container>
   );
-};
-
+}  
 export default CreateEventForm;
