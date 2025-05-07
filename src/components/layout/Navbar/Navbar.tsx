@@ -11,6 +11,7 @@ import {
   Text,
   Button,
   Tooltip,
+  Icon,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, RepeatIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@xellar/kit";
@@ -18,6 +19,7 @@ import { Address, erc20Abi, formatUnits } from "viem";
 import { useReadContract } from "wagmi";
 import { IDRX_SEPOLIA } from "../../../constants";
 import { truncateAddress } from "../../../utils/string";
+import { FaWallet } from "react-icons/fa";
 
 // Kalo mau pake wallet nanti uncomment ini
 // import { useWallet } from "../../../hooks/useWallet";
@@ -171,6 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       py={isCompact ? 1 : 2}
                       borderRadius="lg"
                       onClick={openConnectModal}
+                      leftIcon={<Icon as={FaWallet} />} 
                     >
                       Connect Wallet
                     </Button>
