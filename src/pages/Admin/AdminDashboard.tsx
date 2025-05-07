@@ -17,21 +17,17 @@ import {
   Badge,
   Divider,
   Select,
+  VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, CalendarIcon } from "@chakra-ui/icons";
 import { FaTicketAlt, FaChartLine, FaUsers, FaUserCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-// SECTION 1: Uncomment to test importing the SalesStatistics component
 import SalesStatistics from "../../components/admin/SalesStatistics";
+import EventStats from "../../components/admin/EventStats"; // optional if used later
 
-// SECTION 2: Uncomment to test importing the EventStats component
-import EventStats from "../../components/admin/EventStats";
-
-// SECTION 3: Uncomment to test the mock data
-// Mock data - would be fetched from API in real application
-
+// Mock Events Data
 const mockEvents = [
   {
     eventId: "1",
@@ -58,7 +54,7 @@ const mockEvents = [
       { tierName: "Standard Access", sold: 200, total: 250, price: 150 },
       { tierName: "Premium Access", sold: 80, total: 150, price: 300 },
     ],
-    daysUntilEvent: 120,
+    daysUntilEvent: 5,
   },
   {
     eventId: "3",
@@ -71,11 +67,11 @@ const mockEvents = [
       { tierName: "Workshop Ticket", sold: 65, total: 80, price: 100 },
       { tierName: "Workshop + Certification", sold: 10, total: 20, price: 200 },
     ],
-    daysUntilEvent: 15,
+    daysUntilEvent: -2,
   },
 ];
 
-// Mock sales data
+// Mock Sales Data
 const mockSalesData = {
   totalRevenue: 72000,
   soldTickets: 805,
@@ -104,18 +100,33 @@ const mockSalesData = {
   percentChange: 12.5,
 };
 
+// Helper Functions
+const getEventStatus = (daysUntilEvent: number) => {
+  if (daysUntilEvent > 0) return "Upcoming";
+  if (daysUntilEvent === 0) return "Ongoing";
+  return "Completed";
+};
+
+const getBadgeColor = (status: string) => {
+  switch (status) {
+    case "Upcoming":
+      return "green";
+    case "Ongoing":
+      return "orange";
+    case "Completed":
+      return "gray";
+    default:
+      return "blue";
+  }
+};
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  // SECTION 4: Uncomment to test state management
   const [selectedEvent, setSelectedEvent] = useState<string>("all");
-
   const cardBg = useColorModeValue("white", "gray.700");
 
-  // SECTION 5: Uncomment to test filter function
-  // Filter data based on selected event, or show all stats
-
   const filteredSalesData =
-    selectedEvent === "all" ? mockSalesData : { ...mockSalesData }; // Would filter in real application
+    selectedEvent === "all" ? mockSalesData : { ...mockSalesData }; // Add real filter later
 
   const handleCreateEvent = () => {
     navigate("/admin/events/create");
@@ -125,24 +136,86 @@ const AdminDashboard: React.FC = () => {
     navigate(`/admin/events/${eventId}`);
   };
 
+  const renderEventCards = (events: typeof mockEvents) => (
+    <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+      {events.map((event) => {
+        const status = getEventStatus(event.daysUntilEvent);
+        return (
+          <Box
+            key={event.eventId}
+            p={4}
+            borderWidth="1px"
+            borderRadius="md"
+            bg={cardBg}
+            shadow="sm"
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <HStack mb={1}>
+                  <Heading size="md">{event.eventName}</Heading>
+                  <Badge colorScheme={getBadgeColor(status)}>{status}</Badge>
+                </HStack>
+                <HStack spacing={4} color="gray.600">
+                  <HStack>
+                    <Icon as={FaTicketAlt} />
+                    <Text>
+                      {event.ticketsSold} / {event.totalTickets} sold
+                    </Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={CalendarIcon} />
+                    <Text>{new Date().toLocaleDateString()}</Text>
+                  </HStack>
+                </HStack>
+              </Box>
+              <HStack>
+                <Button
+                  colorScheme="blue"
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<Icon as={FaUserCheck} />}
+                  onClick={() =>
+                    navigate(`/admin/events/${event.eventId}/check-in`)
+                  }
+                >
+                  Check-in
+                </Button>
+                <Button
+                  colorScheme="purple"
+                  onClick={() => handleManageEvent(event.eventId)}
+                >
+                  Manage
+                </Button>
+              </HStack>
+            </Flex>
+          </Box>
+        );
+      })}
+    </SimpleGrid>
+  );
+
+  const upcomingEvents = mockEvents.filter(
+    (e) => getEventStatus(e.daysUntilEvent) === "Upcoming"
+  );
+  const ongoingEvents = mockEvents.filter(
+    (e) => getEventStatus(e.daysUntilEvent) === "Ongoing"
+  );
+  const completedEvents = mockEvents.filter(
+    (e) => getEventStatus(e.daysUntilEvent) === "Completed"
+  );
+
   return (
     <Container maxW="container.xl" py={8}>
-      {/* SECTION 6: Header and Create Button - Should work fine */}
       <Flex justify="space-between" align="center" mb={6}>
         <Box>
           <Heading size="lg">Organizer Dashboard</Heading>
           <Text color="gray.600">Manage your events and track performance</Text>
         </Box>
-        <Button
-          colorScheme="purple"
-          leftIcon={<AddIcon />}
-          onClick={handleCreateEvent}
-        >
+        <Button colorScheme="purple" leftIcon={<AddIcon />} onClick={handleCreateEvent}>
           Create Event
         </Button>
       </Flex>
 
-      {/* SECTION 7: Uncomment to test Tabs */}
       <Tabs colorScheme="purple" variant="enclosed" mb={8}>
         <TabList>
           <Tab>
@@ -157,12 +230,10 @@ const AdminDashboard: React.FC = () => {
         </TabList>
 
         <TabPanels>
-          {/* SECTION 8: Uncomment to test Overview Tab */}
           <TabPanel px={0}>
             <Box mb={6}>
               <HStack mb={4} justify="space-between">
-                <Heading size="md">
-                  Overview</Heading>
+                <Heading size="md">Sales Overview</Heading>
                 <Select
                   maxW="250px"
                   value={selectedEvent}
@@ -176,112 +247,45 @@ const AdminDashboard: React.FC = () => {
                   ))}
                 </Select>
               </HStack>
-              {/* SECTION 9: Uncomment to test SalesStatistics component */}
-
               {filteredSalesData && (
                 <SalesStatistics
                   salesData={filteredSalesData}
                   eventName={
                     selectedEvent === "all"
                       ? "All Events"
-                      : mockEvents.find((e) => e.eventId === selectedEvent)
-                          ?.eventName || "Event"
+                      : mockEvents.find((e) => e.eventId === selectedEvent)?.eventName || "Event"
                   }
                 />
               )}
             </Box>
-
-            <Divider my={8} />
-
-            <Heading size="md" mb={4}>
-              Upcoming Events
-            </Heading>
-            {/* SECTION 10: Uncomment to test EventStats grid */}
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
-              {mockEvents
-                .sort((a, b) => a.daysUntilEvent - b.daysUntilEvent)
-                .slice(0, 4)
-                .map((event) => (
-                  <EventStats key={event.eventId} stats={event} />
-                ))}
-            </SimpleGrid>
+            <Divider my={2} />
           </TabPanel>
 
-          {/* SECTION 11: Uncomment to test My Events Tab */}
-          <TabPanel px={0}>
-            <Heading size="md" mb={4}>
-              All Events
-            </Heading>
-            <SimpleGrid columns={1} spacing={4}>
-              {mockEvents.map((event) => (
-                <Box
-                  key={event.eventId}
-                  p={4}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  bg={cardBg}
-                  shadow="sm"
-                >
-                  <Flex justify="space-between" align="center">
-                    <Box>
-                      <HStack mb={1}>
-                        <Heading size="md">{event.eventName}</Heading>
-                        <Badge
-                          colorScheme={
-                            event.daysUntilEvent > 30
-                              ? "green"
-                              : event.daysUntilEvent > 7
-                              ? "orange"
-                              : "red"
-                          }
-                        >
-                          {event.daysUntilEvent} days to go
-                        </Badge>
-                      </HStack>
-                      <HStack spacing={4} color="gray.600">
-                        <HStack>
-                          <Icon as={FaTicketAlt} />
-                          <Text>
-                            {event.ticketsSold} / {event.totalTickets} sold
-                          </Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={CalendarIcon} />
-                          <Text>{new Date().toLocaleDateString()}</Text>
-                        </HStack>
-                      </HStack>
-                    </Box>
-                    <HStack>
-                      <Button
-                        colorScheme="blue"
-                        variant="outline"
-                        size="sm"
-                        leftIcon={<Icon as={FaUserCheck} />}
-                        onClick={() =>
-                          navigate(`/admin/events/${event.eventId}/check-in`)
-                        }
-                      >
-                        Check-in
-                      </Button>
-                      <Button
-                        colorScheme="purple"
-                        onClick={() => handleManageEvent(event.eventId)}
-                      >
-                        Manage
-                      </Button>
-                    </HStack>
-                  </Flex>
-                </Box>
-              ))}
-            </SimpleGrid>
+          <TabPanel>
+            <VStack align="stretch" spacing={8}>
+              <Box>
+                <Heading size="lg" mb={4}>
+                  Upcoming Events
+                </Heading>
+                {renderEventCards(upcomingEvents)}
+              </Box>
+              <Box>
+                <Heading size="lg" mb={4}>
+                  Ongoing Events
+                </Heading>
+                {renderEventCards(ongoingEvents)}
+              </Box>
+              <Box>
+                <Heading size="lg" mb={4}>
+                  Completed Events
+                </Heading>
+                {renderEventCards(completedEvents)}
+              </Box>
+            </VStack>
           </TabPanel>
 
-          {/* SECTION 12: Uncomment to test Attendees Tab */}
-          <TabPanel px={0}>
-            <Text fontSize="lg" fontWeight="medium" mb={4}>
-              For attendee management, please select an event from the My Events
-              tab.
-            </Text>
+          <TabPanel>
+            <Text>Attendee management coming soon...</Text>
           </TabPanel>
         </TabPanels>
       </Tabs>

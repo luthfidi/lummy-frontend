@@ -26,6 +26,7 @@ import {
   AlertDialogOverlay,
   IconButton,
   Skeleton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import {
@@ -45,6 +46,9 @@ import ResellSettings, {
   ResellSettingsData,
 } from "../../components/admin/ResellSettings";
 import AttendeeList, { Attendee } from "../../components/admin/AttendeeList";
+import { motion } from "framer-motion";
+
+const MotionBox = motion(Box);
 
 // Mock event data - would be fetched from API in real application
 const mockEvent: EventStatsData = {
@@ -315,30 +319,42 @@ const EventManagement: React.FC = () => {
               />
 
               <Divider />
-
-              <Box>
-                <Flex justify="space-between" align="center" mb={4}>
-                  <Heading size="md">Ticket Sales Performance</Heading>
-                  <HStack>
-                    <Button
-                      leftIcon={<Icon as={FaUserCheck} />}
-                      colorScheme="purple"
-                      variant="outline"
-                      onClick={() => navigate(`/admin/events/${id}/check-in`)}
-                    >
-                      Check-in Dashboard
-                    </Button>
-                    <Button
-                      leftIcon={<Icon as={FaQrcode} />}
-                      colorScheme="purple"
-                      onClick={() => navigate(`/admin/events/${id}/scanner`)}
-                    >
-                      Scan Tickets
-                    </Button>
-                  </HStack>
-                </Flex>
-                <EventStats stats={event} />
-              </Box>
+              <MotionBox
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                border="2px solid"
+                borderColor={useColorModeValue("gray.200", "gray.600")}
+                _hover={{
+                  borderColor: useColorModeValue("green.500", "green.300"),
+                  shadow: "lg",
+                }}
+                p={4}
+                rounded="xl"
+              >
+                <Box>
+                  <Flex justify="space-between" align="center" mb={4}>
+                    <Heading size="md">Ticket Sales Performance</Heading>
+                    <HStack>
+                      <Button
+                        leftIcon={<Icon as={FaUserCheck} />}
+                        colorScheme="purple"
+                        variant="outline"
+                        onClick={() => navigate(`/admin/events/${id}/check-in`)}
+                      >
+                        Check-in Dashboard
+                      </Button>
+                      <Button
+                        leftIcon={<Icon as={FaQrcode} />}
+                        colorScheme="purple"
+                        onClick={() => navigate(`/admin/events/${id}/scanner`)}
+                      >
+                        Scan Tickets
+                      </Button>
+                    </HStack>
+                  </Flex>
+                  <EventStats stats={event} />
+                </Box>
+              </MotionBox>
             </VStack>
           </TabPanel>
 

@@ -8,11 +8,6 @@ import {
   HStack,
   Select,
   Badge,
-  Tab,
-  Tabs,
-  TabList,
-  TabPanel,
-  TabPanels,
   useColorModeValue,
   SimpleGrid,
 } from "@chakra-ui/react";
