@@ -161,7 +161,8 @@ const AdminDashboard: React.FC = () => {
           <TabPanel px={0}>
             <Box mb={6}>
               <HStack mb={4} justify="space-between">
-                <Heading size="md">Sales Overview</Heading>
+                <Heading size="md">
+                  Overview</Heading>
                 <Select
                   maxW="250px"
                   value={selectedEvent}

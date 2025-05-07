@@ -55,6 +55,7 @@ interface StatCardProps {
   helpText?: string;
   isIncrease?: boolean;
   icon?: string;
+  bgColor?: string;
 }
 const StatCard: React.FC<StatCardProps> = ({
   label,
@@ -177,7 +178,7 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
 
   return (
     <Box>
-      <Flex justify="space-between" align="center" mb={4}>
+      <Flex justify="space-between" align="center">
         <Heading size="md">Sales Statistics - {eventName || "Event"}</Heading>
         <Select
           value={timeRange}
@@ -193,17 +194,19 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
       </Flex>
 
       <Box>
-        <MotionBox
-          border="2.5px solid"
-          borderColor={useColorModeValue("gray.200", "purple.600")}
-          borderRadius="md"
-          p={4}
-          mb={6}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mt={4}>
+          <MotionBox
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            _hover={{
+              borderColor: useColorModeValue("green.500", "green.300"),
+              shadow: "lg",
+            }}
+            p={4}
+            rounded="xl"
+          >
             <StatCard
               label="Total Revenue"
               value={`${salesData.currency || "IDRX"} ${(
@@ -212,7 +215,22 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               helpText={`${salesData.percentChange || 0}% from previous period`}
               isIncrease={(salesData.percentChange || 0) > 0}
               icon="💰"
+              bgColor={useColorModeValue("green.50", "green.900")}
             />
+          </MotionBox>
+
+          <MotionBox
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            _hover={{
+              borderColor: useColorModeValue("green.500", "green.300"),
+              shadow: "lg",
+            }}
+            p={4}
+            rounded="xl"
+          >
             <StatCard
               label="Tickets Sold"
               value={(salesData.soldTickets || 0).toLocaleString()}
@@ -221,13 +239,43 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
                 (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
               ).toFixed(1)}% of total`}
               icon="🎟️"
+              bgColor={useColorModeValue("yellow.50", "yellow.900")}
             />
+          </MotionBox>
+
+          <MotionBox
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            _hover={{
+              borderColor: useColorModeValue("green.500", "green.300"),
+              shadow: "lg",
+            }}
+            p={4}
+            rounded="xl"
+          >
             <StatCard
               label="Transactions"
               value={(salesData.totalTransactions || 0).toLocaleString()}
               helpText="Total purchases"
               icon="💳"
+              bgColor={useColorModeValue("blue.50", "blue.900")}
             />
+          </MotionBox>
+
+          <MotionBox
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            _hover={{
+              borderColor: useColorModeValue("green.500", "green.300"),
+              shadow: "lg",
+            }}
+            p={4}
+            rounded="xl"
+          >
             <StatCard
               label="Avg. Ticket Price"
               value={`${salesData.currency || "IDRX"} ${(
@@ -235,66 +283,77 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               ).toLocaleString()}`}
               helpText="Per ticket"
               icon="📊"
+              bgColor={useColorModeValue("purple.50", "purple.900")}
             />
-          </SimpleGrid>
-        </MotionBox>
+          </MotionBox>
+        </SimpleGrid>
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mt={6}>
+  <MotionBox
+    whileHover={{ scale: 1.05 }}
+    transition={{ duration: 0.3 }}
+    border="2px solid"
+    borderColor={useColorModeValue("gray.200", "gray.600")}
+    _hover={{
+      borderColor: useColorModeValue("green.500", "green.300"),
+      shadow: "lg",
+    }}
+    p={4}
+    rounded="xl"
+  >
+    <Box flex="1" shadow="sm" p={6}>
+      <Heading size="sm" mb={4}>
+        Sales Overview
+      </Heading>
+      <Box
+        bg={cardBg}
+        borderRadius="md"
+        overflow="hidden"
+        shadow="sm"
+        p={4}
+      >
+        {renderSalesChart()}
       </Box>
+    </Box>
+  </MotionBox>
 
-      <Tabs variant="enclosed" colorScheme="purple" mb={6}>
-        <TabList>
-          <Tab>Sales Overview</Tab>
-          <Tab>By Ticket Tier</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel p={0} pt={4}>
-            <Box
-              bg={cardBg}
-              borderRadius="md"
-              overflow="hidden"
-              shadow="sm"
-              p={4}
-            >
-              <Heading size="sm" mb={4}>
-                Sales Trend
-              </Heading>
-              {renderSalesChart()}
-            </Box>
-          </TabPanel>
-          <TabPanel p={0} pt={4}>
-            <Box
-              bg={cardBg}
-              borderRadius="md"
-              overflow="hidden"
-              shadow="sm"
-              p={4}
-            >
-              <Heading size="sm" mb={4}>
-                Revenue by Ticket Tier
-              </Heading>
-              <VStack spacing={3} align="stretch">
-                {Object.entries(salesData.revenueByTier || {}).map(
-                  ([tier, revenue]) => (
-                    <Flex key={tier} justify="space-between" align="center">
-                      <HStack>
-                        <Badge colorScheme="purple" px={2} py={1}>
-                          {tier}
-                        </Badge>
-                      </HStack>
-                      <Text fontWeight="bold">
-                        {salesData.currency || "IDRX"}{" "}
-                        {(revenue || 0).toLocaleString()}
-                      </Text>
-                    </Flex>
-                  )
-                )}
-                {Object.keys(salesData.revenueByTier || {}).length === 0 && (
-                  <Text color="gray.500">No revenue data available</Text>
-                )}
-              </VStack>
-            </Box>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+  <MotionBox
+    whileHover={{ scale: 1.05 }}
+    transition={{ duration: 0.3 }}
+    border="2px solid"
+    borderColor={useColorModeValue("gray.200", "gray.600")}
+    _hover={{
+      borderColor: useColorModeValue("green.500", "green.300"),
+      shadow: "lg",
+    }}
+    p={4}
+    rounded="xl"
+  >
+    <Box flex="1" p={6}>
+      <Heading size="sm" mb={4}>
+        Revenue by Ticket Tier
+      </Heading>
+      <VStack spacing={3} align="stretch">
+        {Object.entries(salesData.revenueByTier || {}).map(([tier, revenue]) => (
+          <Flex key={tier} justify="space-between" align="center">
+            <HStack>
+              <Badge colorScheme="purple" px={2} py={1}>
+                {tier}
+              </Badge>
+            </HStack>
+            <Text fontWeight="bold">
+              {salesData.currency || "IDRX"} {revenue.toLocaleString()}
+            </Text>
+          </Flex>
+        ))}
+        {Object.keys(salesData.revenueByTier || {}).length === 0 && (
+          <Text color="gray.500">No revenue data available</Text>
+        )}
+      </VStack>
+    </Box>
+  </MotionBox>
+</SimpleGrid>
+
+      </Box>
     </Box>
   );
 };
