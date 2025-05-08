@@ -284,8 +284,11 @@ const AdminDashboard: React.FC = () => {
             </VStack>
           </TabPanel>
 
-          <TabPanel>
-            <Text>Attendee management coming soon...</Text>
+          <TabPanel px={0}>
+            <Text fontSize="lg" fontWeight="medium" mb={4}>
+              For attendee management, please select an event from the My Events
+              tab.
+            </Text>
           </TabPanel>
         </TabPanels>
       </Tabs>

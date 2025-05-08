@@ -9,8 +9,16 @@ import {
   Icon,
   Divider,
   useDisclosure,
+  Image,
 } from "@chakra-ui/react";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt, FaShoppingCart, FaUserAlt, FaTags } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaTicketAlt,
+  FaShoppingCart,
+  FaUserAlt,
+  FaTags,
+} from "react-icons/fa";
 import { BuyResaleTicket } from "./BuyResaleTicket";
 import { PriceComparison } from "./PriceComparison";
 
@@ -30,6 +38,7 @@ export interface ResaleTicket {
   tokenId: string;
   originalOwner?: string;
   transferCount?: number;
+  imageUrl?: string;
 }
 
 interface ResaleTicketCardProps {
@@ -72,11 +81,12 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
         display="flex"
         flexDirection="column"
       >
-        <Box 
+        {/* Header */}
+        <Box
           bg="lummy.purple.500"
-          color="white" 
-          py={1} 
-          px={4} 
+          color="white"
+          py={1}
+          px={4}
           borderBottomWidth="1px"
           borderBottomColor="lummy.purple.600"
         >
@@ -85,80 +95,100 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
               <Icon as={FaTags} />
               <Text fontWeight="medium">Resale</Text>
             </HStack>
-            {/* Badge removed as requested */}
           </Flex>
         </Box>
 
-        <Box p={4} display="flex" flexDirection="column" flex="1">
-          <Text fontSize="lg" fontWeight="bold" noOfLines={1}>
-            {ticket.eventName}
-          </Text>
+        {/* Content Area */}
+        <Box p={4} display="flex" flexDirection="row">
+          {/* Left Column */}
+          <Box flex="1" pr={4} display="flex" flexDirection="column">
+            <Text fontSize="lg" fontWeight="bold" noOfLines={1}>
+              {ticket.eventName}
+            </Text>
 
-          <VStack mt={2} spacing={2} align="flex-start" color="gray.600">
-            <HStack>
-              <Icon as={FaCalendarAlt} size="sm" />
-              <Text fontSize="sm" noOfLines={1} maxW="100%">
-                {formatDate(ticket.eventDate)}
+            <VStack mt={2} spacing={2} align="flex-start" color="gray.600">
+              <HStack>
+                <Icon as={FaCalendarAlt} boxSize={4} />
+                <Text fontSize="sm" noOfLines={1}>
+                  {formatDate(ticket.eventDate)}
+                </Text>
+              </HStack>
+
+              <HStack>
+                <Icon as={FaMapMarkerAlt} boxSize={4} />
+                <Text fontSize="sm" noOfLines={1}>
+                  {ticket.eventLocation}
+                </Text>
+              </HStack>
+            </VStack>
+
+            <HStack mt={3}>
+              <Icon as={FaTicketAlt} color="blue.500" />
+              <Text fontSize="sm" fontWeight="medium">
+                {ticket.ticketType}
               </Text>
             </HStack>
 
-            <HStack>
-              <Icon as={FaMapMarkerAlt} size="sm" />
-              <Text fontSize="sm" noOfLines={1} maxW="100%">
-                {ticket.eventLocation}
+            <Divider my={3} />
+
+            <PriceComparison
+              originalPrice={ticket.originalPrice}
+              resalePrice={ticket.resalePrice}
+              currency={ticket.currency}
+            />
+
+            <HStack mt={3} spacing={2} fontSize="xs" color="gray.500">
+              <Icon as={FaUserAlt} />
+              <Text>
+                Seller: {ticket.sellerAddress.substring(0, 6)}...
+                {ticket.sellerAddress.substring(
+                  ticket.sellerAddress.length - 4
+                )}
               </Text>
             </HStack>
-          </VStack>
-
-          <HStack mt={3}>
-            <Icon as={FaTicketAlt} color="blue.500" />
-            <Text fontSize="sm" fontWeight="medium">
-              {ticket.ticketType}
-            </Text>
-          </HStack>
-
-          <Divider my={3} />
-
-          <PriceComparison
-            originalPrice={ticket.originalPrice}
-            resalePrice={ticket.resalePrice}
-            currency={ticket.currency}
-          />
-
-          <HStack mt={3} spacing={2} fontSize="xs" color="gray.500">
-            <Icon as={FaUserAlt} />
-            <Text>
-              Seller: {ticket.sellerAddress.substring(0, 6)}...
-              {ticket.sellerAddress.substring(ticket.sellerAddress.length - 4)}
-            </Text>
-          </HStack>
-
-          <Flex mt="auto" pt={4} justify="space-between">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleShowDetails}
-            >
-              View Details
-            </Button>
+            <Box position="relative" mt="auto" pt={4} height="40px">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleShowDetails}
+                position="absolute"
+                bottom="0"
+                left="0"
+              >
+                View Details
+              </Button>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Image
+              src={ticket.imageUrl}
+              alt={`${ticket.eventName} Banner`}
+              boxSize="120px"
+              objectFit="cover"
+              borderRadius="md"
+              mb={4}
+            />
 
             <Button
               size="sm"
               colorScheme="blue"
               leftIcon={<Icon as={FaShoppingCart} />}
               onClick={onOpen}
+              alignSelf="flex-end"
             >
               Buy Now
             </Button>
-          </Flex>
+          </Box>
         </Box>
       </Box>
 
-      <BuyResaleTicket
-        isOpen={isOpen}
-        onClose={onClose}
-        ticket={ticket}
-      />
+      {/* Modal */}
+      <BuyResaleTicket isOpen={isOpen} onClose={onClose} ticket={ticket} />
     </>
   );
 };

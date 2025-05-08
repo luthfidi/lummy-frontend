@@ -28,7 +28,6 @@ interface MockAttendeeData {
   name: string;
   email: string;
   ticketType: string;
-  ticketId: string;
   eventName: string;
   eventDate: string;
   eventLocation: string;
@@ -42,7 +41,6 @@ const mockAttendeeData: MockAttendeeData = {
   name: 'John Smith',
   email: 'john.smith@example.com',
   ticketType: 'VIP Pass',
-  ticketId: 'ticket-67890',
   eventName: 'Summer Music Festival',
   eventDate: '2025-06-15T12:00:00',
   eventLocation: 'Jakarta Convention Center',
@@ -104,7 +102,6 @@ const ScannerPage: React.FC = () => {
         const validAttendee: MockAttendeeData = {
           ...mockAttendeeData,
           name: `Attendee ${Math.floor(Math.random() * 100)}`,
-          ticketId: result.ticketId,
           status: 'valid'
         };
         setAttendeeData(validAttendee);
@@ -122,7 +119,6 @@ const ScannerPage: React.FC = () => {
         const invalidAttendee: MockAttendeeData = {
           ...mockAttendeeData,
           name: `Attendee ${Math.floor(Math.random() * 100)}`,
-          ticketId: result.ticketId,
           status: 'invalid'
         };
         setAttendeeData(invalidAttendee);

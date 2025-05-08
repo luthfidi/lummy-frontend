@@ -34,7 +34,6 @@ interface AttendeeData {
   name: string;
   email: string;
   ticketType: string;
-  ticketId: string;
   eventName: string;
   eventDate: string;
   eventLocation: string;
@@ -194,9 +193,6 @@ const AttendeeVerification: React.FC<AttendeeVerificationProps> = ({
                 <Badge colorScheme="purple" px={2} py={1}>
                   {attendee.ticketType}
                 </Badge>
-                <Text fontSize="sm" color="gray.500">
-                  ID: {attendee.ticketId.substring(0, 8)}...
-                </Text>
               </HStack>
             </VStack>
           </Flex>

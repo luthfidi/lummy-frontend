@@ -163,16 +163,6 @@ const CheckInStats: React.FC<CheckInStatsProps> = ({ stats }) => {
           })}
         </VStack>
       </Box>
-
-      <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="sm">
-        <Text fontWeight="medium" fontSize="lg" mb={4}>
-          Check-in Timeline
-        </Text>
-        <Text color="gray.500">
-          Timeline visualization would appear here, showing check-ins over time.
-        </Text>
-        {/* In a real implementation, this would include a time-based chart using Recharts */}
-      </Box>
     </Box>
   );
 };

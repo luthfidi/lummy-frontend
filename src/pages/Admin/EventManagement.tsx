@@ -275,17 +275,33 @@ const EventManagement: React.FC = () => {
 
         <HStack>
           <Button
-            leftIcon={<EditIcon />}
-            colorScheme="purple"
-            variant="outline"
+            leftIcon={<EditIcon color="green.500" />}
+            color="green.500"
+            bg="white"
+            _hover={{
+              transform: "scale(1.05)",
+              boxShadow: "md",
+            }}
+            _active={{
+              transform: "scale(0.98)",
+            }}
+            border="none"
             onClick={() => navigate(`/admin/events/${id}/edit`)}
           >
             Edit Event
           </Button>
           <Button
-            leftIcon={<DeleteIcon />}
-            colorScheme="red"
-            variant="outline"
+            leftIcon={<DeleteIcon color="red.500" />}
+            color="red.500"
+            bg="white"
+            _hover={{
+              transform: "scale(1.05)",
+              boxShadow: "md",
+            }}
+            _active={{
+              transform: "scale(0.98)",
+            }}
+            border="none"
             onClick={onOpen}
           >
             Cancel Event
@@ -367,7 +383,7 @@ const EventManagement: React.FC = () => {
                 <Box
                   key={index}
                   p={4}
-                  borderWidth="1px"
+                  borderWidth="2px"
                   borderRadius="md"
                   shadow="sm"
                 >
@@ -386,23 +402,43 @@ const EventManagement: React.FC = () => {
                     </VStack>
 
                     <HStack>
-                      <Button size="sm" colorScheme="purple" variant="outline">
-                        Edit
-                      </Button>
-                      <Button
+                      <IconButton
+                        aria-label="Edit"
+                        size="sm"
+                        colorScheme="purple"
+                        variant="outline"
+                        icon={<EditIcon color="green.500" />}
+                        color="green.500"
+                        bg="white"
+                        _hover={{
+                          transform: "scale(1.05)",
+                          boxShadow: "md",
+                        }}
+                        _active={{
+                          transform: "scale(0.98)",
+                        }}
+                        border="none"
+                      />
+                      <IconButton
+                        icon={<AddIcon />}
+                        aria-label="Add Tickets"
                         size="sm"
                         colorScheme="purple"
                         variant="ghost"
                         isDisabled={tier.sold >= tier.total}
-                      >
-                        Add Tickets
-                      </Button>
+                      />
                     </HStack>
                   </Flex>
                 </Box>
               ))}
 
-              <Button leftIcon={<AddIcon />} alignSelf="flex-start">
+              <Button
+                leftIcon={<AddIcon />}
+                alignSelf="flex-start"
+                colorScheme="purple"
+                variant="solid"
+                size="md"
+              >
                 Add New Tier
               </Button>
             </VStack>
