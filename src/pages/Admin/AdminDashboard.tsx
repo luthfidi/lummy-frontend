@@ -25,7 +25,7 @@ import { FaTicketAlt, FaChartLine, FaUsers, FaUserCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import SalesStatistics from "../../components/admin/SalesStatistics";
-import EventStats from "../../components/admin/EventStats"; // optional if used later
+// import EventStats from "../../components/admin/EventStats"; // optional if used later
 
 // Mock Events Data
 const mockEvents = [

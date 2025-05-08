@@ -11,9 +11,6 @@ import {
   Input,
   Textarea,
   Select,
-  InputGroup,
-  InputLeftElement,
-  Divider,
   useToast,
   useColorModeValue,
   FormHelperText,
@@ -21,7 +18,7 @@ import {
   IconButton,
   Flex,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, CalendarIcon, TimeIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import TicketTierCreator, {
   TicketTierInput,
@@ -141,10 +138,18 @@ const CreateEventForm: React.FC = () => {
           />
           <Heading size="lg">Create New Event</Heading>
         </HStack>
-  
+
         {/* Event Info */}
-        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
-          <Heading size="md" mb={4}>Event Info</Heading>
+        <Box
+          bg={cardBg}
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <Heading size="md" mb={4}>
+            Event Info
+          </Heading>
           <VStack spacing={4}>
             <FormControl isRequired>
               <FormLabel>Title</FormLabel>
@@ -158,7 +163,9 @@ const CreateEventForm: React.FC = () => {
               <FormLabel>Description</FormLabel>
               <Textarea
                 value={eventData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 placeholder="Event description"
                 rows={4}
               />
@@ -180,70 +187,138 @@ const CreateEventForm: React.FC = () => {
             </FormControl>
           </VStack>
         </Box>
-  
+
         {/* Date & Time */}
-        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
-          <Heading size="md" mb={4}>Date & Time</Heading>
+        <Box
+          bg={cardBg}
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <Heading size="md" mb={4}>
+            Date & Time
+          </Heading>
           <SimpleGrid columns={{ base: 1, sm: 3 }} spacing={4}>
             <FormControl isRequired>
               <FormLabel>Date</FormLabel>
-              <Input type="date" value={eventData.date} onChange={(e) => handleInputChange("date", e.target.value)} />
+              <Input
+                type="date"
+                value={eventData.date}
+                onChange={(e) => handleInputChange("date", e.target.value)}
+              />
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Start Time</FormLabel>
-              <Input type="time" value={eventData.time} onChange={(e) => handleInputChange("time", e.target.value)} />
+              <Input
+                type="time"
+                value={eventData.time}
+                onChange={(e) => handleInputChange("time", e.target.value)}
+              />
             </FormControl>
             <FormControl>
               <FormLabel>End Time</FormLabel>
-              <Input type="time" value={eventData.endTime} onChange={(e) => handleInputChange("endTime", e.target.value)} />
+              <Input
+                type="time"
+                value={eventData.endTime}
+                onChange={(e) => handleInputChange("endTime", e.target.value)}
+              />
             </FormControl>
           </SimpleGrid>
           <FormControl mt={4}>
             <FormLabel>Venue</FormLabel>
-            <Input value={eventData.venue} onChange={(e) => handleInputChange("venue", e.target.value)} />
+            <Input
+              value={eventData.venue}
+              onChange={(e) => handleInputChange("venue", e.target.value)}
+            />
           </FormControl>
           <FormControl mt={2}>
             <FormLabel>Address</FormLabel>
-            <Textarea value={eventData.address} onChange={(e) => handleInputChange("address", e.target.value)} rows={2} />
+            <Textarea
+              value={eventData.address}
+              onChange={(e) => handleInputChange("address", e.target.value)}
+              rows={2}
+            />
           </FormControl>
         </Box>
-  
+
         {/* Images */}
-        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
-          <Heading size="md" mb={4}>Images</Heading>
+        <Box
+          bg={cardBg}
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <Heading size="md" mb={4}>
+            Images
+          </Heading>
           <VStack spacing={4}>
             <FormControl>
               <FormLabel>Banner Image</FormLabel>
-              <Input type="file" accept="image/*" onChange={(e) => handleFileChange("bannerImage", e)} />
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleFileChange("bannerImage", e)}
+              />
               <FormHelperText>Recommended: 1200x400px</FormHelperText>
             </FormControl>
             <FormControl>
               <FormLabel>Featured Image</FormLabel>
-              <Input type="file" accept="image/*" onChange={(e) => handleFileChange("featuredImage", e)} />
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleFileChange("featuredImage", e)}
+              />
               <FormHelperText>Recommended: 600x400px</FormHelperText>
             </FormControl>
           </VStack>
         </Box>
-  
+
         {/* Tickets */}
-        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
-          <TicketTierCreator tiers={ticketTiers} onChange={setTicketTiers} currency="IDRX" />
+        <Box
+          bg={cardBg}
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <TicketTierCreator
+            tiers={ticketTiers}
+            onChange={setTicketTiers}
+            currency="IDRX"
+          />
         </Box>
-  
+
         {/* Resell Settings */}
-        <Box bg={cardBg} p={6} borderRadius="lg" border="1px" borderColor="gray.300">
-          <ResellSettings settings={resellSettings} onSave={setResellSettings} />
+        <Box
+          bg={cardBg}
+          p={6}
+          borderRadius="lg"
+          border="1px"
+          borderColor="gray.300"
+        >
+          <ResellSettings
+            settings={resellSettings}
+            onSave={setResellSettings}
+          />
         </Box>
-  
+
         {/* Submit Buttons */}
-        <Flex justify="flex-end">
-          <HStack spacing={4}>
-            <Button variant="outline" onClick={() => navigate("/admin")}>Cancel</Button>
-            <Button colorScheme="purple" type="submit">Create Event</Button>
-          </HStack>
-        </Flex>
+        <form onSubmit={handleSubmit}>
+          <Flex justify="flex-end">
+            <HStack spacing={4}>
+              <Button variant="outline" onClick={() => navigate("/admin")}>
+                Cancel
+              </Button>
+              <Button colorScheme="purple" type="submit">
+                Create Event
+              </Button>
+            </HStack>
+          </Flex>
+        </form>
       </VStack>
     </Container>
   );
-}  
+};
 export default CreateEventForm;
