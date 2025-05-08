@@ -17,12 +17,13 @@ import { FaTicketAlt, FaShoppingCart } from "react-icons/fa";
 import { ResaleTicketCard, ResaleTicket } from "../../components/marketplace/ResaleTicketCard";
 import { MarketplaceFilters, MarketplaceFiltersValue } from "../../components/marketplace/MarketplaceFilters";
 import { BuyResaleTicket } from "../../components/marketplace/BuyResaleTicket";
+import { mockEvents } from "../../data/mockEvents";
 
 // Mock data for resale tickets
 const mockResaleTickets: ResaleTicket[] = [
   {
     id: "resale-1",
-    eventId: "event-1",
+    eventId: "1", // Match with mockEvents IDs
     eventName: "Summer Music Festival",
     eventDate: "2025-06-15T12:00:00",
     eventLocation: "Jakarta Convention Center",
@@ -38,7 +39,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-2",
-    eventId: "event-2",
+    eventId: "2", // Match with mockEvents IDs
     eventName: "Tech Conference 2025",
     eventDate: "2025-07-25T09:00:00",
     eventLocation: "Digital Hub Bandung",
@@ -54,7 +55,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-3",
-    eventId: "event-1",
+    eventId: "1", // Match with mockEvents IDs
     eventName: "Summer Music Festival",
     eventDate: "2025-06-15T12:00:00",
     eventLocation: "Jakarta Convention Center",
@@ -70,7 +71,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-4",
-    eventId: "event-3",
+    eventId: "3", // Match with mockEvents IDs
     eventName: "Blockchain Workshop",
     eventDate: "2025-05-10T10:00:00",
     eventLocation: "Blockchain Center Jakarta",
@@ -86,7 +87,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-5",
-    eventId: "event-2",
+    eventId: "2", // Match with mockEvents IDs
     eventName: "Tech Conference 2025",
     eventDate: "2025-07-25T09:00:00",
     eventLocation: "Digital Hub Bandung",
@@ -102,7 +103,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-6",
-    eventId: "event-4",
+    eventId: "4", // Match with mockEvents IDs
     eventName: "Art Exhibition: Future Visions",
     eventDate: "2025-06-05T11:00:00",
     eventLocation: "Modern Gallery Surabaya",
@@ -118,6 +119,20 @@ const mockResaleTickets: ResaleTicket[] = [
   }
 ];
 
+// Add image URLs from mockEvents to resale tickets
+const enrichTicketsWithImages = (tickets: ResaleTicket[]): ResaleTicket[] => {
+  return tickets.map(ticket => {
+    const matchingEvent = mockEvents.find(event => event.id === ticket.eventId);
+    if (matchingEvent) {
+      return {
+        ...ticket,
+        imageUrl: matchingEvent.imageUrl
+      };
+    }
+    return ticket;
+  });
+};
+
 export const MarketplacePage: React.FC = () => {
   const [resaleTickets, setResaleTickets] = useState<ResaleTicket[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<ResaleTicket[]>([]);
@@ -131,8 +146,9 @@ export const MarketplacePage: React.FC = () => {
   useEffect(() => {
     // Simulate API call to fetch resale tickets
     setTimeout(() => {
-      setResaleTickets(mockResaleTickets);
-      setFilteredTickets(mockResaleTickets);
+      const enrichedTickets = enrichTicketsWithImages(mockResaleTickets);
+      setResaleTickets(enrichedTickets);
+      setFilteredTickets(enrichedTickets);
       setIsLoading(false);
     }, 1500);
   }, []);

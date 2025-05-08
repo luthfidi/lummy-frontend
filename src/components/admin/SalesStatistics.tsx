@@ -10,6 +10,7 @@ import {
   Badge,
   useColorModeValue,
   SimpleGrid,
+  Divider,
 } from "@chakra-ui/react";
 import {
   LineChart,
@@ -26,6 +27,7 @@ import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
 
+// Modified to group by event name
 export interface SalesData {
   totalRevenue: number;
   soldTickets: number;
@@ -33,6 +35,12 @@ export interface SalesData {
   totalTransactions: number;
   averageTicketPrice: number;
   revenueByTier: { [tierName: string]: number };
+  // Add revenueByEventAndTier for grouped data
+  revenueByEventAndTier?: { 
+    [eventName: string]: { 
+      [tierName: string]: number 
+    } 
+  };
   salesByDay: { date: string; sales: number }[];
   currency: string;
   percentChange: number;
@@ -77,6 +85,7 @@ const StatCard: React.FC<StatCardProps> = ({
       <MotionText
         fontSize="2xl"
         fontWeight="bold"
+        mt={2}
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -111,10 +120,6 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
   const handleTimeRangeChange = (range: string) => {
     setTimeRange(range);
     // Would typically fetch new data here
-  };
-
-  const calculatePercentage = (sold: number, total: number): number => {
-    return total > 0 ? (sold / total) * 100 : 0;
   };
 
   const renderSalesChart = () => {
@@ -166,10 +171,35 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
     );
   };
 
+  // Prepare event and tier data for display
+  const prepareEventTierData = () => {
+    // If we have the new format data
+    if (salesData.revenueByEventAndTier) {
+      return Object.entries(salesData.revenueByEventAndTier).map(([eventName, tiers]) => ({
+        eventName,
+        tiers: Object.entries(tiers).map(([tierName, revenue]) => ({
+          tierName,
+          revenue
+        }))
+      }));
+    } else {
+      // Fallback to display flat tier data, all under the current event name
+      return [{
+        eventName,
+        tiers: Object.entries(salesData.revenueByTier || {}).map(([tierName, revenue]) => ({
+          tierName,
+          revenue
+        }))
+      }];
+    }
+  };
+
   // Defensively handle data
   if (!salesData) {
     return <Box>No sales data available</Box>;
   }
+
+  const eventTierData = prepareEventTierData();
 
   return (
     <Box>
@@ -217,9 +247,10 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
             <StatCard
               label="Tickets Sold"
               value={(salesData.soldTickets || 0).toLocaleString()}
-              helpText={`${calculatePercentage(
-                salesData.soldTickets || 0,
-                (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
+              helpText={`${(
+                (salesData.soldTickets || 0) /
+                ((salesData.soldTickets || 0) + (salesData.availableTickets || 0)) *
+                100
               ).toFixed(1)}% of total`}
               icon="🎟️"
               bgColor={useColorModeValue("yellow.50", "yellow.900")}
@@ -285,23 +316,37 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               <Heading size="sm" mb={4}>
                 Revenue by Ticket Tier
               </Heading>
-              <VStack spacing={3} align="stretch">
-                {Object.entries(salesData.revenueByTier || {}).map(
-                  ([tier, revenue]) => (
-                    <Flex key={tier} justify="space-between" align="center">
-                      <HStack>
-                        <Badge colorScheme="purple" px={2} py={1}>
-                          {tier}
-                        </Badge>
-                      </HStack>
-                      <Text fontWeight="bold">
-                        {salesData.currency || "IDRX"}{" "}
-                        {revenue.toLocaleString()}
-                      </Text>
-                    </Flex>
-                  )
-                )}
-                {Object.keys(salesData.revenueByTier || {}).length === 0 && (
+              <VStack spacing={4} align="stretch">
+                {eventTierData.map((eventData, eventIndex) => (
+                  <Box key={eventIndex}>
+                    <Heading size="xs" mb={2} color="gray.700">
+                      {eventData.eventName}
+                    </Heading>
+                    <VStack spacing={3} align="stretch">
+                      {eventData.tiers.map((tier, tierIndex) => (
+                        <Flex 
+                          key={tierIndex} 
+                          justify="space-between" 
+                          align="center"
+                        >
+                          <HStack>
+                            <Badge colorScheme="purple" px={2} py={1}>
+                              {tier.tierName}
+                            </Badge>
+                          </HStack>
+                          <Text fontWeight="bold">
+                            {salesData.currency || "IDRX"}{" "}
+                            {tier.revenue.toLocaleString()}
+                          </Text>
+                        </Flex>
+                      ))}
+                    </VStack>
+                    {eventIndex < eventTierData.length - 1 && (
+                      <Divider my={3} />
+                    )}
+                  </Box>
+                ))}
+                {eventTierData.length === 0 && (
                   <Text color="gray.500">No revenue data available</Text>
                 )}
               </VStack>

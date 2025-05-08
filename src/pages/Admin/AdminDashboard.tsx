@@ -182,6 +182,7 @@ const AdminDashboard: React.FC = () => {
                 </Button>
                 <Button
                   colorScheme="purple"
+                  size="sm"
                   onClick={() => handleManageEvent(event.eventId)}
                 >
                   Manage
