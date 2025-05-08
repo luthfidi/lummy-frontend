@@ -47,7 +47,7 @@ const EventStats: React.FC<EventStatsProps> = ({ stats }) => {
   );
 
   return (
-    <Box bg={cardBg} borderRadius="md" p={4} shadow="sm">
+    <Box bg={cardBg} borderRadius="md" p={4}>
       <Flex justify="space-between" align="center" mb={4}>
         <Heading size="md">{stats.eventName}</Heading>
         <Badge

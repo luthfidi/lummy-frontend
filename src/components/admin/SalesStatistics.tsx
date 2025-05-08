@@ -64,7 +64,7 @@ const StatCard: React.FC<StatCardProps> = ({
   const arrowSymbol = isIncrease ? "↑" : "↓";
 
   return (
-    <Box p={4} bg={cardBg} borderRadius="md" shadow="sm" aria-label={label}>
+    <Box bg={cardBg} borderRadius="md" aria-label={label}>
       <Flex justify="space-between" align="center" mb={2}>
         <Text fontWeight="medium">{label}</Text>
         {icon && (
@@ -191,14 +191,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
       <Box>
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mt={4}>
           <MotionBox
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
             border="2px solid"
             borderColor={useColorModeValue("gray.200", "gray.600")}
-            _hover={{
-              borderColor: useColorModeValue("green.500", "green.300"),
-              shadow: "lg",
-            }}
             p={4}
             rounded="xl"
           >
@@ -215,14 +209,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
           </MotionBox>
 
           <MotionBox
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
             border="2px solid"
             borderColor={useColorModeValue("gray.200", "gray.600")}
-            _hover={{
-              borderColor: useColorModeValue("green.500", "green.300"),
-              shadow: "lg",
-            }}
             p={4}
             rounded="xl"
           >
@@ -239,14 +227,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
           </MotionBox>
 
           <MotionBox
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
             border="2px solid"
             borderColor={useColorModeValue("gray.200", "gray.600")}
-            _hover={{
-              borderColor: useColorModeValue("green.500", "green.300"),
-              shadow: "lg",
-            }}
             p={4}
             rounded="xl"
           >
@@ -260,14 +242,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
           </MotionBox>
 
           <MotionBox
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
             border="2px solid"
             borderColor={useColorModeValue("gray.200", "gray.600")}
-            _hover={{
-              borderColor: useColorModeValue("green.500", "green.300"),
-              shadow: "lg",
-            }}
             p={4}
             rounded="xl"
           >
@@ -283,71 +259,55 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
           </MotionBox>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mt={6}>
-  <MotionBox
-    whileHover={{ scale: 1.05 }}
-    transition={{ duration: 0.3 }}
-    border="2px solid"
-    borderColor={useColorModeValue("gray.200", "gray.600")}
-    _hover={{
-      borderColor: useColorModeValue("green.500", "green.300"),
-      shadow: "lg",
-    }}
-    p={4}
-    rounded="xl"
-  >
-    <Box flex="1" shadow="sm" p={6}>
-      <Heading size="sm" mb={4}>
-        Sales Overview
-      </Heading>
-      <Box
-        bg={cardBg}
-        borderRadius="md"
-        overflow="hidden"
-        shadow="sm"
-        p={4}
-      >
-        {renderSalesChart()}
-      </Box>
-    </Box>
-  </MotionBox>
+          <MotionBox
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            p={4}
+            rounded="xl"
+          >
+            <Box flex="1">
+              <Heading size="sm" mb={4}>
+                Sales Overview
+              </Heading>
+              <Box bg={cardBg} borderRadius="md" overflow="hidden" p={4}>
+                {renderSalesChart()}
+              </Box>
+            </Box>
+          </MotionBox>
 
-  <MotionBox
-    whileHover={{ scale: 1.05 }}
-    transition={{ duration: 0.3 }}
-    border="2px solid"
-    borderColor={useColorModeValue("gray.200", "gray.600")}
-    _hover={{
-      borderColor: useColorModeValue("green.500", "green.300"),
-      shadow: "lg",
-    }}
-    p={4}
-    rounded="xl"
-  >
-    <Box flex="1" p={6}>
-      <Heading size="sm" mb={4}>
-        Revenue by Ticket Tier
-      </Heading>
-      <VStack spacing={3} align="stretch">
-        {Object.entries(salesData.revenueByTier || {}).map(([tier, revenue]) => (
-          <Flex key={tier} justify="space-between" align="center">
-            <HStack>
-              <Badge colorScheme="purple" px={2} py={1}>
-                {tier}
-              </Badge>
-            </HStack>
-            <Text fontWeight="bold">
-              {salesData.currency || "IDRX"} {revenue.toLocaleString()}
-            </Text>
-          </Flex>
-        ))}
-        {Object.keys(salesData.revenueByTier || {}).length === 0 && (
-          <Text color="gray.500">No revenue data available</Text>
-        )}
-      </VStack>
-    </Box>
-  </MotionBox>
-</SimpleGrid>
-
+          <MotionBox
+            border="2px solid"
+            borderColor={useColorModeValue("gray.200", "gray.600")}
+            p={4}
+            rounded="xl"
+          >
+            <Box flex="1">
+              <Heading size="sm" mb={4}>
+                Revenue by Ticket Tier
+              </Heading>
+              <VStack spacing={3} align="stretch">
+                {Object.entries(salesData.revenueByTier || {}).map(
+                  ([tier, revenue]) => (
+                    <Flex key={tier} justify="space-between" align="center">
+                      <HStack>
+                        <Badge colorScheme="purple" px={2} py={1}>
+                          {tier}
+                        </Badge>
+                      </HStack>
+                      <Text fontWeight="bold">
+                        {salesData.currency || "IDRX"}{" "}
+                        {revenue.toLocaleString()}
+                      </Text>
+                    </Flex>
+                  )
+                )}
+                {Object.keys(salesData.revenueByTier || {}).length === 0 && (
+                  <Text color="gray.500">No revenue data available</Text>
+                )}
+              </VStack>
+            </Box>
+          </MotionBox>
+        </SimpleGrid>
       </Box>
     </Box>
   );

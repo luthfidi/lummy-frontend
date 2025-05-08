@@ -336,14 +336,8 @@ const EventManagement: React.FC = () => {
 
               <Divider />
               <MotionBox
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
                 border="2px solid"
                 borderColor={useColorModeValue("gray.200", "gray.600")}
-                _hover={{
-                  borderColor: useColorModeValue("green.500", "green.300"),
-                  shadow: "lg",
-                }}
                 p={4}
                 rounded="xl"
               >
