@@ -1,4 +1,3 @@
-// src/pages/EventDetail/EventDetailPage.tsx
 import React, { useState, useEffect, useRef, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
