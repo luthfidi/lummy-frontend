@@ -26,7 +26,7 @@ import { BuyResaleTicket } from "../../components/marketplace/BuyResaleTicket";
 import { mockEvents } from "../../data/mockEvents";
 
 // Mock data for resale tickets
-const mockResaleTickets: ResaleTicket[] = [
+export const mockResaleTickets: ResaleTicket[] = [
   {
     id: "resale-1",
     eventId: "1", // Match with mockEvents IDs
@@ -122,6 +122,103 @@ const mockResaleTickets: ResaleTicket[] = [
     sellerRating: 4.9,
     tokenId: "NFT-56789012",
     transferCount: 0,
+  },
+  // New resale tickets for additional event categories
+  {
+    id: "resale-7",
+    eventId: "5", // Liga Indonesia Championship Finals
+    eventName: "Liga Indonesia Championship Finals",
+    eventDate: "2025-05-30T19:00:00",
+    eventLocation: "Gelora Bung Karno Stadium",
+    ticketType: "Premium Seating",
+    originalPrice: 350,
+    resalePrice: 400,
+    currency: "IDRX",
+    listedDate: "2025-05-18T08:45:22",
+    sellerAddress: "0x67890123456def67890123456def6789012345",
+    sellerRating: 4.6,
+    tokenId: "NFT-67890123",
+    transferCount: 1,
+  },
+  {
+    id: "resale-8",
+    eventId: "5", // Liga Indonesia Championship Finals
+    eventName: "Liga Indonesia Championship Finals",
+    eventDate: "2025-05-30T19:00:00",
+    eventLocation: "Gelora Bung Karno Stadium",
+    ticketType: "General Seating",
+    originalPrice: 200,
+    resalePrice: 180,
+    currency: "IDRX",
+    listedDate: "2025-05-22T14:30:12",
+    sellerAddress: "0x7890123456def7890123456def78901234567",
+    sellerRating: 4.3,
+    tokenId: "NFT-78901234",
+    transferCount: 1,
+  },
+  {
+    id: "resale-9",
+    eventId: "6", // Future of Education Summit
+    eventName: "Future of Education Summit 2025",
+    eventDate: "2025-08-23T08:30:00",
+    eventLocation: "Jakarta International Convention Center",
+    ticketType: "VIP Experience",
+    originalPrice: 350,
+    resalePrice: 300,
+    currency: "IDRX",
+    listedDate: "2025-07-15T11:22:45",
+    sellerAddress: "0x8901234567def8901234567def890123456789",
+    sellerRating: 4.9,
+    tokenId: "NFT-89012345",
+    transferCount: 0,
+  },
+  {
+    id: "resale-10",
+    eventId: "7", // Jakarta Food Festival
+    eventName: "Jakarta Food Festival 2025",
+    eventDate: "2025-07-11T10:00:00",
+    eventLocation: "Senayan Park",
+    ticketType: "Gourmet Experience",
+    originalPrice: 300,
+    resalePrice: 350,
+    currency: "IDRX",
+    listedDate: "2025-06-28T09:40:18",
+    sellerAddress: "0x9012345678def9012345678def901234567890",
+    sellerRating: 4.7,
+    tokenId: "NFT-90123456",
+    transferCount: 1,
+  },
+  {
+    id: "resale-11",
+    eventId: "8", // Southeast Asian Film Festival
+    eventName: "Southeast Asian Film Festival 2025",
+    eventDate: "2025-10-05T18:00:00",
+    eventLocation: "CGV Cinemas Grand Indonesia",
+    ticketType: "Festival Pass",
+    originalPrice: 600,
+    resalePrice: 550,
+    currency: "IDRX",
+    listedDate: "2025-09-10T15:33:27",
+    sellerAddress: "0xa123456789defab123456789defab12345678",
+    sellerRating: 4.8,
+    tokenId: "NFT-A1234567",
+    transferCount: 0,
+  },
+  {
+    id: "resale-12",
+    eventId: "9", // Jakarta International Theater Festival
+    eventName: "Jakarta International Theater Festival",
+    eventDate: "2025-09-12T19:30:00",
+    eventLocation: "Teater Jakarta",
+    ticketType: "Weekend Pass",
+    originalPrice: 450,
+    resalePrice: 420,
+    currency: "IDRX",
+    listedDate: "2025-08-25T12:15:39",
+    sellerAddress: "0xb234567890defb234567890defb2345678901",
+    sellerRating: 4.5,
+    tokenId: "NFT-B2345678",
+    transferCount: 1,
   },
 ];
 

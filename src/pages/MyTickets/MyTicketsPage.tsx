@@ -31,7 +31,7 @@ import { TicketCard, Ticket } from "../../components/tickets/TicketCard";
 import { TicketDetails } from "../../components/tickets/TicketDetails";
 
 // Mock data for tickets
-const mockTickets: Ticket[] = [
+export const mockTickets: Ticket[] = [
   {
     id: "ticket-1",
     eventId: "event-1",
@@ -74,8 +74,22 @@ const mockTickets: Ticket[] = [
     tokenId: "NFT-23456789",
     ownerAddress: "0x1234567890abcdef1234567890abcdef12345678",
   },
-  {
+    {
     id: "ticket-4",
+    eventId: "event-5",
+    eventName: "Liga Indonesia Championship Finals",
+    eventDate: "2025-05-30T19:00:00",
+    eventLocation: "Gelora Bung Karno Stadium",
+    ticketType: "VIP Box",
+    price: 750,
+    currency: "IDRX",
+    status: "used",
+    purchaseDate: "2025-05-10T10:15:33",
+    tokenId: "NFT-C3456789",
+    ownerAddress: "0x1234567890abcdef1234567890abcdef12345678",
+  },
+  {
+    id: "ticket-5",
     eventId: "event-4",
     eventName: "Art Exhibition: Future Visions",
     eventDate: "2025-06-05T11:00:00",
@@ -87,6 +101,20 @@ const mockTickets: Ticket[] = [
     purchaseDate: "2025-04-15T11:23:45",
     tokenId: "NFT-34567890",
     ownerAddress: "0x2345678901bcdef2345678901bcdef23456789",
+  },
+  {
+    id: "ticket-6",
+    eventId: "event-8",
+    eventName: "Southeast Asian Film Festival 2025",
+    eventDate: "2025-10-05T18:00:00",
+    eventLocation: "CGV Cinemas Grand Indonesia",
+    ticketType: "5-Film Pass",
+    price: 325,
+    currency: "IDRX",
+    status: "transferred",
+    purchaseDate: "2025-09-01T14:27:56",
+    tokenId: "NFT-D4567890",
+    ownerAddress: "0x1234567890abcdef1234567890abcdef12345678",
   },
 ];
 
