@@ -20,7 +20,6 @@ import {
   Divider,
   Button,
   useToast,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 export interface ResellSettingsData {
@@ -46,7 +45,7 @@ const ResellSettings: React.FC<ResellSettingsProps> = ({
   const [isChanged, setIsChanged] = useState(false);
   const toast = useToast();
 
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
 
   const handleChange = (field: keyof ResellSettingsData, value: any) => {
     setCurrentSettings((prev) => ({

@@ -13,7 +13,6 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaUsers, FaUserCheck, FaPercentage, FaClock } from "react-icons/fa";
 
@@ -51,7 +50,7 @@ const StatCard: React.FC<StatCardProps> = ({
   helpText,
   isPercentage = false,
 }) => {
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
 
   return (
     <Box
@@ -85,8 +84,8 @@ const StatCard: React.FC<StatCardProps> = ({
 };
 
 const CheckInStats: React.FC<CheckInStatsProps> = ({ stats }) => {
-  const cardBg = useColorModeValue("white", "gray.700");
-  const progressTrackBg = useColorModeValue("gray.100", "gray.600");
+  const cardBg = "white";
+  const progressTrackBg = "gray.100";
 
   return (
     <Box>

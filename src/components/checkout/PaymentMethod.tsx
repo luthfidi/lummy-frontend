@@ -12,7 +12,6 @@ import {
   Radio,
   RadioGroup,
   Icon,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, InfoIcon } from "@chakra-ui/icons";
 import { FaCoins } from "react-icons/fa";
@@ -34,8 +33,8 @@ export const PaymentMethod: React.FC<PaymentMethodProps> = ({
   onBack,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<string>("idrx");
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const bgColor = "white";
+  const borderColor = "gray.200";
 
   // Mock wallet balance
   const walletBalance = 1000; // IDRX

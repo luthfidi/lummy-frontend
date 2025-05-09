@@ -55,7 +55,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
 
   // Get the image URL from the mockEvents data
   const getEventImageUrl = (eventId: string): string => {
-    const event = mockEvents.find(e => e.id === eventId);
+    const event = mockEvents.find((e) => e.id === eventId);
     return event?.imageUrl || "https://via.placeholder.com/120";
   };
 
@@ -92,11 +92,11 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
         flexDirection="column"
         cursor="default"
       >
-        <Box 
+        <Box
           bg="lummy.purple.500"
-          color="white" 
-          py={1} 
-          px={4} 
+          color="white"
+          py={1}
+          px={4}
           borderBottomWidth="1px"
           borderBottomColor="lummy.purple.600"
         >
@@ -114,7 +114,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
               <Text fontSize="lg" fontWeight="bold" noOfLines={1} mb={1}>
                 {ticket.eventName}
               </Text>
-            
+
               <VStack mt={2} spacing={2} align="flex-start" color="gray.600">
                 <HStack>
                   <Icon as={FaCalendarAlt} boxSize={3.5} />
@@ -129,7 +129,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
                     {ticket.eventLocation}
                   </Text>
                 </HStack>
-                
+
                 <HStack>
                   <Icon as={FaTicketAlt} color="blue.500" boxSize={3.5} />
                   <Text fontSize="sm" fontWeight="medium">
@@ -138,7 +138,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
                 </HStack>
               </VStack>
             </Box>
-            
+
             <Box width="110px" height="110px" flexShrink={0}>
               <Image
                 src={imageUrl}
@@ -168,11 +168,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
           </HStack>
 
           <Flex mt="auto" pt={4} justify="space-between">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleShowDetails}
-            >
+            <Button size="sm" variant="outline" onClick={handleShowDetails}>
               View Details
             </Button>
 
@@ -188,11 +184,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
         </Box>
       </Box>
 
-      <BuyResaleTicket
-        isOpen={isOpen}
-        onClose={onClose}
-        ticket={ticket}
-      />
+      <BuyResaleTicket isOpen={isOpen} onClose={onClose} ticket={ticket} />
     </>
   );
 };

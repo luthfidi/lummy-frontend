@@ -14,7 +14,6 @@ import {
   IconButton,
   Link,
   HStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   ExternalLinkIcon,
@@ -44,8 +43,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
-  const bgColor = useColorModeValue("white", "gray.700");
-  const headerBg = useColorModeValue("gray.50", "gray.700");
+  const bgColor = "white";
+  const headerBg = "gray.50";
 
   // Filter transactions based on selected type
   const filteredTransactions = transactions.filter(

@@ -110,7 +110,7 @@ export const TransferTicket: React.FC<TransferTicketProps> = ({
               isDisabled={!isValid}
               onClick={handleTransfer}
               _hover={{
-                bg: isLoading ? "purple.500" : "purple.600"
+                bg: isLoading ? "purple.500" : "purple.600",
               }}
             >
               Transfer Ticket

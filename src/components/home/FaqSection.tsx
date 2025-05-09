@@ -12,7 +12,6 @@ import {
   Flex,
   Button,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 const faqData = [
@@ -59,7 +58,7 @@ const faqData = [
 ];
 
 const FaqSection: React.FC = () => {
-  const bgColor = useColorModeValue("white", "gray.800");
+  const bgColor = "white";
 
   return (
     <Box bg={bgColor} py={16}>

@@ -16,7 +16,6 @@ import {
   FormLabel,
   Textarea,
   Divider,
-  useColorModeValue,
   Flex,
   Badge,
   useToast,
@@ -49,8 +48,8 @@ const TicketTierCreator: React.FC<TicketTierCreatorProps> = ({
     {}
   );
 
-  const bgColor = useColorModeValue("white", "gray.700");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const bgColor = "white";
+  const borderColor = "gray.200";
 
   const handleAddTier = () => {
     const newTier: TicketTierInput = {

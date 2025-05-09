@@ -9,7 +9,6 @@ import {
   Icon,
   Divider,
   Flex,
-  useColorModeValue,
   Container,
 } from "@chakra-ui/react";
 import { CheckCircleIcon, ExternalLinkIcon } from "@chakra-ui/icons";
@@ -31,7 +30,7 @@ export const PaymentConfirmation: React.FC<PaymentConfirmationProps> = ({
   transactionHash,
   onViewTickets,
 }) => {
-  const bgColor = useColorModeValue("white", "gray.800");
+  const bgColor = "white";
 
   return (
     <Container maxW="container.sm">

@@ -16,8 +16,8 @@ import { Event } from "../../types/Event";
 import { EventsFilter, EventsSorter } from "../../components/events";
 
 const EventsPage: React.FC = () => {
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);

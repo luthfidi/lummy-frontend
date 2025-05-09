@@ -12,7 +12,6 @@ import {
   Textarea,
   Select,
   useToast,
-  useColorModeValue,
   FormHelperText,
   SimpleGrid,
   IconButton,
@@ -31,7 +30,7 @@ const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
 
   // Form state
   const [eventData, setEventData] = useState({

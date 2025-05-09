@@ -197,7 +197,7 @@ export const BuyResaleTicket: React.FC<BuyResaleTicketProps> = ({
                   isLoading={isLoading}
                   loadingText="Processing..."
                   _hover={{
-                    bg: isLoading ? "purple.500" : "purple.600"
+                    bg: isLoading ? "purple.500" : "purple.600",
                   }}
                 >
                   Confirm Purchase

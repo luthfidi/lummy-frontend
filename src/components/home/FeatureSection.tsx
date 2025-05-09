@@ -8,7 +8,6 @@ import {
   Stack,
   Flex,
   Heading,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FaShieldAlt,
@@ -50,7 +49,7 @@ const Feature = ({ title, text, icon }: FeatureProps) => {
 
 const FeatureSection: React.FC = () => {
   return (
-    <Box bg={useColorModeValue("gray.50", "gray.900")}>
+    <Box bg={"gray.50"}>
       <Container maxW={"container.xl"} py={16}>
         <Stack spacing={12}>
           <Box textAlign={"center"}>

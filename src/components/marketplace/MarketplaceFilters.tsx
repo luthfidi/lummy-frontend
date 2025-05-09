@@ -8,7 +8,6 @@ import {
   Select,
   Button,
   Icon,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
@@ -39,7 +38,7 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
     sortBy: "newest",
   });
 
-  const bgColor = useColorModeValue("white", "gray.700");
+  const bgColor = "white";
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value;
@@ -82,8 +81,8 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
         />
       </InputGroup>
 
-      <Flex 
-        gap={3} 
+      <Flex
+        gap={3}
         flexWrap={{ base: "wrap", md: "nowrap" }}
         justify="space-between"
         align="center"

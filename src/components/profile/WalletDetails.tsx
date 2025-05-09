@@ -10,7 +10,6 @@ import {
   Icon,
   useClipboard,
   Tooltip,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { CopyIcon, CheckIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { FaWallet, FaCoins, FaExchangeAlt, FaTicketAlt } from "react-icons/fa";
@@ -28,8 +27,8 @@ const WalletDetails: React.FC = () => {
   const { wallet, isConnected, formatAddress } = useWallet();
   const { hasCopied, onCopy } = useClipboard(wallet?.address || "");
 
-  const bgColor = useColorModeValue("white", "gray.700");
-  const cardBg = useColorModeValue("gray.50", "gray.600");
+  const bgColor = "white";
+  const cardBg = "gray.50";
 
   if (!isConnected || !wallet) {
     return (

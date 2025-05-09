@@ -18,7 +18,6 @@ import {
   Divider,
   Select,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, CalendarIcon } from "@chakra-ui/icons";
 import { FaTicketAlt, FaChartLine, FaUserCheck } from "react-icons/fa";
@@ -78,24 +77,24 @@ const mockSalesData = {
   availableTickets: 195,
   totalTransactions: 610,
   averageTicketPrice: 89.44,
-  
+
   // Grouped by event name and ticket tier
   revenueByEventAndTier: {
     "Summer Music Festival": {
       "General Admission": 15000,
       "VIP Pass": 12000,
-      "Backstage Experience": 4500
+      "Backstage Experience": 4500,
     },
     "Tech Conference 2025": {
       "Standard Access": 30000,
-      "Premium Access": 24000
+      "Premium Access": 24000,
     },
     "Blockchain Workshop": {
       "Workshop Ticket": 6500,
-      "Workshop + Certification": 2000
-    }
+      "Workshop + Certification": 2000,
+    },
   },
-  
+
   // Flat version (for backward compatibility)
   revenueByTier: {
     "General Admission": 15000,
@@ -106,7 +105,7 @@ const mockSalesData = {
     "Workshop Ticket": 6500,
     "Workshop + Certification": 2000,
   },
-  
+
   salesByDay: [
     { date: "2025-03-01", sales: 20 },
     { date: "2025-03-02", sales: 35 },
@@ -143,7 +142,7 @@ const getBadgeColor = (status: string) => {
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<string>("all");
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
 
   const filteredSalesData =
     selectedEvent === "all" ? mockSalesData : { ...mockSalesData }; // Add real filter later
@@ -232,7 +231,11 @@ const AdminDashboard: React.FC = () => {
           <Heading size="lg">Organizer Dashboard</Heading>
           <Text color="gray.600">Manage your events and track performance</Text>
         </Box>
-        <Button colorScheme="purple" leftIcon={<AddIcon />} onClick={handleCreateEvent}>
+        <Button
+          colorScheme="purple"
+          leftIcon={<AddIcon />}
+          onClick={handleCreateEvent}
+        >
           Create Event
         </Button>
       </Flex>
@@ -271,7 +274,8 @@ const AdminDashboard: React.FC = () => {
                   eventName={
                     selectedEvent === "all"
                       ? "All Events"
-                      : mockEvents.find((e) => e.eventId === selectedEvent)?.eventName || "Event"
+                      : mockEvents.find((e) => e.eventId === selectedEvent)
+                          ?.eventName || "Event"
                   }
                 />
               )}
@@ -279,7 +283,7 @@ const AdminDashboard: React.FC = () => {
             <Divider my={2} />
           </TabPanel>
 
-          <TabPanel px={0} py={6} >
+          <TabPanel px={0} py={6}>
             <VStack align="stretch" spacing={8}>
               <Box>
                 <Heading size="md" mb={4}>

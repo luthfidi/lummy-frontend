@@ -1,6 +1,4 @@
-import XellarSDK, {
-  TransactionResult,
-} from "./XellarIntegration";
+import XellarSDK, { TransactionResult } from "./XellarIntegration";
 
 class TransactionService {
   private sdk: XellarSDK;

@@ -61,7 +61,9 @@ export const WalletModal: React.FC<WalletModalProps> = ({
                 Balance
               </Heading>
               <Text>
-                {balanceData ? `${balanceData.formatted} ${balanceData.symbol}` : "Loading..."}
+                {balanceData
+                  ? `${balanceData.formatted} ${balanceData.symbol}`
+                  : "Loading..."}
               </Text>
             </Box>
 

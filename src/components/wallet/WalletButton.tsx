@@ -43,7 +43,9 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
 
   const formatAddress = (address: string | undefined): string => {
     if (!address) return "";
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+    return `${address.substring(0, 6)}...${address.substring(
+      address.length - 4
+    )}`;
   };
 
   if (!isConnected || !address) {
@@ -69,7 +71,10 @@ export const WalletButton: React.FC<WalletButtonProps> = ({
         <MenuList>
           <HStack px={3} py={2}>
             <Text fontWeight="bold">
-              Balance: {balanceData ? `${balanceData.formatted} ${balanceData.symbol}` : "Loading..."}
+              Balance:{" "}
+              {balanceData
+                ? `${balanceData.formatted} ${balanceData.symbol}`
+                : "Loading..."}
             </Text>
           </HStack>
           <MenuDivider />

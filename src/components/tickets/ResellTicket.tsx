@@ -184,7 +184,7 @@ export const ResellTicket: React.FC<ResellTicketProps> = ({
               loadingText="Listing..."
               onClick={handleListForResale}
               _hover={{
-                bg: isLoading ? "purple.500" : "purple.600"
+                bg: isLoading ? "purple.500" : "purple.600",
               }}
             >
               List for Resale

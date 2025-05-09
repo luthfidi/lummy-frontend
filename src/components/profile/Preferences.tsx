@@ -8,7 +8,6 @@ import {
   Divider,
   Button,
   useToast,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 interface PreferenceOption {
@@ -41,7 +40,7 @@ const Preferences: React.FC<PreferencesProps> = ({
   const [isChanged, setIsChanged] = useState(false);
   const toast = useToast();
 
-  const bgColor = useColorModeValue("white", "gray.700");
+  const bgColor = "white";
 
   const handleToggle = (
     section: "notifications" | "privacySettings",

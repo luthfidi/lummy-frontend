@@ -10,7 +10,6 @@ import {
   Divider,
   Icon,
   useToast,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -60,9 +59,9 @@ const AttendeeVerification: React.FC<AttendeeVerificationProps> = ({
   const [rejectionReason, setRejectionReason] =
     useState<string>("Invalid ticket");
 
-  const cardBg = useColorModeValue("white", "gray.700");
-  const successBg = useColorModeValue("green.50", "green.900");
-  const dangerBg = useColorModeValue("red.50", "red.900");
+  const cardBg = "white";
+  const successBg = "green.50";
+  const dangerBg = "red.50";
 
   const handleCheckIn = () => {
     if (attendee) {

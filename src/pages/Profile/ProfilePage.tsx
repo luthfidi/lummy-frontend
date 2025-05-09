@@ -113,9 +113,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Heading size="lg">
-        My Profile
-      </Heading>
+      <Heading size="lg">My Profile</Heading>
       <Text color="gray.600" mb={8}>
         Manage your personal information, wallet, and preferences
       </Text>

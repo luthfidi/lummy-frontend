@@ -10,7 +10,6 @@ import {
   Button,
   Icon,
   HStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaFilter, FaSearch } from "react-icons/fa";
 
@@ -47,10 +46,10 @@ const EventsFilter: React.FC<EventsFilterProps> = ({
   statuses,
   onReset,
 }) => {
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  const resetBgColor = useColorModeValue("purple.50", "purple.900");
-  const resetColor = useColorModeValue("purple.600", "purple.200");
+  const bgColor = "white";
+  const borderColor = "gray.200";
+  const resetBgColor = "purple.50";
+  const resetColor = "purple.600";
 
   return (
     <Box bg={bgColor} borderRadius="lg">
