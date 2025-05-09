@@ -268,7 +268,7 @@ const CheckInDashboard: React.FC = () => {
                   </GridItem>
                   
                   <GridItem>
-                    <Box bg={cardBg} p={6} borderRadius="lg" shadow="sm">
+                    <Box bg={cardBg} p={6} borderRadius="lg" border="2px solid" borderColor="gray.200">
                       <Heading size="md" mb={4}>
                         <Icon as={FaUserCheck} mr={2} />
                         Recent Check-ins
@@ -321,7 +321,7 @@ const CheckInDashboard: React.FC = () => {
                       </Button>
                     </Box>
                     
-                    <Box bg={cardBg} p={6} borderRadius="lg" shadow="sm" mt={6}>
+                    <Box bg={cardBg} p={6} borderRadius="lg" border="2px solid" borderColor="gray.200" mt={6}>
                       <Heading size="md" mb={4}>
                         <Icon as={FaQrcode} mr={2} />
                         Check-in Methods
@@ -355,7 +355,7 @@ const CheckInDashboard: React.FC = () => {
               
               {/* Attendees Tab */}
               <TabPanel p={0} pt={6}>
-                <Box bg={tableBg} borderRadius="lg" shadow="sm" overflow="hidden">
+                <Box bg={tableBg} borderRadius="lg" border="2px solid" borderColor="gray.200"  overflow="hidden">
                   <Flex 
                     bg={tableHeadBg} 
                     p={4} 

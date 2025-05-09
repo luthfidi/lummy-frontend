@@ -16,7 +16,7 @@ import {
   useToast,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { ArrowBackIcon, RepeatIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { FaTicketAlt} from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
 import QrScanner from '../../components/ticketManagement/QrScanner';
@@ -184,15 +184,6 @@ const ScannerPage: React.FC = () => {
   const handleReject = (attendeeId: string, reason: string) => {
     // Simulate API call to mark ticket as rejected
     console.log(`Rejecting attendee ${attendeeId}, reason: ${reason}`);
-    
-    // Reset for next scan
-    setTimeout(() => {
-      setAttendeeData(null);
-    }, 2000);
-  };
-
-  const resetScan = () => {
-    setAttendeeData(null);
   };
 
   const formatTime = (date: Date): string => {
@@ -302,21 +293,6 @@ const ScannerPage: React.FC = () => {
               onReject={handleReject}
               isLoading={isLoading}
             />
-            
-            {attendeeData && (
-              <Button
-                position="absolute"
-                top={4}
-                right={4}
-                size="sm"
-                leftIcon={<RepeatIcon />}
-                onClick={resetScan}
-                colorScheme="gray"
-                variant="ghost"
-              >
-                Reset
-              </Button>
-            )}
           </Box>
         </GridItem>
       </Grid>

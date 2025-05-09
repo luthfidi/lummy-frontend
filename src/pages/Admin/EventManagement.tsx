@@ -369,7 +369,7 @@ const EventManagement: React.FC = () => {
           </TabPanel>
 
           {/* Tickets Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={6}>
             <VStack spacing={6} align="stretch">
               <Heading size="md">Ticket Tiers</Heading>
 
@@ -439,7 +439,7 @@ const EventManagement: React.FC = () => {
           </TabPanel>
 
           {/* Attendees Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={4}>
             <Flex justify="space-between" align="center" mb={6}>
               <Heading size="md">Attendee Management</Heading>
               <HStack>
@@ -460,7 +460,7 @@ const EventManagement: React.FC = () => {
           </TabPanel>
 
           {/* Settings Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={4}>
             <VStack spacing={8} align="stretch">
               <ResellSettings
                 settings={resellSettings}

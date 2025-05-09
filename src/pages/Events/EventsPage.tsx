@@ -228,8 +228,8 @@ const EventsPage: React.FC = () => {
     <Container maxW="container.xl" py={8}>
       <VStack spacing={8} align="stretch">
         <Box>
-          <Heading size="xl">Discover Events</Heading>
-          <Text color="gray.600" mt={2}>
+          <Heading size="lg">Discover Events</Heading>
+          <Text color="gray.600">
             Find and book blockchain-verified tickets for the best events
           </Text>
         </Box>

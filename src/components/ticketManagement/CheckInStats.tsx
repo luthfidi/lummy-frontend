@@ -54,7 +54,15 @@ const StatCard: React.FC<StatCardProps> = ({
   const cardBg = useColorModeValue("white", "gray.700");
 
   return (
-    <Box p={4} bg={cardBg} borderRadius="lg" boxShadow="sm">
+    <Box
+      px={3}
+      pt={3}
+      pb={1}
+      bg={cardBg}
+      borderRadius="lg"
+      border="2px solid"
+      borderColor="gray.200"
+    >
       <Stat>
         <Flex justify="space-between" align="center">
           <StatLabel fontWeight="medium" color="gray.600">
@@ -62,7 +70,7 @@ const StatCard: React.FC<StatCardProps> = ({
           </StatLabel>
           <Icon as={icon} color={`${color}.500`} boxSize={6} />
         </Flex>
-        <StatNumber fontSize="3xl" fontWeight="bold" mt={2}>
+        <StatNumber fontSize="2xl" fontWeight="bold" mt={2}>
           {isPercentage ? `${value}%` : value}
         </StatNumber>
         {helpText && (
@@ -82,7 +90,7 @@ const CheckInStats: React.FC<CheckInStatsProps> = ({ stats }) => {
 
   return (
     <Box>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={4} mb={8}>
         <StatCard
           label="Total Attendees"
           value={stats.totalAttendees}
@@ -111,7 +119,14 @@ const CheckInStats: React.FC<CheckInStatsProps> = ({ stats }) => {
         />
       </SimpleGrid>
 
-      <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="sm" mb={8}>
+      <Box
+        bg={cardBg}
+        p={5}
+        borderRadius="lg"
+        border="2px solid"
+        borderColor="gray.200"
+        mb={8}
+      >
         <Text fontWeight="medium" fontSize="lg" mb={4}>
           Check-in Progress
         </Text>

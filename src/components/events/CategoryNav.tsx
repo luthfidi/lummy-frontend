@@ -40,8 +40,8 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ onCategorySelect }) => {
     { name: "Theater", icon: FaTheaterMasks, color: "teal.500" },
   ];
 
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  const hoverBorder = useColorModeValue("gray.400", "gray.500");
+  const borderColor = useColorModeValue("gray.300", "gray.400");
+  const hoverBorder = useColorModeValue("gray.500", "gray.600");
   const bgHover = useColorModeValue("gray.50", "gray.700");
 
   return (
@@ -49,7 +49,7 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ onCategorySelect }) => {
       {categories.map((category) => (
         <Box
           key={category.name}
-          border="2px solid"
+          border="1px solid"
           borderColor={borderColor}
           borderRadius="lg"
           p={4}

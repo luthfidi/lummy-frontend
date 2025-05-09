@@ -21,7 +21,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { AddIcon, CalendarIcon } from "@chakra-ui/icons";
-import { FaTicketAlt, FaChartLine, FaUsers, FaUserCheck } from "react-icons/fa";
+import { FaTicketAlt, FaChartLine, FaUserCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import SalesStatistics from "../../components/admin/SalesStatistics";
@@ -78,6 +78,25 @@ const mockSalesData = {
   availableTickets: 195,
   totalTransactions: 610,
   averageTicketPrice: 89.44,
+  
+  // Grouped by event name and ticket tier
+  revenueByEventAndTier: {
+    "Summer Music Festival": {
+      "General Admission": 15000,
+      "VIP Pass": 12000,
+      "Backstage Experience": 4500
+    },
+    "Tech Conference 2025": {
+      "Standard Access": 30000,
+      "Premium Access": 24000
+    },
+    "Blockchain Workshop": {
+      "Workshop Ticket": 6500,
+      "Workshop + Certification": 2000
+    }
+  },
+  
+  // Flat version (for backward compatibility)
   revenueByTier: {
     "General Admission": 15000,
     "VIP Pass": 12000,
@@ -87,6 +106,7 @@ const mockSalesData = {
     "Workshop Ticket": 6500,
     "Workshop + Certification": 2000,
   },
+  
   salesByDay: [
     { date: "2025-03-01", sales: 20 },
     { date: "2025-03-02", sales: 35 },
@@ -152,7 +172,7 @@ const AdminDashboard: React.FC = () => {
             <Flex justify="space-between" align="center">
               <Box>
                 <HStack mb={1}>
-                  <Heading size="md">{event.eventName}</Heading>
+                  <Heading size="sm">{event.eventName}</Heading>
                   <Badge colorScheme={getBadgeColor(status)}>{status}</Badge>
                 </HStack>
                 <HStack spacing={4} color="gray.600">
@@ -207,7 +227,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Flex justify="space-between" align="center" mb={6}>
+      <Flex justify="space-between" align="center" mb={8}>
         <Box>
           <Heading size="lg">Organizer Dashboard</Heading>
           <Text color="gray.600">Manage your events and track performance</Text>
@@ -224,9 +244,6 @@ const AdminDashboard: React.FC = () => {
           </Tab>
           <Tab>
             <Icon as={FaTicketAlt} mr={2} /> My Events
-          </Tab>
-          <Tab>
-            <Icon as={FaUsers} mr={2} /> Attendees
           </Tab>
         </TabList>
 
@@ -262,34 +279,27 @@ const AdminDashboard: React.FC = () => {
             <Divider my={2} />
           </TabPanel>
 
-          <TabPanel>
+          <TabPanel px={0} py={6} >
             <VStack align="stretch" spacing={8}>
               <Box>
-                <Heading size="lg" mb={4}>
+                <Heading size="md" mb={4}>
                   Upcoming Events
                 </Heading>
                 {renderEventCards(upcomingEvents)}
               </Box>
               <Box>
-                <Heading size="lg" mb={4}>
+                <Heading size="md" mb={4}>
                   Ongoing Events
                 </Heading>
                 {renderEventCards(ongoingEvents)}
               </Box>
               <Box>
-                <Heading size="lg" mb={4}>
+                <Heading size="md" mb={4}>
                   Completed Events
                 </Heading>
                 {renderEventCards(completedEvents)}
               </Box>
             </VStack>
-          </TabPanel>
-
-          <TabPanel px={0}>
-            <Text fontSize="lg" fontWeight="medium" mb={4}>
-              For attendee management, please select an event from the My Events
-              tab.
-            </Text>
           </TabPanel>
         </TabPanels>
       </Tabs>

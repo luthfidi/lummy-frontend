@@ -12,8 +12,7 @@ import {
   HStack,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 
 interface EventsFilterProps {
   searchQuery: string;
@@ -55,11 +54,11 @@ const EventsFilter: React.FC<EventsFilterProps> = ({
 
   return (
     <Box bg={bgColor} borderRadius="lg">
-      <VStack spacing={6}>
+      <VStack spacing={4}>
         {/* Search Bar */}
-        <InputGroup size="lg">
+        <InputGroup size="md">
           <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.400" />
+            <Icon as={FaSearch} color="gray.400" />
           </InputLeftElement>
           <Input
             placeholder="Search events, artists, or venues"

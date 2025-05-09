@@ -79,7 +79,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           onChange={handleSearchChange}
           bg={bgColor}
           borderRadius="md"
-          boxShadow="sm"
         />
       </InputGroup>
 
@@ -96,7 +95,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           {categories.map((category) => (
@@ -113,7 +111,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           {locations.map((location) => (
@@ -130,7 +127,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         />
 
@@ -140,7 +136,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           <option value="newest">Newest Listings</option>

@@ -5,7 +5,6 @@ import {
   Heading,
   Text,
   VStack,
-  HStack,
   Select,
   Badge,
   useColorModeValue,
@@ -36,10 +35,10 @@ export interface SalesData {
   averageTicketPrice: number;
   revenueByTier: { [tierName: string]: number };
   // Add revenueByEventAndTier for grouped data
-  revenueByEventAndTier?: { 
-    [eventName: string]: { 
-      [tierName: string]: number 
-    } 
+  revenueByEventAndTier?: {
+    [eventName: string]: {
+      [tierName: string]: number;
+    };
   };
   salesByDay: { date: string; sales: number }[];
   currency: string;
@@ -115,6 +114,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
 }) => {
   const [timeRange, setTimeRange] = useState<string>("7d");
   const cardBg = useColorModeValue("white", "gray.700");
+  const purpleColor = useColorModeValue("purple.500", "purple.300");
+  const badgeBg = useColorModeValue("purple.50", "purple.900");
 
   // In a real implementation, this would update the data based on time range
   const handleTimeRangeChange = (range: string) => {
@@ -130,8 +131,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
             data={salesData.salesByDay}
             margin={{
               top: 5,
-              right: 30,
-              left: 20,
+              right: 50,
+              left: 0,
               bottom: 5,
             }}
           >
@@ -171,35 +172,10 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
     );
   };
 
-  // Prepare event and tier data for display
-  const prepareEventTierData = () => {
-    // If we have the new format data
-    if (salesData.revenueByEventAndTier) {
-      return Object.entries(salesData.revenueByEventAndTier).map(([eventName, tiers]) => ({
-        eventName,
-        tiers: Object.entries(tiers).map(([tierName, revenue]) => ({
-          tierName,
-          revenue
-        }))
-      }));
-    } else {
-      // Fallback to display flat tier data, all under the current event name
-      return [{
-        eventName,
-        tiers: Object.entries(salesData.revenueByTier || {}).map(([tierName, revenue]) => ({
-          tierName,
-          revenue
-        }))
-      }];
-    }
-  };
-
   // Defensively handle data
   if (!salesData) {
     return <Box>No sales data available</Box>;
   }
-
-  const eventTierData = prepareEventTierData();
 
   return (
     <Box>
@@ -248,8 +224,9 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               label="Tickets Sold"
               value={(salesData.soldTickets || 0).toLocaleString()}
               helpText={`${(
-                (salesData.soldTickets || 0) /
-                ((salesData.soldTickets || 0) + (salesData.availableTickets || 0)) *
+                ((salesData.soldTickets || 0) /
+                  ((salesData.soldTickets || 0) +
+                    (salesData.availableTickets || 0))) *
                 100
               ).toFixed(1)}% of total`}
               icon="🎟️"
@@ -316,39 +293,98 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               <Heading size="sm" mb={4}>
                 Revenue by Ticket Tier
               </Heading>
-              <VStack spacing={4} align="stretch">
-                {eventTierData.map((eventData, eventIndex) => (
-                  <Box key={eventIndex}>
-                    <Heading size="xs" mb={2} color="gray.700">
-                      {eventData.eventName}
-                    </Heading>
-                    <VStack spacing={3} align="stretch">
-                      {eventData.tiers.map((tier, tierIndex) => (
-                        <Flex 
-                          key={tierIndex} 
-                          justify="space-between" 
-                          align="center"
+
+              <VStack spacing={2} align="stretch">
+                {salesData.revenueByEventAndTier ? (
+                  // Display revenue grouped by event
+                  Object.entries(salesData.revenueByEventAndTier).map(
+                    ([eventName, tiers], eventIndex) => (
+                      <Box key={eventIndex}>
+                        <Text
+                          fontWeight="bold"
+                          fontSize="md"
+                          color={purpleColor}
+                          mb={2}
+                          borderLeftWidth="3px"
+                          borderLeftColor={purpleColor}
+                          pl={2}
                         >
-                          <HStack>
-                            <Badge colorScheme="purple" px={2} py={1}>
-                              {tier.tierName}
+                          {eventName}
+                        </Text>
+                        <VStack spacing={2} align="stretch" mb={3}>
+                          {Object.entries(tiers).map(
+                            ([tierName, revenue], tierIndex) => (
+                              <Flex
+                                key={tierIndex}
+                                justify="space-between"
+                                align="center"
+                              >
+                                <Badge
+                                  bg={badgeBg}
+                                  color={purpleColor}
+                                  px={2}
+                                  py={1}
+                                >
+                                  {tierName}
+                                </Badge>
+                                <Text fontWeight="medium">
+                                  {salesData.currency}{" "}
+                                  {revenue.toLocaleString()}
+                                </Text>
+                              </Flex>
+                            )
+                          )}
+                        </VStack>
+                        {eventIndex <
+                          Object.keys(salesData.revenueByEventAndTier || {})
+                            .length -
+                            1 && <Divider />}
+                      </Box>
+                    )
+                  )
+                ) : (
+                  // Fallback to non-grouped display
+                  <Box>
+                    <Text
+                      fontWeight="bold"
+                      fontSize="md"
+                      color={purpleColor}
+                      mb={2}
+                      borderLeftWidth="3px"
+                      borderLeftColor={purpleColor}
+                      pl={2}
+                    >
+                      {eventName}
+                    </Text>
+                    <VStack spacing={2} align="stretch">
+                      {Object.entries(salesData.revenueByTier || {}).map(
+                        ([tierName, revenue], index) => (
+                          <Flex
+                            key={index}
+                            justify="space-between"
+                            align="center"
+                          >
+                            <Badge
+                              bg={badgeBg}
+                              color={purpleColor}
+                              px={2}
+                              py={1}
+                            >
+                              {tierName}
                             </Badge>
-                          </HStack>
-                          <Text fontWeight="bold">
-                            {salesData.currency || "IDRX"}{" "}
-                            {tier.revenue.toLocaleString()}
-                          </Text>
-                        </Flex>
-                      ))}
+                            <Text fontWeight="medium">
+                              {salesData.currency} {revenue.toLocaleString()}
+                            </Text>
+                          </Flex>
+                        )
+                      )}
                     </VStack>
-                    {eventIndex < eventTierData.length - 1 && (
-                      <Divider my={3} />
-                    )}
                   </Box>
-                ))}
-                {eventTierData.length === 0 && (
-                  <Text color="gray.500">No revenue data available</Text>
                 )}
+                {!salesData.revenueByEventAndTier &&
+                  Object.keys(salesData.revenueByTier || {}).length === 0 && (
+                    <Text color="gray.500">No revenue data available</Text>
+                  )}
               </VStack>
             </Box>
           </MotionBox>

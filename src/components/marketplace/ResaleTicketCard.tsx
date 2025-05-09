@@ -90,6 +90,7 @@ export const ResaleTicketCard: React.FC<ResaleTicketCardProps> = ({
         height="100%"
         display="flex"
         flexDirection="column"
+        cursor="default"
       >
         <Box 
           bg="lummy.purple.500"

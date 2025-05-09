@@ -5,7 +5,6 @@ import {
   VStack,
   HStack,
   Text,
-  Image,
   Button,
   Badge,
   Divider,
@@ -175,15 +174,6 @@ const AttendeeVerification: React.FC<AttendeeVerificationProps> = ({
             gap={6}
             mb={6}
           >
-            <Image
-              src={attendee.profileImage || "https://via.placeholder.com/100"}
-              alt={attendee.name}
-              boxSize="100px"
-              borderRadius="lg"
-              objectFit="cover"
-              fallbackSrc="https://via.placeholder.com/100?text=Attendee"
-            />
-
             <VStack align="flex-start" spacing={1} flex="1">
               <Text fontSize="2xl" fontWeight="bold">
                 {attendee.name}
