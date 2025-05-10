@@ -1,4 +1,3 @@
-// src/components/layout/Navbar/FinalNavbar.tsx
 import React from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import {
@@ -33,7 +32,7 @@ const Links = [
 ];
 
 // Final Improved Navbar Component
-export const FinalNavbar: React.FC = () => {
+export const Navbar: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const location = useLocation();
   const { address } = useAccount();
@@ -246,4 +245,4 @@ export const FinalNavbar: React.FC = () => {
   );
 };
 
-export default FinalNavbar;
+export default Navbar;
