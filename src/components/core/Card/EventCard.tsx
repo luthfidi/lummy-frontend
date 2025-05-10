@@ -72,7 +72,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onClick }) => {
         <Text
           fontWeight="semibold"
           fontSize="md"
-          noOfLines={2}
+          noOfLines={1}
           lineHeight="tight"
         >
           {title}

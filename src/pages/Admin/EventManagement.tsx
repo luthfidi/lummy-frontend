@@ -26,16 +26,29 @@ import {
   AlertDialogOverlay,
   IconButton,
   Skeleton,
+  Progress,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  FormControl,
+  FormLabel,
+  Input,
+  Textarea,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  InputGroup,
+  InputLeftAddon,
+  Stack,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
-import {
-  FaTicketAlt,
-  FaChartBar,
-  FaUsers,
-  FaCog,
-  FaQrcode,
-  FaUserCheck,
-} from "react-icons/fa";
+import { FaTicketAlt, FaChartBar, FaUsers, FaCog } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import SalesStatistics, {
   SalesData,
@@ -123,6 +136,18 @@ const mockResellSettings: ResellSettingsData = {
   requireVerification: false,
 };
 
+// Interface untuk Ticket Tier yang akan diedit
+interface EditableTier {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  description: string;
+  available: number;
+  maxPerPurchase: number;
+  benefits?: string[];
+}
+
 const EventManagement: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -137,6 +162,15 @@ const EventManagement: React.FC = () => {
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [resellSettings, setResellSettings] =
     useState<ResellSettingsData | null>(null);
+
+  // State dan handler untuk modal form ticket tier
+  const [editingTier, setEditingTier] = useState<EditableTier | null>(null);
+  const [isNewTier, setIsNewTier] = useState(false);
+  const {
+    isOpen: isTierModalOpen,
+    onOpen: openTierModal,
+    onClose: closeTierModal,
+  } = useDisclosure();
 
   // Fetch event data on mount
   useEffect(() => {
@@ -207,6 +241,148 @@ const EventManagement: React.FC = () => {
     });
 
     navigate("/admin");
+  };
+
+  // Handlers untuk mengedit dan menambah tier
+  const handleEditTier = (tier: any) => {
+    setEditingTier({
+      id: tier.id || `tier-${Date.now()}`,
+      name: tier.tierName,
+      price: tier.price,
+      currency: tier.currency || "IDRX",
+      description: "Ticket description", // Mock value since it's not in the data model
+      available: tier.total,
+      maxPerPurchase: 4, // Mock value since it's not in the data model
+      benefits: [], // Mock value since it's not in the data model
+    });
+    setIsNewTier(false);
+    openTierModal();
+  };
+
+  const handleAddNewTier = () => {
+    setEditingTier({
+      id: `tier-${Date.now()}`,
+      name: "",
+      price: 0,
+      currency: "IDRX",
+      description: "",
+      available: 100,
+      maxPerPurchase: 4,
+      benefits: [],
+    });
+    setIsNewTier(true);
+    openTierModal();
+  };
+
+  // Handler untuk perubahan pada form
+  const handleTierInputChange = (field: keyof EditableTier, value: any) => {
+    if (editingTier) {
+      setEditingTier({
+        ...editingTier,
+        [field]: value,
+      });
+    }
+  };
+
+  // Handler untuk menyimpan perubahan
+  const handleSaveTier = () => {
+    if (!editingTier || !event) return;
+
+    let updatedTierStats = [...event.tierStats];
+
+    if (isNewTier) {
+      // Add new tier
+      updatedTierStats.push({
+        tierName: editingTier.name,
+        sold: 0,
+        total: editingTier.available,
+        price: editingTier.price,
+      });
+
+      toast({
+        title: "Ticket tier added",
+        description: `${editingTier.name} has been added successfully.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      // Update existing tier
+      updatedTierStats = updatedTierStats.map((tier) =>
+        tier.tierName === editingTier.name
+          ? {
+              ...tier,
+              price: editingTier.price,
+              total: editingTier.available,
+            }
+          : tier
+      );
+
+      toast({
+        title: "Ticket tier updated",
+        description: `${editingTier.name} has been updated successfully.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+    // Update event data
+    setEvent({
+      ...event,
+      tierStats: updatedTierStats,
+      // Update total tickets and revenue
+      totalTickets: updatedTierStats.reduce(
+        (total, tier) => total + tier.total,
+        0
+      ),
+      ticketsSold: updatedTierStats.reduce(
+        (total, tier) => total + tier.sold,
+        0
+      ),
+      revenue: updatedTierStats.reduce(
+        (total, tier) => total + tier.sold * tier.price,
+        0
+      ),
+    });
+
+    closeTierModal();
+  };
+
+  // Handle delete tier
+  const handleDeleteTier = (tierName: string) => {
+    if (!event) return;
+
+    const updatedTierStats = event.tierStats.filter(
+      (tier) => tier.tierName !== tierName
+    );
+
+    // Update event data
+    setEvent({
+      ...event,
+      tierStats: updatedTierStats,
+      // Update total tickets and revenue
+      totalTickets: updatedTierStats.reduce(
+        (total, tier) => total + tier.total,
+        0
+      ),
+      ticketsSold: updatedTierStats.reduce(
+        (total, tier) => total + tier.sold,
+        0
+      ),
+      revenue: updatedTierStats.reduce(
+        (total, tier) => total + tier.sold * tier.price,
+        0
+      ),
+    });
+
+    toast({
+      title: "Ticket tier deleted",
+      description: `${tierName} has been deleted successfully.`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
   };
 
   if (loading) {
@@ -325,26 +501,9 @@ const EventManagement: React.FC = () => {
                 rounded="xl"
               >
                 <Box>
-                  <Flex justify="space-between" align="center" mb={4}>
-                    <Heading size="md">Ticket Sales Performance</Heading>
-                    <HStack>
-                      <Button
-                        leftIcon={<Icon as={FaUserCheck} />}
-                        colorScheme="purple"
-                        variant="outline"
-                        onClick={() => navigate(`/admin/events/${id}/check-in`)}
-                      >
-                        Check-in Dashboard
-                      </Button>
-                      <Button
-                        leftIcon={<Icon as={FaQrcode} />}
-                        colorScheme="purple"
-                        onClick={() => navigate(`/admin/events/${id}/scanner`)}
-                      >
-                        Scan Tickets
-                      </Button>
-                    </HStack>
-                  </Flex>
+                  <Heading size="md" mb={4}>
+                    Ticket Sales Performance
+                  </Heading>
                   <EventStats stats={event} />
                 </Box>
               </MotionBox>
@@ -354,7 +513,16 @@ const EventManagement: React.FC = () => {
           {/* Tickets Tab */}
           <TabPanel px={0} py={6}>
             <VStack spacing={6} align="stretch">
-              <Heading size="md">Ticket Tiers</Heading>
+              <Flex justify="space-between" align="center" mb={4}>
+                <Heading size="md">Ticket Tiers</Heading>
+                <Button
+                  leftIcon={<AddIcon />}
+                  colorScheme="purple"
+                  onClick={handleAddNewTier}
+                >
+                  Add New Tier
+                </Button>
+              </Flex>
 
               {event.tierStats.map((tier, index) => (
                 <Box
@@ -363,33 +531,91 @@ const EventManagement: React.FC = () => {
                   borderWidth="2px"
                   borderRadius="md"
                   shadow="sm"
+                  transition="all 0.3s"
+                  _hover={{ boxShadow: "md" }}
                 >
-                  <Flex justify="space-between" align="center">
-                    <VStack align="start" spacing={1}>
-                      <Text fontWeight="bold">{tier.tierName}</Text>
-                      <HStack>
+                  <Flex justify="space-between" align="start">
+                    <Box flex="1">
+                      <HStack mb={2} align="center">
+                        <Text fontWeight="bold" fontSize="lg">
+                          {tier.tierName}
+                        </Text>
                         <Badge colorScheme="purple">
                           {tier.price} {event.currency}
                         </Badge>
-                        <Text fontSize="sm">
-                          {tier.sold} / {tier.total} sold (
-                          {((tier.sold / tier.total) * 100).toFixed(0)}%)
+                      </HStack>
+
+                      <Text fontSize="sm" color="gray.600" mb={2}>
+                        {tier.sold} / {tier.total} sold (
+                        {((tier.sold / tier.total) * 100).toFixed(0)}%)
+                      </Text>
+
+                      <Progress
+                        value={(tier.sold / tier.total) * 100}
+                        size="sm"
+                        colorScheme={
+                          (tier.sold / tier.total) * 100 >= 75
+                            ? "green"
+                            : "blue"
+                        }
+                        borderRadius="full"
+                        mb={2}
+                      />
+
+                      <HStack mt={3} spacing={4}>
+                        <Text fontSize="sm" color="gray.500">
+                          Max Per Purchase: 4
+                        </Text>
+                        <Text fontSize="sm" color="gray.500">
+                          Revenue: {event.currency}{" "}
+                          {(tier.sold * tier.price).toLocaleString()}
                         </Text>
                       </HStack>
-                    </VStack>
+                    </Box>
 
-                    <HStack>
-                      <Button size="sm" colorScheme="purple" variant="outline">
+                    <HStack spacing={2}>
+                      <Button
+                        size="sm"
+                        leftIcon={<EditIcon />}
+                        colorScheme="purple"
+                        variant="outline"
+                        onClick={() => handleEditTier(tier)}
+                      >
                         Edit
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        leftIcon={<DeleteIcon />}
+                        colorScheme="red"
+                        variant="outline"
+                        onClick={() => handleDeleteTier(tier.tierName)}
+                      >
+                        Delete
                       </Button>
                     </HStack>
                   </Flex>
                 </Box>
               ))}
 
-              <Button leftIcon={<AddIcon />} alignSelf="flex-start">
-                Add New Tier
-              </Button>
+              {event.tierStats.length === 0 && (
+                <Box
+                  p={8}
+                  borderWidth="1px"
+                  borderRadius="md"
+                  borderStyle="dashed"
+                  textAlign="center"
+                >
+                  <Text color="gray.500">No ticket tiers added yet.</Text>
+                  <Button
+                    mt={4}
+                    colorScheme="purple"
+                    onClick={handleAddNewTier}
+                  >
+                    Add Your First Tier
+                  </Button>
+                </Box>
+              )}
             </VStack>
           </TabPanel>
 
@@ -399,7 +625,6 @@ const EventManagement: React.FC = () => {
               <Heading size="md">Attendee Management</Heading>
               <HStack>
                 <Button
-                  leftIcon={<Icon as={FaUserCheck} />}
                   colorScheme="purple"
                   onClick={() => navigate(`/admin/events/${id}/check-in`)}
                 >
@@ -454,6 +679,162 @@ const EventManagement: React.FC = () => {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
+
+      {/* Ticket Tier Edit/Add Modal */}
+      <Modal isOpen={isTierModalOpen} onClose={closeTierModal} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            {isNewTier ? "Add New Ticket Tier" : "Edit Ticket Tier"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {editingTier && (
+              <Stack spacing={4}>
+                <FormControl isRequired>
+                  <FormLabel>Tier Name</FormLabel>
+                  <Input
+                    value={editingTier.name}
+                    onChange={(e) =>
+                      handleTierInputChange("name", e.target.value)
+                    }
+                    placeholder="e.g. VIP, General Admission, Early Bird"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Price</FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon>{editingTier.currency}</InputLeftAddon>
+                    <NumberInput
+                      value={editingTier.price}
+                      onChange={(_, value) =>
+                        handleTierInputChange("price", value)
+                      }
+                      min={0}
+                      w="full"
+                    >
+                      <NumberInputField borderLeftRadius={0} />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </InputGroup>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Description</FormLabel>
+                  <Textarea
+                    value={editingTier.description}
+                    onChange={(e) =>
+                      handleTierInputChange("description", e.target.value)
+                    }
+                    placeholder="Describe what this ticket tier offers"
+                    rows={3}
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Available Quantity</FormLabel>
+                  <NumberInput
+                    value={editingTier.available}
+                    onChange={(_, value) =>
+                      handleTierInputChange("available", value)
+                    }
+                    min={0}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Maximum Per Purchase</FormLabel>
+                  <NumberInput
+                    value={editingTier.maxPerPurchase}
+                    onChange={(_, value) =>
+                      handleTierInputChange("maxPerPurchase", value)
+                    }
+                    min={1}
+                    max={10}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                  <Text fontSize="sm" color="gray.500" mt={1}>
+                    Maximum number of tickets that can be purchased in a single
+                    transaction
+                  </Text>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Benefits (Optional)</FormLabel>
+                  <VStack align="start" spacing={2}>
+                    {editingTier.benefits?.map((benefit, index) => (
+                      <HStack key={index} width="full">
+                        <Input
+                          value={benefit}
+                          onChange={(e) => {
+                            const newBenefits = [
+                              ...(editingTier.benefits || []),
+                            ];
+                            newBenefits[index] = e.target.value;
+                            handleTierInputChange("benefits", newBenefits);
+                          }}
+                          placeholder={`Benefit ${index + 1}`}
+                        />
+                        <IconButton
+                          aria-label="Remove benefit"
+                          icon={<DeleteIcon />}
+                          size="sm"
+                          colorScheme="red"
+                          variant="ghost"
+                          onClick={() => {
+                            const newBenefits = [
+                              ...(editingTier.benefits || []),
+                            ];
+                            newBenefits.splice(index, 1);
+                            handleTierInputChange("benefits", newBenefits);
+                          }}
+                        />
+                      </HStack>
+                    ))}
+                    <Button
+                      leftIcon={<AddIcon />}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const newBenefits = [
+                          ...(editingTier.benefits || []),
+                          "",
+                        ];
+                        handleTierInputChange("benefits", newBenefits);
+                      }}
+                    >
+                      Add Benefit
+                    </Button>
+                  </VStack>
+                </FormControl>
+              </Stack>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={closeTierModal}>
+              Cancel
+            </Button>
+            <Button colorScheme="purple" onClick={handleSaveTier}>
+              {isNewTier ? "Add Tier" : "Save Changes"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   VStack,
-  HStack,
   Text,
   Button,
   Flex,
@@ -15,6 +14,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
 import { TicketTier } from "../../../types/Event";
@@ -22,49 +22,82 @@ import { TicketTier } from "../../../types/Event";
 interface TicketTierCardProps {
   tier: TicketTier;
   onSelect: (tierId: string, quantity: number) => void;
+  isSelected?: boolean;
+  selectedQuantity?: number;
+  onCheckout?: () => void;
 }
 
 export const TicketTierCard: React.FC<TicketTierCardProps> = ({
   tier,
   onSelect,
+  isSelected = false,
+  selectedQuantity = 0,
 }) => {
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [, setTotalPrice] = useState<number>(tier.price * quantity);
   const isAvailable = tier.available > 0;
+
+  // Update local quantity when selected quantity changes from parent
+  useEffect(() => {
+    setQuantity(selectedQuantity);
+  }, [isSelected, selectedQuantity]);
+
+  // Calculate total price whenever quantity changes
+  useEffect(() => {
+    setTotalPrice(tier.price * quantity);
+  }, [tier.price, quantity]);
 
   const handleQuantityChange = (
     _valueAsString: string,
     valueAsNumber: number
   ) => {
     setQuantity(valueAsNumber);
+    if (isSelected) {
+      onSelect(tier.id, valueAsNumber);
+    }
   };
 
   const handleSelect = () => {
-    onSelect(tier.id, quantity);
+    // If not already selected, set quantity to 1 when selecting
+    const newQuantity = !isSelected ? 1 : quantity;
+    setQuantity(newQuantity);
+    onSelect(tier.id, newQuantity);
   };
+
+  // Enhanced styles for selected state
+  const borderColor = useColorModeValue(
+    isSelected ? "purple.300" : "gray.200",
+    isSelected ? "purple.600" : "gray.600"
+  );
+
+  const bgColor = useColorModeValue(
+    isSelected ? "purple.50" : "white",
+    isSelected ? "purple.900" : "gray.800"
+  );
 
   return (
     <Box
-      borderWidth="1px"
+      borderWidth="2px"
       borderRadius="lg"
       overflow="hidden"
-      p={5}
-      bg="white"
-      boxShadow="sm"
+      borderColor={borderColor}
+      bg={bgColor}
+      boxShadow={isSelected ? "md" : "sm"}
       position="relative"
       transition="all 0.3s"
-      _hover={{
-        boxShadow: "md",
-        transform: isAvailable ? "translateY(-2px)" : "none",
-      }}
     >
+      {/* Status Badge */}
       {tier.available < 10 && tier.available > 0 && (
         <Badge
           position="absolute"
-          top={2}
-          right={2}
+          top={3}
+          right={3}
           colorScheme="orange"
           variant="solid"
-          fontSize="xs"
+          fontSize="sm"
+          px={2}
+          py={1}
+          borderRadius="md"
         >
           Only {tier.available} left
         </Badge>
@@ -73,74 +106,113 @@ export const TicketTierCard: React.FC<TicketTierCardProps> = ({
       {tier.available === 0 && (
         <Badge
           position="absolute"
-          top={2}
-          right={2}
+          top={3}
+          right={3}
           colorScheme="red"
           variant="solid"
-          fontSize="xs"
+          fontSize="sm"
+          px={2}
+          py={1}
+          borderRadius="md"
         >
           Sold Out
         </Badge>
       )}
 
-      <VStack spacing={4} align="stretch">
-        <Text fontWeight="bold" fontSize="lg">
-          {tier.name}
-        </Text>
+      <Flex direction={{ base: "column", md: "row" }}>
+        {/* Tier Info */}
+        <Box flex="1" p={6}>
+          <VStack align="start" spacing={3}>
+            <Text
+              fontWeight="bold"
+              fontSize="xl"
+              color={isSelected ? "purple.700" : "gray.800"}
+            >
+              {tier.name}
+            </Text>
 
-        <Text fontWeight="bold" fontSize="2xl" color="purple.600">
-          {tier.price} {tier.currency}
-        </Text>
+            <Text fontWeight="bold" fontSize="2xl" color="purple.600">
+              {tier.price} {tier.currency}
+            </Text>
 
-        <Text color="gray.600">{tier.description}</Text>
+            <Text color="gray.600" fontSize="md">
+              {tier.description}
+            </Text>
 
-        {tier.benefits && tier.benefits.length > 0 && (
-          <List spacing={2} mt={2}>
-            {tier.benefits.map((benefit, index) => (
-              <ListItem key={index} display="flex" alignItems="center">
-                <ListIcon as={CheckIcon} color="green.500" />
-                <Text fontSize="sm">{benefit}</Text>
-              </ListItem>
-            ))}
-          </List>
-        )}
+            {/* Benefits List */}
+            {tier.benefits && tier.benefits.length > 0 && (
+              <Box width="100%" mt={2}>
+                <Text fontWeight="medium" mb={2}>
+                  This ticket includes:
+                </Text>
+                <List spacing={2}>
+                  {tier.benefits.map((benefit, index) => (
+                    <ListItem
+                      key={index}
+                      display="flex"
+                      alignItems="flex-start"
+                    >
+                      <ListIcon as={CheckIcon} color="green.500" mt={1} />
+                      <Text>{benefit}</Text>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+          </VStack>
+        </Box>
 
-        <Flex justify="space-between" align="center" mt={4}>
+        {/* Selection Controls */}
+        <Box
+          p={6}
+          bg={isSelected ? "purple.100" : "gray.50"}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          minWidth={{ base: "full", md: "250px" }}
+          borderLeftWidth={{ base: "0", md: "1px" }}
+          borderTopWidth={{ base: "1px", md: "0" }}
+          borderColor="gray.200"
+        >
           {isAvailable ? (
-            <>
-              <HStack spacing={2}>
-                <Text fontSize="sm">Quantity:</Text>
+            <VStack spacing={4} align="stretch">
+              <Box>
+                <Text fontWeight="medium" mb={2}>
+                  Quantity
+                </Text>
                 <NumberInput
-                  size="sm"
-                  maxW={20}
-                  min={1}
+                  size="md"
+                  min={0}
                   max={Math.min(tier.maxPerPurchase, tier.available)}
                   value={quantity}
                   onChange={handleQuantityChange}
+                  isDisabled={!isAvailable}
                 >
-                  <NumberInputField />
+                  <NumberInputField borderRadius="md" bg="white" />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-              </HStack>
+              </Box>
+
               <Button
                 colorScheme="purple"
-                size="sm"
+                size="md"
                 onClick={handleSelect}
                 isDisabled={!isAvailable}
+                mt={2}
               >
-                Select
+                Select Ticket
               </Button>
-            </>
+            </VStack>
           ) : (
-            <Button width="full" colorScheme="gray" isDisabled>
+            <Button width="100%" isDisabled size="md" colorScheme="gray">
               Sold Out
             </Button>
           )}
-        </Flex>
-      </VStack>
+        </Box>
+      </Flex>
     </Box>
   );
 };

@@ -1,5 +1,4 @@
-// src/pages/EventDetail/EventDetailPage.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -9,25 +8,31 @@ import {
   Text,
   VStack,
   HStack,
-  SimpleGrid,
   Button,
   useToast,
   Flex,
   Badge,
   Avatar,
   Icon,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  List,
+  ListItem,
+  ListIcon,
+  Divider,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, CheckIcon } from "@chakra-ui/icons";
+import { CheckIcon } from "@chakra-ui/icons";
 import {
   FaMapMarkerAlt,
   FaCalendarAlt,
@@ -35,9 +40,12 @@ import {
   FaUsers,
   FaInfoCircle,
   FaTicketAlt,
+  FaShoppingCart,
 } from "react-icons/fa";
 import { mockEvents } from "../../data/mockEvents";
 import { Event } from "../../types/Event";
+import { CountdownTimer } from "../../components/core/CountdownTimer";
+import { TicketTierCard } from "../../components/composite/TicketTierCard";
 
 // This will be replaced with an actual API call in a real application
 const fetchEventById = (id: string): Promise<Event | undefined> => {
@@ -60,10 +68,60 @@ const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString("en-US", options);
 };
 
+// Function to format bullet points in description text
+const formatDescription = (text: string): JSX.Element => {
+  if (!text) return <></>;
+
+  // Split text into paragraphs
+  const paragraphs = text.split("\n\n");
+
+  return (
+    <>
+      {paragraphs.map((paragraph, pIndex) => {
+        // Check if paragraph contains bullet points
+        if (paragraph.includes("- ")) {
+          const lines = paragraph.split("\n");
+          const title = lines[0].endsWith(":") ? lines[0] : null;
+          const bulletPoints = lines.filter((line) =>
+            line.trim().startsWith("- ")
+          );
+
+          return (
+            <Box key={`p-${pIndex}`} mb={4}>
+              {title && (
+                <Text fontWeight="medium" mb={2}>
+                  {title}
+                </Text>
+              )}
+              <List spacing={2}>
+                {bulletPoints.map((point, bIndex) => (
+                  <ListItem key={`bullet-${pIndex}-${bIndex}`} display="flex">
+                    <ListIcon as={CheckIcon} color="green.500" mt={1} />
+                    <Text>{point.replace("- ", "")}</Text>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          );
+        }
+
+        // Regular paragraph
+        return (
+          <Text key={`p-${pIndex}`} mb={4}>
+            {paragraph}
+          </Text>
+        );
+      })}
+    </>
+  );
+};
+
 export const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const toast = useToast();
+  const ticketSectionRef = useRef<HTMLDivElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null!);
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,7 +129,16 @@ export const EventDetailPage: React.FC = () => {
     id: string;
     quantity: number;
   } | null>(null);
-  const ticketSectionRef = React.useRef<HTMLDivElement>(null);
+  const [, setShowStickyButton] = useState(false);
+
+  // State for tier change confirmation dialog
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [newTierSelection, setNewTierSelection] = useState<{
+    id: string;
+    quantity: number;
+    name: string;
+  } | null>(null);
+  const [currentTierName, setCurrentTierName] = useState<string>("");
 
   useEffect(() => {
     const getEvent = async () => {
@@ -96,8 +163,61 @@ export const EventDetailPage: React.FC = () => {
     getEvent();
   }, [id, toast]);
 
-  const handleTierSelect = (tierId: string, quantity: number) => {
-    setSelectedTier({ id: tierId, quantity });
+  // Add scroll listener for sticky button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ticketSectionRef.current) {
+        const ticketSectionTop =
+          ticketSectionRef.current.getBoundingClientRect().top;
+        const ticketSectionBottom =
+          ticketSectionRef.current.getBoundingClientRect().bottom;
+
+        // Show sticky button when ticket section is not fully visible and there's a selected tier
+        setShowStickyButton(
+          (ticketSectionTop < 0 || ticketSectionBottom < 0) &&
+            selectedTier !== null
+        );
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [selectedTier]);
+
+  const handleTierSelect = (
+    tierId: string,
+    quantity: number,
+    tierName: string
+  ) => {
+    // If no tier selected yet, just select this one
+    if (!selectedTier) {
+      setSelectedTier({ id: tierId, quantity });
+      return;
+    }
+
+    // If same tier, update quantity
+    if (selectedTier.id === tierId) {
+      setSelectedTier({ ...selectedTier, quantity });
+      return;
+    }
+
+    // If different tier, show confirmation dialog
+    setCurrentTierName(
+      event?.ticketTiers?.find((t) => t.id === selectedTier.id)?.name || ""
+    );
+    setNewTierSelection({ id: tierId, quantity, name: tierName });
+    onOpen();
+  };
+
+  const handleTierChange = () => {
+    if (newTierSelection) {
+      setSelectedTier({
+        id: newTierSelection.id,
+        quantity: newTierSelection.quantity,
+      });
+      setNewTierSelection(null);
+      onClose();
+    }
   };
 
   const handleProceedToCheckout = () => {
@@ -116,6 +236,19 @@ export const EventDetailPage: React.FC = () => {
         isClosable: true,
       });
     }
+  };
+
+  const scrollToTickets = () => {
+    ticketSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const calculateTotalPrice = () => {
+    if (!selectedTier || !event?.ticketTiers) return 0;
+
+    const tier = event.ticketTiers.find((t) => t.id === selectedTier.id);
+    if (!tier) return 0;
+
+    return tier.price * selectedTier.quantity;
   };
 
   if (loading) {
@@ -145,6 +278,10 @@ export const EventDetailPage: React.FC = () => {
     );
   }
 
+  const selectedTicketTier = event.ticketTiers?.find(
+    (tier) => tier.id === selectedTier?.id
+  );
+
   return (
     <Box>
       {/* Hero Section with Event Banner */}
@@ -167,445 +304,396 @@ export const EventDetailPage: React.FC = () => {
           color="white"
         >
           <Container maxW="container.xl">
-            <VStack align="flex-start" spacing={2}>
-              <Heading size="xl">{event.title}</Heading>
-              <Text fontSize="lg">{event.venue || event.location}</Text>
-            </VStack>
+            <HStack spacing={3} mb={2}>
+              <Badge colorScheme="purple" fontSize="sm" px={2} py={1}>
+                {event.category}
+              </Badge>
+              <Badge
+                colorScheme={
+                  event.status === "available"
+                    ? "green"
+                    : event.status === "limited"
+                    ? "orange"
+                    : "red"
+                }
+                fontSize="sm"
+                px={2}
+                py={1}
+              >
+                {event.status.toUpperCase()}
+              </Badge>
+            </HStack>
+            <Heading size="xl">{event.title}</Heading>
+            <HStack mt={2} spacing={6}>
+              <HStack>
+                <Icon as={FaCalendarAlt} color="purple.300" />
+                <Text>{formatDate(event.date)}</Text>
+              </HStack>
+              <HStack>
+                <Icon as={FaMapMarkerAlt} color="purple.300" />
+                <Text>{event.venue || event.location}</Text>
+              </HStack>
+            </HStack>
           </Container>
         </Box>
       </Box>
 
       <Container maxW="container.xl" py={8}>
-        {/* Social Share Section - Added based on reference */}
-        <Flex direction={{ base: "column", md: "row" }} mb={6}>
-          <Box w={{ base: "100%", md: "70%" }} pr={{ md: 8 }}>
-            {/* Event Info - Similar to reference layout */}
-            <HStack spacing={4} mb={6}>
-              <Icon as={FaMapMarkerAlt} color="lummy.purple.500" />
-              <Text>{event.venue || event.location}</Text>
-            </HStack>
-
-            <HStack spacing={4} mb={6}>
-              <Icon as={FaCalendarAlt} color="lummy.purple.500" />
-              <Text>
-                {formatDate(event.date)} • {event.time}{" "}
-                {event.endTime ? `- ${event.endTime}` : ""}
-              </Text>
-            </HStack>
-
-            {/* Event Description - Clean layout */}
-            <Box mb={8}>
-              <Text fontSize="lg" lineHeight="tall">
-                {event.longDescription || event.description}
-              </Text>
-            </Box>
-          </Box>
-
-          {/* Ticket Info Card - Similar to reference */}
-          <Box
-            w={{ base: "100%", md: "30%" }}
-            borderWidth="1px"
-            borderColor="gray.200"
-            borderRadius="md"
-            p={6}
-            bg="white"
-            boxShadow="sm"
-          >
-            <VStack spacing={4} align="stretch">
-              <Text fontWeight="medium" color="gray.500">
-                Tickets starting at
-              </Text>
-              <Heading size="lg" color="lummy.gray.800">
-                {event.currency} {event.price.toLocaleString()}
-              </Heading>
-              <Button
-                colorScheme="purple"
-                size="lg"
-                width="100%"
-                onClick={() => {
-                  if (event.ticketTiers && event.ticketTiers.length > 0) {
-                    // Scroll to ticket section
-                    ticketSectionRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
-
-                    // If we already have a selected tier, proceed to checkout
-                    if (selectedTier) {
-                      handleProceedToCheckout();
-                    }
-                  }
-                }}
-              >
-                Buy Tickets
-              </Button>
-            </VStack>
-          </Box>
-        </Flex>
-
-        {/* Event Information Section */}
-        <Box my={10}>
-          <Heading
-            size="md"
-            mb={6}
-            pb={2}
-            borderBottomWidth="1px"
-            borderColor="gray.200"
-          >
-            Event Information
-          </Heading>
-
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
-            {/* Duration */}
-            <HStack spacing={4} align="start">
-              <Box
-                p={2}
-                bg="lummy.purple.50"
-                borderRadius="full"
-                color="lummy.purple.500"
-              >
-                <Icon as={FaClock} boxSize={5} />
-              </Box>
-              <Box>
-                <Text fontWeight="medium" mb={1}>
-                  Duration
-                </Text>
-                <Text color="gray.600">
-                  {event.time} {event.endTime ? `- ${event.endTime}` : ""}
-                  {/* Calculate duration if start and end times are available */}
-                </Text>
-              </Box>
-            </HStack>
-
-            {/* Audience */}
-            <HStack spacing={4} align="start">
-              <Box
-                p={2}
-                bg="lummy.blue.50"
-                borderRadius="full"
-                color="lummy.blue.500"
-              >
-                <Icon as={FaUsers} boxSize={5} />
-              </Box>
-              <Box>
-                <Text fontWeight="medium" mb={1}>
-                  Audience
-                </Text>
-                <Text color="gray.600">Suitable for all ages</Text>
-              </Box>
-            </HStack>
-
-            {/* Special Notes */}
-            <HStack spacing={4} align="start">
-              <Box
-                p={2}
-                bg="lummy.pink.50"
-                borderRadius="full"
-                color="lummy.pink.500"
-              >
-                <Icon as={FaInfoCircle} boxSize={5} />
-              </Box>
-              <Box>
-                <Text fontWeight="medium" mb={1}>
-                  Important Info
-                </Text>
-                <Text color="gray.600">Digital ticket via blockchain.</Text>
-              </Box>
-            </HStack>
-          </SimpleGrid>
-        </Box>
-
-        {/* Ticket Selection - Clean and Organized */}
-        <Box my={10} ref={ticketSectionRef}>
-          <Heading
-            size="md"
-            mb={6}
-            pb={2}
-            borderBottomWidth="1px"
-            borderColor="gray.200"
-          >
-            Select Tickets
-          </Heading>
-
-          {event.ticketTiers && event.ticketTiers.length > 0 ? (
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-              {event.ticketTiers.map((tier) => (
-                <Box
-                  key={tier.id}
-                  borderWidth="1px"
-                  borderColor={
-                    selectedTier?.id === tier.id
-                      ? "lummy.purple.300"
-                      : "gray.200"
-                  }
-                  borderRadius="lg"
-                  overflow="hidden"
-                  bg="white"
-                  boxShadow={
-                    selectedTier?.id === tier.id
-                      ? "0 0 0 2px rgba(138, 110, 247, 0.3)"
-                      : "sm"
-                  }
-                  transition="all 0.3s ease"
-                  _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
-                  position="relative"
-                >
-                  {/* Status Badge */}
-                  {tier.available < 10 && tier.available > 0 && (
-                    <Badge
-                      position="absolute"
-                      top={3}
-                      right={3}
-                      colorScheme="orange"
-                      variant="solid"
-                      borderRadius="md"
-                      px={2}
-                      py={1}
-                      fontSize="xs"
-                    >
-                      Only {tier.available} left
-                    </Badge>
-                  )}
-
-                  {/* Tier Header */}
-                  <Box
-                    bg={
-                      selectedTier?.id === tier.id
-                        ? "lummy.purple.100"
-                        : "gray.50"
-                    }
-                    p={4}
-                    borderBottomWidth="1px"
-                    borderColor={
-                      selectedTier?.id === tier.id
-                        ? "lummy.purple.200"
-                        : "gray.200"
-                    }
-                  >
-                    <Flex justify="space-between" align="center">
-                      <Text
-                        fontWeight="bold"
-                        fontSize="lg"
-                        color={
-                          selectedTier?.id === tier.id
-                            ? "lummy.purple.700"
-                            : "gray.800"
-                        }
-                      >
-                        {tier.name}
-                      </Text>
-                      <Text
-                        fontWeight="bold"
-                        fontSize="xl"
-                        color="lummy.purple.600"
-                      >
-                        {tier.currency} {tier.price.toLocaleString()}
-                      </Text>
-                    </Flex>
-                  </Box>
-
-                  {/* Tier Content */}
-                  <Box p={4}>
-                    <Text color="gray.600" mb={4}>
-                      {tier.description}
-                    </Text>
-
-                    {/* Benefits List */}
-                    {tier.benefits && tier.benefits.length > 0 && (
-                      <VStack align="start" spacing={2} mb={4}>
-                        {tier.benefits.map((benefit, idx) => (
-                          <HStack key={idx} spacing={2} align="start">
-                            <Icon
-                              as={CheckIcon}
-                              color="green.500"
-                              mt={1}
-                              boxSize={3}
-                            />
-                            <Text fontSize="sm" color="gray.700">
-                              {benefit}
-                            </Text>
-                          </HStack>
-                        ))}
-                      </VStack>
-                    )}
-
-                    {/* Selection Controls */}
-                    {tier.available > 0 ? (
-                      <Flex justify="space-between" align="center" mt={4}>
-                        <HStack spacing={2}>
-                          <Text fontSize="sm" color="gray.600">
-                            Qty:
-                          </Text>
-                          <NumberInput
-                            size="sm"
-                            maxW={16}
-                            min={1}
-                            max={Math.min(tier.maxPerPurchase, tier.available)}
-                            value={
-                              selectedTier?.id === tier.id
-                                ? selectedTier.quantity
-                                : 1
-                            }
-                            onChange={(_, val) => {
-                              if (tier.id === selectedTier?.id) {
-                                setSelectedTier({ id: tier.id, quantity: val });
-                              }
-                            }}
-                          >
-                            <NumberInputField borderRadius="md" bg="white" />
-                            <NumberInputStepper bg="gray.100">
-                              <NumberIncrementStepper
-                                borderColor="gray.300"
-                                color="gray.800"
-                              />
-                              <NumberDecrementStepper
-                                borderColor="gray.300"
-                                color="gray.800"
-                              />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        </HStack>
-
-                        <Button
-                          colorScheme={
-                            selectedTier?.id === tier.id ? "purple" : "gray"
-                          }
-                          size="sm"
-                          onClick={() =>
-                            handleTierSelect(
-                              tier.id,
-                              selectedTier?.id === tier.id
-                                ? selectedTier.quantity
-                                : 1
-                            )
-                          }
-                          leftIcon={
-                            selectedTier?.id === tier.id ? (
-                              <CheckIcon />
-                            ) : undefined
-                          }
-                          px={4}
-                        >
-                          {selectedTier?.id === tier.id ? "Selected" : "Select"}
-                        </Button>
-                      </Flex>
-                    ) : (
-                      <Button
-                        width="100%"
-                        isDisabled
-                        size="sm"
-                        colorScheme="gray"
-                        mt={4}
-                      >
-                        Sold Out
-                      </Button>
-                    )}
-                  </Box>
-                </Box>
-              ))}
-            </SimpleGrid>
-          ) : (
-            <Box p={4} bg="gray.50" borderRadius="md">
-              <Text>No ticket tiers available for this event.</Text>
-            </Box>
-          )}
-
-          {/* Proceed to Checkout Button */}
-          {selectedTier && (
-            <Flex justify="center" mt={8}>
-              <Button
-                size="lg"
-                colorScheme="purple"
-                onClick={handleProceedToCheckout}
-                leftIcon={<Icon as={FaTicketAlt} />}
-                boxShadow="md"
-                _hover={{
-                  transform: "translateY(-2px)",
-                  boxShadow: "lg",
-                }}
-                px={8}
-              >
-                Proceed to Checkout
-              </Button>
-            </Flex>
-          )}
-        </Box>
-
-        {/* Terms & Conditions Accordion - Similar to reference */}
-        <Box my={10}>
-          <Accordion allowToggle>
-            <AccordionItem
-              border="1px solid"
-              borderColor="gray.200"
-              borderRadius="md"
+        {/* Main Content Section */}
+        <Flex direction={{ base: "column", lg: "row" }} gap={8}>
+          {/* Left Column - Event Info */}
+          <Box w={{ base: "100%", lg: "70%" }}>
+            {/* Countdown Timer */}
+            <Box
+              mb={8}
+              bg="purple.50"
+              p={6}
+              borderRadius="lg"
+              borderWidth="1px"
+              borderColor="purple.100"
             >
-              <AccordionButton py={4}>
-                <Box flex="1" textAlign="left" fontWeight="medium">
-                  Terms & Conditions
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel pb={4}>
-                <Text>1. All tickets are NFTs on the Lisk blockchain.</Text>
-                <Text mt={2}>
-                  2. Tickets are subject to availability and are non-refundable
-                  except in case of event cancellation.
-                </Text>
-                <Text mt={2}>
-                  3. Tickets can be transferred to other users through the Lummy
-                  platform.
-                </Text>
-                <Text mt={2}>
-                  4. Resale of tickets is allowed only through the official
-                  Lummy marketplace, with price caps set by event organizers.
-                </Text>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-        </Box>
-
-        {/* Organizer Information */}
-        <Box my={10}>
-          <Heading
-            size="md"
-            mb={6}
-            pb={2}
-            borderBottomWidth="1px"
-            borderColor="gray.200"
-          >
-            Organizer
-          </Heading>
-
-          <HStack spacing={4} align="center">
-            <Avatar
-              src={event.organizer.imageUrl || ""}
-              name={event.organizer.name}
-              size="lg"
-              bg="lummy.purple.500"
-            />
-            <Box>
-              <HStack>
-                <Text fontWeight="bold" fontSize="lg">
-                  {event.organizer.name}
-                </Text>
-                {event.organizer.verified && (
-                  <Badge colorScheme="green" variant="subtle">
-                    <HStack spacing={1}>
-                      <CheckCircleIcon />
-                      <Text fontSize="xs">Verified</Text>
-                    </HStack>
-                  </Badge>
-                )}
+              <HStack justify="space-between" mb={4}>
+                <Heading size="md" color="purple.700">
+                  Event starts in
+                </Heading>
+                <HStack>
+                  <Icon as={FaClock} color="purple.500" />
+                  <Text color="purple.700" fontWeight="medium">
+                    {event.time} {event.endTime ? `- ${event.endTime}` : ""}
+                  </Text>
+                </HStack>
               </HStack>
-              {event.organizer.description && (
-                <Text color="gray.600" mt={1}>
-                  {event.organizer.description}
-                </Text>
+              <CountdownTimer targetDate={event.date} />
+            </Box>
+
+            {/* Event Description */}
+            <Box mb={8}>
+              <Heading
+                size="md"
+                mb={4}
+                pb={2}
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+              >
+                About This Event
+              </Heading>
+              <Box fontSize="lg" lineHeight="tall">
+                {formatDescription(event.longDescription || event.description)}
+              </Box>
+            </Box>
+
+            {/* Event Information Section */}
+            <Box mb={10}>
+              <Heading
+                size="md"
+                mb={6}
+                pb={2}
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+              >
+                Event Information
+              </Heading>
+
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
+                {/* Duration */}
+                <HStack spacing={4} align="start">
+                  <Box
+                    p={2}
+                    bg="lummy.purple.50"
+                    borderRadius="full"
+                    color="lummy.purple.500"
+                  >
+                    <Icon as={FaClock} boxSize={5} />
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" mb={1}>
+                      Duration
+                    </Text>
+                    <Text color="gray.600">
+                      {event.time} {event.endTime ? `- ${event.endTime}` : ""}
+                    </Text>
+                  </Box>
+                </HStack>
+
+                {/* Audience */}
+                <HStack spacing={4} align="start">
+                  <Box
+                    p={2}
+                    bg="lummy.blue.50"
+                    borderRadius="full"
+                    color="lummy.blue.500"
+                  >
+                    <Icon as={FaUsers} boxSize={5} />
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" mb={1}>
+                      Audience
+                    </Text>
+                    <Text color="gray.600">Suitable for all ages</Text>
+                  </Box>
+                </HStack>
+
+                {/* Special Notes */}
+                <HStack spacing={4} align="start">
+                  <Box
+                    p={2}
+                    bg="lummy.pink.50"
+                    borderRadius="full"
+                    color="lummy.pink.500"
+                  >
+                    <Icon as={FaInfoCircle} boxSize={5} />
+                  </Box>
+                  <Box>
+                    <Text fontWeight="medium" mb={1}>
+                      Important Info
+                    </Text>
+                    <Text color="gray.600">Digital ticket via blockchain.</Text>
+                  </Box>
+                </HStack>
+              </SimpleGrid>
+            </Box>
+
+            {/* Ticket Selection - Single Column Layout */}
+            <Box my={10} ref={ticketSectionRef} id="tickets-section">
+              <Heading
+                size="md"
+                mb={6}
+                pb={2}
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+              >
+                Select Tickets
+              </Heading>
+
+              {event.ticketTiers && event.ticketTiers.length > 0 ? (
+                <VStack spacing={6} align="stretch">
+                  {event.ticketTiers.map((tier) => (
+                    <TicketTierCard
+                      key={tier.id}
+                      tier={tier}
+                      onSelect={(tierId, quantity) =>
+                        handleTierSelect(tierId, quantity, tier.name)
+                      }
+                      isSelected={selectedTier?.id === tier.id}
+                      selectedQuantity={
+                        selectedTier?.id === tier.id ? selectedTier.quantity : 0
+                      }
+                      onCheckout={handleProceedToCheckout}
+                    />
+                  ))}
+                </VStack>
+              ) : (
+                <Box p={4} bg="gray.50" borderRadius="md">
+                  <Text>No ticket tiers available for this event.</Text>
+                </Box>
               )}
             </Box>
-          </HStack>
-        </Box>
+
+            {/* Terms & Conditions Accordion */}
+            <Box my={10}>
+              <Accordion allowToggle>
+                <AccordionItem
+                  border="1px solid"
+                  borderColor="gray.200"
+                  borderRadius="md"
+                >
+                  <AccordionButton py={4}>
+                    <Box flex="1" textAlign="left" fontWeight="medium">
+                      Terms & Conditions
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text>1. All tickets are NFTs on the Lisk blockchain.</Text>
+                    <Text mt={2}>
+                      2. Tickets are subject to availability and are
+                      non-refundable except in case of event cancellation.
+                    </Text>
+                    <Text mt={2}>
+                      3. Tickets can be transferred to other users through the
+                      Lummy platform.
+                    </Text>
+                    <Text mt={2}>
+                      4. Resale of tickets is allowed only through the official
+                      Lummy marketplace, with price caps set by event
+                      organizers.
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </Box>
+          </Box>
+
+          {/* Right Column - Sidebar */}
+          <Box w={{ base: "100%", lg: "30%" }}>
+            {/* Sticky Ticket Info Card */}
+            <Box
+              position="sticky"
+              top="20px"
+              borderWidth="1px"
+              borderColor="gray.200"
+              borderRadius="lg"
+              overflow="hidden"
+              bg="white"
+              boxShadow="sm"
+              p={6}
+              zIndex={2}
+            >
+              <VStack spacing={4} align="stretch">
+                <Text fontWeight="medium" color="gray.500">
+                  Tickets starting at
+                </Text>
+                <Heading size="lg" color="lummy.gray.800">
+                  {event.currency} {event.price.toLocaleString()}
+                </Heading>
+                <Button
+                  colorScheme="purple"
+                  size="lg"
+                  width="100%"
+                  onClick={scrollToTickets}
+                  leftIcon={<Icon as={FaTicketAlt} />}
+                >
+                  View Tickets
+                </Button>
+
+                {/* Selected Ticket Summary */}
+                {selectedTier && selectedTicketTier && (
+                  <Box
+                    mt={4}
+                    pt={4}
+                    borderTopWidth="1px"
+                    borderColor="gray.200"
+                  >
+                    <Text fontWeight="bold" mb={2}>
+                      Your Selection
+                    </Text>
+                    <HStack justify="space-between" mb={1}>
+                      <Text>{selectedTicketTier.name}</Text>
+                      <Text>x {selectedTier.quantity}</Text>
+                    </HStack>
+                    <HStack justify="space-between" mb={4}>
+                      <Text>Price per ticket</Text>
+                      <Text>
+                        {event.currency}{" "}
+                        {selectedTicketTier.price.toLocaleString()}
+                      </Text>
+                    </HStack>
+                    <Divider mb={4} />
+                    <HStack justify="space-between" fontWeight="bold">
+                      <Text>Total</Text>
+                      <Text color="purple.600">
+                        {event.currency}{" "}
+                        {calculateTotalPrice().toLocaleString()}
+                      </Text>
+                    </HStack>
+                    <Button
+                      colorScheme="green"
+                      width="100%"
+                      mt={4}
+                      onClick={handleProceedToCheckout}
+                      rightIcon={<Icon as={FaShoppingCart} />}
+                    >
+                      Proceed to Checkout
+                    </Button>
+                  </Box>
+                )}
+              </VStack>
+            </Box>
+
+            {/* Organizer Information */}
+            <Box
+              mt={8}
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              bg="white"
+              boxShadow="sm"
+              p={6}
+            >
+              <Heading size="md" mb={4}>
+                Organizer
+              </Heading>
+
+              <HStack spacing={4} align="center">
+                <Avatar
+                  src={event.organizer.imageUrl || ""}
+                  name={event.organizer.name}
+                  size="lg"
+                  bg="lummy.purple.500"
+                />
+                <Box>
+                  <HStack>
+                    <Text fontWeight="bold" fontSize="lg">
+                      {event.organizer.name}
+                    </Text>
+                    {event.organizer.verified && (
+                      <Badge colorScheme="green" variant="subtle">
+                        <HStack spacing={1}>
+                          <CheckIcon />
+                          <Text fontSize="xs">Verified</Text>
+                        </HStack>
+                      </Badge>
+                    )}
+                  </HStack>
+                  {event.organizer.description && (
+                    <Text color="gray.600" mt={1} fontSize="sm">
+                      {event.organizer.description}
+                    </Text>
+                  )}
+                </Box>
+              </HStack>
+
+              {event.organizer.website && (
+                <Button
+                  as="a"
+                  href={event.organizer.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  variant="outline"
+                  colorScheme="purple"
+                  mt={4}
+                  width="100%"
+                >
+                  Visit Website
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Flex>
       </Container>
+
+      {/* Sticky Buy Button - removed as per client request */}
+
+      {/* Tier Change Confirmation Dialog */}
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Change Ticket Selection
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              You can only select one ticket type at a time. Do you want to
+              change your selection from "{currentTierName}" to "
+              {newTierSelection?.name}"?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="purple" onClick={handleTierChange} ml={3}>
+                Yes, Change Ticket
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
