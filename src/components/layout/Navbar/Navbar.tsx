@@ -173,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       py={isCompact ? 1 : 2}
                       borderRadius="lg"
                       onClick={openConnectModal}
-                      leftIcon={<Icon as={FaWallet} />} 
+                      leftIcon={<Icon as={FaWallet} />}
                     >
                       Connect Wallet
                     </Button>

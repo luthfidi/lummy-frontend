@@ -7,7 +7,6 @@ import {
   Flex,
   Icon,
   useToast,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { FaQrcode } from "react-icons/fa";
@@ -57,7 +56,7 @@ const QrScanner: React.FC<QrScannerProps> = ({ onScan, isLoading = false }) => {
 
   const scanIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const borderColor = "gray.200";
 
   const handleToggleCamera = () => {
     if (isCameraActive) {

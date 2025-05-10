@@ -5,13 +5,11 @@ import {
   VStack,
   HStack,
   Text,
-  Image,
   Button,
   Badge,
   Divider,
   Icon,
   useToast,
-  useColorModeValue,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -61,9 +59,9 @@ const AttendeeVerification: React.FC<AttendeeVerificationProps> = ({
   const [rejectionReason, setRejectionReason] =
     useState<string>("Invalid ticket");
 
-  const cardBg = useColorModeValue("white", "gray.700");
-  const successBg = useColorModeValue("green.50", "green.900");
-  const dangerBg = useColorModeValue("red.50", "red.900");
+  const cardBg = "white";
+  const successBg = "green.50";
+  const dangerBg = "red.50";
 
   const handleCheckIn = () => {
     if (attendee) {
@@ -175,15 +173,6 @@ const AttendeeVerification: React.FC<AttendeeVerificationProps> = ({
             gap={6}
             mb={6}
           >
-            <Image
-              src={attendee.profileImage || "https://via.placeholder.com/100"}
-              alt={attendee.name}
-              boxSize="100px"
-              borderRadius="lg"
-              objectFit="cover"
-              fallbackSrc="https://via.placeholder.com/100?text=Attendee"
-            />
-
             <VStack align="flex-start" spacing={1} flex="1">
               <Text fontSize="2xl" fontWeight="bold">
                 {attendee.name}

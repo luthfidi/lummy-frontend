@@ -8,7 +8,6 @@ import {
   Select,
   Button,
   Icon,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 
@@ -39,7 +38,7 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
     sortBy: "newest",
   });
 
-  const bgColor = useColorModeValue("white", "gray.700");
+  const bgColor = "white";
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const search = e.target.value;
@@ -79,12 +78,11 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           onChange={handleSearchChange}
           bg={bgColor}
           borderRadius="md"
-          boxShadow="sm"
         />
       </InputGroup>
 
-      <Flex 
-        gap={3} 
+      <Flex
+        gap={3}
         flexWrap={{ base: "wrap", md: "nowrap" }}
         justify="space-between"
         align="center"
@@ -96,7 +94,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           {categories.map((category) => (
@@ -113,7 +110,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           {locations.map((location) => (
@@ -130,7 +126,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         />
 
@@ -140,7 +135,6 @@ export const MarketplaceFilters: React.FC<MarketplaceFiltersProps> = ({
           bg={bgColor}
           size="md"
           borderRadius="md"
-          boxShadow="sm"
           flex={{ base: "1 0 100%", md: 1 }}
         >
           <option value="newest">Newest Listings</option>

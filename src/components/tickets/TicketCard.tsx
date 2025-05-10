@@ -261,8 +261,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
                 opacity="0"
                 _hover={{ opacity: "0" }}
                 cursor="default"
-              >
-              </Button>
+              ></Button>
             )}
           </Flex>
         </Box>

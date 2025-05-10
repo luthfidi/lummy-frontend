@@ -12,15 +12,17 @@ import {
   useToast,
   HStack,
   IconButton,
+  Tooltip,
 } from "@chakra-ui/react";
 import { EditIcon, CloseIcon, CheckIcon } from "@chakra-ui/icons";
+import { ConnectButton } from "@xellar/kit";
 
 interface PersonalInfoProps {
   initialData: {
     name: string;
     email: string;
     phone: string;
-    avatar?: string;
+    walletAddress: string;
   };
   onSave: (data: any) => void;
 }
@@ -86,34 +88,83 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialData, onSave }) => {
       </Flex>
 
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
-        <VStack spacing={4} align="center">
-          <Avatar
-            size="2xl"
-            name={formData.name}
-            src={formData.avatar}
-            mb={2}
-          />
-          {isEditing && (
-            <Button size="sm" colorScheme="purple" variant="outline">
-              Change Photo
-            </Button>
-          )}
-        </VStack>
-
         <VStack spacing={4} flex="1" align="stretch">
+          {/* Wallet Address */}
           <FormControl>
-            <FormLabel>Full Name</FormLabel>
+            <FormLabel>Wallet Address</FormLabel>
+
+            <ConnectButton.Custom>
+              {({
+                openConnectModal,
+                isConnected,
+                openProfileModal,
+                account,
+              }) => {
+                const address = account?.address || "";
+
+                return (
+                  <Flex
+                    bg={isConnected ? "gray.50" : "white"}
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    fontFamily="monospace"
+                    fontSize="sm"
+                    py={2}
+                    px={3}
+                    mt={1}
+                    align="center"
+                    height="40px"
+                  >
+                    <Text flex="1" color={isConnected ? "black" : "gray.500"}>
+                      {isConnected ? address : "Not connected"}
+                    </Text>
+                    <Button
+                      size="sm"
+                      ml={2}
+                      variant="ghost"
+                      bg="transparent"
+                      colorScheme="purple"
+                      onClick={
+                        isConnected ? openProfileModal : openConnectModal
+                      }
+                    >
+                      {isConnected ? "Manage" : "Connect"}
+                    </Button>
+                  </Flex>
+                );
+              }}
+            </ConnectButton.Custom>
+          </FormControl>
+          {/* Full Name */}
+          <FormControl>
+            <FormLabel>
+              Full Name{" "}
+              <Text as="span" color="gray.500" fontSize="sm" ml={2}>
+                (Optional)
+              </Text>
+            </FormLabel>
             <Input
               name="name"
               value={formData.name}
               onChange={handleChange}
               isReadOnly={!isEditing}
               bg={isEditing ? "white" : "gray.50"}
+              placeholder="Enter your name"
             />
+            <Text fontSize="xs" color="gray.500" mt={1}>
+              Only required for major event registration
+            </Text>
           </FormControl>
 
+          {/* Email */}
           <FormControl>
-            <FormLabel>Email Address</FormLabel>
+            <FormLabel>
+              Email Address{" "}
+              <Text as="span" color="gray.500" fontSize="sm" ml={2}>
+                (Optional)
+              </Text>
+            </FormLabel>
             <Input
               name="email"
               type="email"
@@ -121,18 +172,11 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ initialData, onSave }) => {
               onChange={handleChange}
               isReadOnly={!isEditing}
               bg={isEditing ? "white" : "gray.50"}
+              placeholder="Enter your email"
             />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Phone Number</FormLabel>
-            <Input
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              isReadOnly={!isEditing}
-              bg={isEditing ? "white" : "gray.50"}
-            />
+            <Text fontSize="xs" color="gray.500" mt={1}>
+              Only required for major event registration
+            </Text>
           </FormControl>
         </VStack>
       </Flex>

@@ -10,7 +10,6 @@ import {
   VStack,
   Badge,
   Divider,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 export interface EventStatsData {
@@ -34,8 +33,8 @@ interface EventStatsProps {
 }
 
 const EventStats: React.FC<EventStatsProps> = ({ stats }) => {
-  const cardBg = useColorModeValue("white", "gray.700");
-  const progressTrackBg = useColorModeValue("gray.100", "gray.600");
+  const cardBg = "white";
+  const progressTrackBg = "gray.100";
 
   const calculatePercentage = (sold: number, total: number): number => {
     return total > 0 ? (sold / total) * 100 : 0;

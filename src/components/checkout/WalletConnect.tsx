@@ -9,7 +9,6 @@ import {
   Heading,
   Divider,
   Badge,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
@@ -28,8 +27,8 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
   isConnected = false,
   walletAddress,
 }) => {
-  const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const bgColor = "white";
+  const borderColor = "gray.200";
 
   return (
     <VStack
@@ -53,7 +52,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
         borderRadius="md"
         borderColor={borderColor}
         p={4}
-        bg={useColorModeValue("lummy.purple.50", "lummy.purple.900")}
+        bg={"lummy.purple.50"}
       >
         <VStack align="center" spacing={4}>
           <Box

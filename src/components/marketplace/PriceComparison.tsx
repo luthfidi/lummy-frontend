@@ -25,13 +25,13 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
 }) => {
   const priceDifference = resalePrice - originalPrice;
   const percentageDifference = (priceDifference / originalPrice) * 100;
-  
+
   const getPriceChangeIcon = () => {
     if (priceDifference > 0) return { icon: FaArrowUp, color: "red.500" };
     if (priceDifference < 0) return { icon: FaArrowDown, color: "green.500" };
     return { icon: FaEquals, color: "gray.500" };
   };
-  
+
   const { icon, color } = getPriceChangeIcon();
 
   return (
@@ -45,9 +45,9 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
             {currency} {resalePrice.toLocaleString()}
           </Text>
         </VStack>
-        
-        <Tooltip 
-          label={`Original price: ${currency} ${originalPrice.toLocaleString()}`} 
+
+        <Tooltip
+          label={`Original price: ${currency} ${originalPrice.toLocaleString()}`}
           hasArrow
         >
           <HStack>
@@ -59,11 +59,13 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
           </HStack>
         </Tooltip>
       </Flex>
-      
+
       {showDetail && (
         <HStack mt={1} fontSize="xs" color="gray.500">
           <Text>Original price:</Text>
-          <Text>{currency} {originalPrice.toLocaleString()}</Text>
+          <Text>
+            {currency} {originalPrice.toLocaleString()}
+          </Text>
         </HStack>
       )}
     </Box>

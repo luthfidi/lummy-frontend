@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -14,13 +14,12 @@ import {
   VStack,
   Icon,
   useToast,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import { ArrowBackIcon, RepeatIcon } from '@chakra-ui/icons';
-import { FaTicketAlt} from 'react-icons/fa';
-import { useParams, useNavigate } from 'react-router-dom';
-import QrScanner from '../../components/ticketManagement/QrScanner';
-import AttendeeVerification from '../../components/ticketManagement/AttendeeVerification';
+} from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import { FaTicketAlt } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import QrScanner from "../../components/ticketManagement/QrScanner";
+import AttendeeVerification from "../../components/ticketManagement/AttendeeVerification";
 
 // Mock data for ticket verification result
 interface MockAttendeeData {
@@ -32,20 +31,20 @@ interface MockAttendeeData {
   eventDate: string;
   eventLocation: string;
   walletAddress: string;
-  status: 'valid' | 'invalid' | 'checked-in';
+  status: "valid" | "invalid" | "checked-in";
   checkInTime?: string;
 }
 
 const mockAttendeeData: MockAttendeeData = {
-  id: 'att-12345',
-  name: 'John Smith',
-  email: 'john.smith@example.com',
-  ticketType: 'VIP Pass',
-  eventName: 'Summer Music Festival',
-  eventDate: '2025-06-15T12:00:00',
-  eventLocation: 'Jakarta Convention Center',
-  walletAddress: '0x1234567890abcdef1234567890abcdef12345678',
-  status: 'valid',
+  id: "att-12345",
+  name: "John Smith",
+  email: "john.smith@example.com",
+  ticketType: "VIP Pass",
+  eventName: "Summer Music Festival",
+  eventDate: "2025-06-15T12:00:00",
+  eventLocation: "Jakarta Convention Center",
+  walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
+  status: "valid",
 };
 
 interface ScanResult {
@@ -62,16 +61,20 @@ const ScannerPage: React.FC = () => {
   const toast = useToast();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [attendeeData, setAttendeeData] = useState<MockAttendeeData | null>(null);
-  const [scanHistory, setScanHistory] = useState<Array<{
-    time: Date;
-    attendee: string;
-    status: 'success' | 'failed';
-  }>>([]);
-  
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  
-  const cardBg = useColorModeValue('white', 'gray.700');
+  const [attendeeData, setAttendeeData] = useState<MockAttendeeData | null>(
+    null
+  );
+  const [scanHistory, setScanHistory] = useState<
+    Array<{
+      time: Date;
+      attendee: string;
+      status: "success" | "failed";
+    }>
+  >([]);
+
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+
+  const cardBg = "white";
 
   // For demo purposes, let's simulate fetching event details
   const [eventDetails, setEventDetails] = useState<{
@@ -85,8 +88,8 @@ const ScannerPage: React.FC = () => {
     // Simulate API call to get event details
     setTimeout(() => {
       setEventDetails({
-        name: 'Summer Music Festival',
-        date: 'June 15, 2025',
+        name: "Summer Music Festival",
+        date: "June 15, 2025",
         totalAttendees: 500,
         checkedIn: 320,
       });
@@ -95,80 +98,80 @@ const ScannerPage: React.FC = () => {
 
   const handleScan = (result: ScanResult) => {
     setIsLoading(true);
-    
+
     // Simulate API call to verify ticket
     setTimeout(() => {
       if (result.valid) {
         const validAttendee: MockAttendeeData = {
           ...mockAttendeeData,
           name: `Attendee ${Math.floor(Math.random() * 100)}`,
-          status: 'valid'
+          status: "valid",
         };
         setAttendeeData(validAttendee);
-        
+
         // Add to scan history
-        setScanHistory(prev => [
-          { 
-            time: new Date(), 
-            attendee: validAttendee.name, 
-            status: 'success' 
+        setScanHistory((prev) => [
+          {
+            time: new Date(),
+            attendee: validAttendee.name,
+            status: "success",
           },
-          ...prev.slice(0, 9)  // Keep only last 10 items
+          ...prev.slice(0, 9), // Keep only last 10 items
         ]);
       } else {
         const invalidAttendee: MockAttendeeData = {
           ...mockAttendeeData,
           name: `Attendee ${Math.floor(Math.random() * 100)}`,
-          status: 'invalid'
+          status: "invalid",
         };
         setAttendeeData(invalidAttendee);
-        
+
         // Add to scan history
-        setScanHistory(prev => [
-          { 
-            time: new Date(), 
-            attendee: invalidAttendee.name, 
-            status: 'failed' 
+        setScanHistory((prev) => [
+          {
+            time: new Date(),
+            attendee: invalidAttendee.name,
+            status: "failed",
           },
-          ...prev.slice(0, 9)
+          ...prev.slice(0, 9),
         ]);
       }
-      
+
       setIsLoading(false);
     }, 1500);
   };
 
   const handleCheckIn = () => {
     setIsLoading(true);
-    
+
     // Simulate API call to check in
     setTimeout(() => {
       if (attendeeData) {
         const updatedAttendee: MockAttendeeData = {
           ...attendeeData,
-          status: 'checked-in',
+          status: "checked-in",
           checkInTime: new Date().toLocaleTimeString(),
         };
         setAttendeeData(updatedAttendee);
-        
+
         toast({
-          title: 'Check-in successful',
+          title: "Check-in successful",
           description: `${attendeeData.name} has been checked in.`,
-          status: 'success',
+          status: "success",
           duration: 3000,
           isClosable: true,
         });
-        
+
         // Add to scan history
-        setScanHistory(prev => [
-          { 
-            time: new Date(), 
-            attendee: attendeeData.name, 
-            status: 'success' 
+        setScanHistory((prev) => [
+          {
+            time: new Date(),
+            attendee: attendeeData.name,
+            status: "success",
           },
-          ...prev.slice(0, 9)
+          ...prev.slice(0, 9),
         ]);
-        
+
         if (eventDetails) {
           setEventDetails({
             ...eventDetails,
@@ -176,7 +179,7 @@ const ScannerPage: React.FC = () => {
           });
         }
       }
-      
+
       setIsLoading(false);
     }, 1000);
   };
@@ -184,26 +187,20 @@ const ScannerPage: React.FC = () => {
   const handleReject = (attendeeId: string, reason: string) => {
     // Simulate API call to mark ticket as rejected
     console.log(`Rejecting attendee ${attendeeId}, reason: ${reason}`);
-    
-    // Reset for next scan
-    setTimeout(() => {
-      setAttendeeData(null);
-    }, 2000);
-  };
-
-  const resetScan = () => {
-    setAttendeeData(null);
   };
 
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const filteredHistory = filterStatus === 'all'
-    ? scanHistory
-    : scanHistory.filter(item => 
-        filterStatus === 'success' ? item.status === 'success' : item.status === 'failed'
-      );
+  const filteredHistory =
+    filterStatus === "all"
+      ? scanHistory
+      : scanHistory.filter((item) =>
+          filterStatus === "success"
+            ? item.status === "success"
+            : item.status === "failed"
+        );
 
   return (
     <Container maxW="container.xl" py={8}>
@@ -218,11 +215,12 @@ const ScannerPage: React.FC = () => {
           </Button>
           <Heading size="lg">Ticket Scanner</Heading>
         </HStack>
-        
+
         {eventDetails && (
           <HStack>
             <Badge colorScheme="purple" p={2} borderRadius="md">
-              {eventDetails.checkedIn} / {eventDetails.totalAttendees} Checked In
+              {eventDetails.checkedIn} / {eventDetails.totalAttendees} Checked
+              In
             </Badge>
           </HStack>
         )}
@@ -242,14 +240,14 @@ const ScannerPage: React.FC = () => {
         <GridItem>
           <VStack spacing={6} align="stretch">
             <QrScanner onScan={handleScan} isLoading={isLoading} />
-            
+
             <Box bg={cardBg} p={6} borderRadius="lg" shadow="sm">
               <Flex justify="space-between" align="center" mb={4}>
                 <Heading size="md">
                   <Icon as={FaTicketAlt} mr={2} />
                   Recent Scans
                 </Heading>
-                <Select 
+                <Select
                   size="sm"
                   width="120px"
                   value={filterStatus}
@@ -260,22 +258,28 @@ const ScannerPage: React.FC = () => {
                   <option value="failed">Failed</option>
                 </Select>
               </Flex>
-              
+
               {filteredHistory.length > 0 ? (
                 <VStack spacing={3} align="stretch">
                   {filteredHistory.map((scan, index) => (
-                    <Flex 
+                    <Flex
                       key={index}
                       justify="space-between"
                       p={3}
                       borderWidth="1px"
                       borderRadius="md"
-                      borderColor={scan.status === 'success' ? 'green.200' : 'red.200'}
-                      bg={scan.status === 'success' ? 'green.50' : 'red.50'}
+                      borderColor={
+                        scan.status === "success" ? "green.200" : "red.200"
+                      }
+                      bg={scan.status === "success" ? "green.50" : "red.50"}
                     >
                       <HStack>
-                        <Badge colorScheme={scan.status === 'success' ? 'green' : 'red'}>
-                          {scan.status === 'success' ? 'Success' : 'Failed'}
+                        <Badge
+                          colorScheme={
+                            scan.status === "success" ? "green" : "red"
+                          }
+                        >
+                          {scan.status === "success" ? "Success" : "Failed"}
                         </Badge>
                         <Text fontWeight="medium">{scan.attendee}</Text>
                       </HStack>
@@ -293,7 +297,7 @@ const ScannerPage: React.FC = () => {
             </Box>
           </VStack>
         </GridItem>
-        
+
         <GridItem>
           <Box position="relative">
             <AttendeeVerification
@@ -302,21 +306,6 @@ const ScannerPage: React.FC = () => {
               onReject={handleReject}
               isLoading={isLoading}
             />
-            
-            {attendeeData && (
-              <Button
-                position="absolute"
-                top={4}
-                right={4}
-                size="sm"
-                leftIcon={<RepeatIcon />}
-                onClick={resetScan}
-                colorScheme="gray"
-                variant="ghost"
-              >
-                Reset
-              </Button>
-            )}
           </Box>
         </GridItem>
       </Grid>

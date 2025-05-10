@@ -8,14 +8,13 @@ import {
   Stack,
   Image,
   Container,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
-  const gradientStart = useColorModeValue("purple.500", "purple.400");
-  const gradientEnd = useColorModeValue("pink.400", "pink.300");
+  const gradientStart = "purple.500";
+  const gradientEnd = "pink.400";
 
   return (
     <Box position="relative" overflow="hidden" bg="white">

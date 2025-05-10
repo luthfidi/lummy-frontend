@@ -22,7 +22,6 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
-  useColorModeValue,
   useClipboard,
 } from "@chakra-ui/react";
 import {
@@ -60,8 +59,8 @@ const AttendeeList: React.FC<AttendeeListProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
-  const tableHeadBg = useColorModeValue("gray.50", "gray.700");
-  const hoverBg = useColorModeValue("gray.50", "gray.700");
+  const tableHeadBg = "gray.50";
+  const hoverBg = "gray.50";
 
   // Get unique ticket types for filter
   const ticketTypes = [...new Set(attendees.map((a) => a.ticketType))];

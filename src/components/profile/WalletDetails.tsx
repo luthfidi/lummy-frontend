@@ -3,71 +3,93 @@ import {
   Box,
   VStack,
   HStack,
+  Flex,
   Text,
   Button,
-  Flex,
   Divider,
   Icon,
   useClipboard,
   Tooltip,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import { CopyIcon, CheckIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { FaWallet, FaCoins, FaExchangeAlt, FaTicketAlt } from "react-icons/fa";
+import {
+  CopyIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+  HamburgerIcon,
+  CloseIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
+import {
+  FaWallet,
+  FaCoins,
+  FaExchangeAlt,
+  FaTicketAlt,
+} from "react-icons/fa";
 import { useWallet } from "../../hooks/useWallet";
+import { ConnectButton } from "@xellar/kit";
+import { Address } from "viem";
 
-// Temporarily modify component usage to avoid type errors
-// Note: we should update TokenBalance component to accept the tokenType prop properly
+// Temporary display for token balance
 const TokenDisplay = () => {
-  return (
-    <Text fontWeight="medium">1000 IDRX</Text> // Simplified placeholder
-  );
+  return <Text fontWeight="medium">1000 IDRX</Text>; // Placeholder
 };
 
 const WalletDetails: React.FC = () => {
   const { wallet, isConnected, formatAddress } = useWallet();
   const { hasCopied, onCopy } = useClipboard(wallet?.address || "");
 
-  const bgColor = useColorModeValue("white", "gray.700");
-  const cardBg = useColorModeValue("gray.50", "gray.600");
+  const bgColor = "white";
+  const cardBg = "gray.50";
 
   if (!isConnected || !wallet) {
     return (
-      <Box
-        borderWidth="1px"
-        borderRadius="lg"
-        overflow="hidden"
-        bg={bgColor}
-        p={6}
-      >
+      <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={bgColor} p={6}>
         <Flex direction="column" align="center" justify="center" py={10}>
           <Icon as={FaWallet} boxSize={12} color="gray.300" mb={4} />
           <Text fontSize="lg" fontWeight="medium" mb={2}>
             No Wallet Connected
           </Text>
           <Text color="gray.500" mb={6} textAlign="center">
-            Connect your Xellar wallet to view your balance and transaction
-            history
+            Connect your Xellar wallet to view your balance and transaction history
           </Text>
-          <Button colorScheme="purple">Connect Wallet</Button>
+          <ConnectButton.Custom>
+            {({ openConnectModal, isConnected, openProfileModal, account }) => {
+              if (!isConnected) {
+                return (
+                  <Button
+                    colorScheme="purple"
+                    onClick={openConnectModal}
+                  >
+                    Connect Wallet
+                  </Button>
+                );
+              }
+
+              return (
+                <Button
+                  variant="solid"
+                  colorScheme="purple"
+                  borderRadius="lg"
+                  onClick={openProfileModal}
+                >
+                  {account?.address}
+                </Button>
+              );
+            }}
+          </ConnectButton.Custom>
         </Flex>
       </Box>
     );
   }
 
   return (
-    <Box
-      borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      bg={bgColor}
-      p={6}
-    >
+    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={bgColor} p={6}>
       <Text fontSize="xl" fontWeight="bold" mb={6}>
         Wallet Details
       </Text>
 
       <VStack spacing={6} align="stretch">
+        {/* Wallet Address */}
         <Flex
           bg={cardBg}
           p={4}
@@ -111,6 +133,7 @@ const WalletDetails: React.FC = () => {
 
         <Divider />
 
+        {/* Token Balances */}
         <Box>
           <Text fontWeight="medium" mb={4}>
             Token Balances
@@ -148,6 +171,7 @@ const WalletDetails: React.FC = () => {
 
         <Divider />
 
+        {/* Quick Actions */}
         <Box>
           <Text fontWeight="medium" mb={4}>
             Quick Actions

@@ -14,15 +14,22 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaTicketAlt, FaShoppingCart } from "react-icons/fa";
-import { ResaleTicketCard, ResaleTicket } from "../../components/marketplace/ResaleTicketCard";
-import { MarketplaceFilters, MarketplaceFiltersValue } from "../../components/marketplace/MarketplaceFilters";
+import {
+  ResaleTicketCard,
+  ResaleTicket,
+} from "../../components/marketplace/ResaleTicketCard";
+import {
+  MarketplaceFilters,
+  MarketplaceFiltersValue,
+} from "../../components/marketplace/MarketplaceFilters";
 import { BuyResaleTicket } from "../../components/marketplace/BuyResaleTicket";
+import { mockEvents } from "../../data/mockEvents";
 
 // Mock data for resale tickets
 const mockResaleTickets: ResaleTicket[] = [
   {
     id: "resale-1",
-    eventId: "event-1",
+    eventId: "1", // Match with mockEvents IDs
     eventName: "Summer Music Festival",
     eventDate: "2025-06-15T12:00:00",
     eventLocation: "Jakarta Convention Center",
@@ -38,7 +45,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-2",
-    eventId: "event-2",
+    eventId: "2", // Match with mockEvents IDs
     eventName: "Tech Conference 2025",
     eventDate: "2025-07-25T09:00:00",
     eventLocation: "Digital Hub Bandung",
@@ -54,7 +61,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-3",
-    eventId: "event-1",
+    eventId: "1", // Match with mockEvents IDs
     eventName: "Summer Music Festival",
     eventDate: "2025-06-15T12:00:00",
     eventLocation: "Jakarta Convention Center",
@@ -70,7 +77,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-4",
-    eventId: "event-3",
+    eventId: "3", // Match with mockEvents IDs
     eventName: "Blockchain Workshop",
     eventDate: "2025-05-10T10:00:00",
     eventLocation: "Blockchain Center Jakarta",
@@ -86,7 +93,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-5",
-    eventId: "event-2",
+    eventId: "2", // Match with mockEvents IDs
     eventName: "Tech Conference 2025",
     eventDate: "2025-07-25T09:00:00",
     eventLocation: "Digital Hub Bandung",
@@ -102,7 +109,7 @@ const mockResaleTickets: ResaleTicket[] = [
   },
   {
     id: "resale-6",
-    eventId: "event-4",
+    eventId: "4", // Match with mockEvents IDs
     eventName: "Art Exhibition: Future Visions",
     eventDate: "2025-06-05T11:00:00",
     eventLocation: "Modern Gallery Surabaya",
@@ -115,14 +122,32 @@ const mockResaleTickets: ResaleTicket[] = [
     sellerRating: 4.9,
     tokenId: "NFT-56789012",
     transferCount: 0,
-  }
+  },
 ];
+
+// Add image URLs from mockEvents to resale tickets
+const enrichTicketsWithImages = (tickets: ResaleTicket[]): ResaleTicket[] => {
+  return tickets.map((ticket) => {
+    const matchingEvent = mockEvents.find(
+      (event) => event.id === ticket.eventId
+    );
+    if (matchingEvent) {
+      return {
+        ...ticket,
+        imageUrl: matchingEvent.imageUrl,
+      };
+    }
+    return ticket;
+  });
+};
 
 export const MarketplacePage: React.FC = () => {
   const [resaleTickets, setResaleTickets] = useState<ResaleTicket[]>([]);
   const [filteredTickets, setFilteredTickets] = useState<ResaleTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTicket, setSelectedTicket] = useState<ResaleTicket | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<ResaleTicket | null>(
+    null
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const categories = ["Music", "Technology", "Workshop", "Art", "All"];
@@ -131,8 +156,9 @@ export const MarketplacePage: React.FC = () => {
   useEffect(() => {
     // Simulate API call to fetch resale tickets
     setTimeout(() => {
-      setResaleTickets(mockResaleTickets);
-      setFilteredTickets(mockResaleTickets);
+      const enrichedTickets = enrichTicketsWithImages(mockResaleTickets);
+      setResaleTickets(enrichedTickets);
+      setFilteredTickets(enrichedTickets);
       setIsLoading(false);
     }, 1500);
   }, []);
@@ -144,7 +170,7 @@ export const MarketplacePage: React.FC = () => {
     if (filters.search && filters.search.trim() !== "") {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(
-        ticket =>
+        (ticket) =>
           ticket.eventName.toLowerCase().includes(searchLower) ||
           ticket.ticketType.toLowerCase().includes(searchLower) ||
           ticket.eventLocation.toLowerCase().includes(searchLower)
@@ -153,21 +179,25 @@ export const MarketplacePage: React.FC = () => {
 
     // Apply category filter
     if (filters.category && filters.category !== "All") {
-      filtered = filtered.filter(ticket => {
+      filtered = filtered.filter((ticket) => {
         // Simplified category mapping for demo purposes
-        const ticketCategory = 
-          ticket.eventName.includes("Music") ? "Music" :
-          ticket.eventName.includes("Tech") ? "Technology" :
-          ticket.eventName.includes("Workshop") ? "Workshop" :
-          ticket.eventName.includes("Art") ? "Art" : "Other";
-        
+        const ticketCategory = ticket.eventName.includes("Music")
+          ? "Music"
+          : ticket.eventName.includes("Tech")
+          ? "Technology"
+          : ticket.eventName.includes("Workshop")
+          ? "Workshop"
+          : ticket.eventName.includes("Art")
+          ? "Art"
+          : "Other";
+
         return ticketCategory === filters.category;
       });
     }
 
     // Apply location filter
     if (filters.location && filters.location !== "All") {
-      filtered = filtered.filter(ticket =>
+      filtered = filtered.filter((ticket) =>
         ticket.eventLocation.includes(filters.location)
       );
     }
@@ -175,7 +205,7 @@ export const MarketplacePage: React.FC = () => {
     // Apply date filter
     if (filters.date) {
       const filterDate = new Date(filters.date);
-      filtered = filtered.filter(ticket => {
+      filtered = filtered.filter((ticket) => {
         const eventDate = new Date(ticket.eventDate);
         return (
           eventDate.getFullYear() === filterDate.getFullYear() &&
@@ -194,13 +224,22 @@ export const MarketplacePage: React.FC = () => {
         filtered.sort((a, b) => b.resalePrice - a.resalePrice);
         break;
       case "date_close":
-        filtered.sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+        );
         break;
       case "best_deal":
-        filtered.sort((a, b) => (a.resalePrice / a.originalPrice) - (b.resalePrice / b.originalPrice));
+        filtered.sort(
+          (a, b) =>
+            a.resalePrice / a.originalPrice - b.resalePrice / b.originalPrice
+        );
         break;
       default: // newest
-        filtered.sort((a, b) => new Date(b.listedDate).getTime() - new Date(a.listedDate).getTime());
+        filtered.sort(
+          (a, b) =>
+            new Date(b.listedDate).getTime() - new Date(a.listedDate).getTime()
+        );
         break;
     }
 
@@ -208,7 +247,7 @@ export const MarketplacePage: React.FC = () => {
   };
 
   const handleShowDetails = (ticketId: string) => {
-    const ticket = resaleTickets.find(t => t.id === ticketId);
+    const ticket = resaleTickets.find((t) => t.id === ticketId);
     if (ticket) {
       setSelectedTicket(ticket);
       onOpen();
@@ -220,7 +259,9 @@ export const MarketplacePage: React.FC = () => {
       <VStack spacing={8} align="stretch">
         <Box>
           <Heading size="lg">NFT Ticket Marketplace</Heading>
-          <Text color="gray.600">Buy verified resale tickets for upcoming events</Text>
+          <Text color="gray.600">
+            Buy verified resale tickets for upcoming events
+          </Text>
         </Box>
 
         <MarketplaceFilters
@@ -237,7 +278,7 @@ export const MarketplacePage: React.FC = () => {
           </Flex>
         ) : filteredTickets.length > 0 ? (
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-            {filteredTickets.map(ticket => (
+            {filteredTickets.map((ticket) => (
               <ResaleTicketCard
                 key={ticket.id}
                 ticket={ticket}

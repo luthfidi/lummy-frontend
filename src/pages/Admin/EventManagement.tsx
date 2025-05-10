@@ -26,7 +26,6 @@ import {
   AlertDialogOverlay,
   IconButton,
   Skeleton,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, EditIcon, DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import {
@@ -275,33 +274,17 @@ const EventManagement: React.FC = () => {
 
         <HStack>
           <Button
-            leftIcon={<EditIcon color="green.500" />}
-            color="green.500"
-            bg="white"
-            _hover={{
-              transform: "scale(1.05)",
-              boxShadow: "md",
-            }}
-            _active={{
-              transform: "scale(0.98)",
-            }}
-            border="none"
+            leftIcon={<EditIcon />}
+            colorScheme="purple"
+            variant="outline"
             onClick={() => navigate(`/admin/events/${id}/edit`)}
           >
             Edit Event
           </Button>
           <Button
-            leftIcon={<DeleteIcon color="red.500" />}
-            color="red.500"
-            bg="white"
-            _hover={{
-              transform: "scale(1.05)",
-              boxShadow: "md",
-            }}
-            _active={{
-              transform: "scale(0.98)",
-            }}
-            border="none"
+            leftIcon={<DeleteIcon />}
+            colorScheme="red"
+            variant="outline"
             onClick={onOpen}
           >
             Cancel Event
@@ -337,7 +320,7 @@ const EventManagement: React.FC = () => {
               <Divider />
               <MotionBox
                 border="2px solid"
-                borderColor={useColorModeValue("gray.200", "gray.600")}
+                borderColor={"gray.200"}
                 p={4}
                 rounded="xl"
               >
@@ -369,7 +352,7 @@ const EventManagement: React.FC = () => {
           </TabPanel>
 
           {/* Tickets Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={6}>
             <VStack spacing={6} align="stretch">
               <Heading size="md">Ticket Tiers</Heading>
 
@@ -396,50 +379,22 @@ const EventManagement: React.FC = () => {
                     </VStack>
 
                     <HStack>
-                      <IconButton
-                        aria-label="Edit"
-                        size="sm"
-                        colorScheme="purple"
-                        variant="outline"
-                        icon={<EditIcon color="green.500" />}
-                        color="green.500"
-                        bg="white"
-                        _hover={{
-                          transform: "scale(1.05)",
-                          boxShadow: "md",
-                        }}
-                        _active={{
-                          transform: "scale(0.98)",
-                        }}
-                        border="none"
-                      />
-                      <IconButton
-                        icon={<AddIcon />}
-                        aria-label="Add Tickets"
-                        size="sm"
-                        colorScheme="purple"
-                        variant="ghost"
-                        isDisabled={tier.sold >= tier.total}
-                      />
+                      <Button size="sm" colorScheme="purple" variant="outline">
+                        Edit
+                      </Button>
                     </HStack>
                   </Flex>
                 </Box>
               ))}
 
-              <Button
-                leftIcon={<AddIcon />}
-                alignSelf="flex-start"
-                colorScheme="purple"
-                variant="solid"
-                size="md"
-              >
+              <Button leftIcon={<AddIcon />} alignSelf="flex-start">
                 Add New Tier
               </Button>
             </VStack>
           </TabPanel>
 
           {/* Attendees Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={4}>
             <Flex justify="space-between" align="center" mb={6}>
               <Heading size="md">Attendee Management</Heading>
               <HStack>
@@ -460,7 +415,7 @@ const EventManagement: React.FC = () => {
           </TabPanel>
 
           {/* Settings Tab */}
-          <TabPanel px={0}>
+          <TabPanel px={0} py={4}>
             <VStack spacing={8} align="stretch">
               <ResellSettings
                 settings={resellSettings}

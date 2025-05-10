@@ -203,50 +203,41 @@ export const EventDetailPage: React.FC = () => {
 
           {/* Ticket Info Card - Similar to reference */}
           <Box
-            w={{ base: "100%", md: "25%" }}
+            w={{ base: "100%", md: "30%" }}
             borderWidth="1px"
-            borderColor="gray.100"
-            borderRadius="xl"
-            px={8}
-            py={14}
-            bgGradient="linear(to-br, white, gray.50)"
-            boxShadow="lg"
-            transition="all 0.3s ease-in-out"
-            _hover={{ boxShadow: "xl", transform: "translateY(-4px)" }}
+            borderColor="gray.200"
+            borderRadius="md"
+            p={6}
+            bg="white"
+            boxShadow="sm"
           >
-            <VStack spacing={5} align="stretch">
-              <Text
-                fontSize="sm"
-                fontWeight="medium"
-                color="gray.500"
-                textTransform="uppercase"
-                letterSpacing="wide"
-              >
-                From
+            <VStack spacing={4} align="stretch">
+              <Text fontWeight="medium" color="gray.500">
+                Tickets starting at
               </Text>
-              <Heading size="xl" color="lummy.gray.800" fontWeight="extrabold">
+              <Heading size="lg" color="lummy.gray.800">
                 {event.currency} {event.price.toLocaleString()}
               </Heading>
               <Button
-                bgGradient="linear(to-r, purple.500, purple.400)"
-                color="white"
+                colorScheme="purple"
                 size="lg"
                 width="100%"
-                _hover={{ bgGradient: "linear(to-r, purple.600, purple.500)" }}
                 onClick={() => {
                   if (event.ticketTiers && event.ticketTiers.length > 0) {
+                    // Scroll to ticket section
                     ticketSectionRef.current?.scrollIntoView({
                       behavior: "smooth",
                       block: "center",
                     });
 
+                    // If we already have a selected tier, proceed to checkout
                     if (selectedTier) {
                       handleProceedToCheckout();
                     }
                   }
                 }}
               >
-                🎟️ Buy Tickets
+                Buy Tickets
               </Button>
             </VStack>
           </Box>

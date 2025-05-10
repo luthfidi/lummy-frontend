@@ -1,10 +1,10 @@
 import { Box, Container } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { 
-  HeroSection, 
-  FeatureSection, 
-  FaqSection, 
-  TestimonialSection 
+import {
+  HeroSection,
+  FeatureSection,
+  FaqSection,
+  TestimonialSection,
 } from "../../components/home";
 import { FeaturedEvents, CategoryNav } from "../../components/events";
 import { mockEvents } from "../../data/mockEvents";
@@ -28,9 +28,9 @@ export const HomePage = () => {
   };
 
   const handleViewAllClick = () => {
-    navigate('/events');
+    navigate("/events");
   };
-  
+
   const handleCategorySelect = (category: string) => {
     // Navigate to events page with category filter
     navigate(`/events?category=${category}`);
@@ -40,27 +40,27 @@ export const HomePage = () => {
     <Box>
       {/* Hero Section */}
       <HeroSection />
-      
+
       {/* Category Navigation */}
       <Container maxW="container.xl" py={12}>
         <CategoryNav onCategorySelect={handleCategorySelect} />
       </Container>
-      
+
       {/* Featured Events Section */}
       <Container maxW="container.xl" py={8}>
-        <FeaturedEvents 
-          events={events} 
-          onEventClick={handleEventClick} 
+        <FeaturedEvents
+          events={events}
+          onEventClick={handleEventClick}
           onViewAllClick={handleViewAllClick}
         />
       </Container>
-      
+
       {/* Features Section */}
       <FeatureSection />
-      
+
       {/* Testimonials Section */}
       <TestimonialSection />
-      
+
       {/* FAQ Section */}
       <FaqSection />
     </Box>

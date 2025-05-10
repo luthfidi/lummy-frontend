@@ -7,7 +7,6 @@ import {
   Text,
   Link,
   HStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { FaDiscord, FaInstagram, FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -39,12 +38,12 @@ const SocialIcon = ({ icon, label, href }: SocialIconProps) => {
       display={"inline-flex"}
       alignItems={"center"}
       justifyContent={"center"}
-      bg={useColorModeValue("blackAlpha.100", "whiteAlpha.100")}
-      color={useColorModeValue("gray.700", "gray.200")}
+      bg={"blackAlpha.100"}
+      color={"gray.700"}
       transition={"all 0.3s ease"}
       _hover={{
-        bg: useColorModeValue("blackAlpha.200", "whiteAlpha.200"),
-        color: useColorModeValue("gray.900", "white"),
+        bg: "blackAlpha.200",
+        color: "gray.900",
       }}
     >
       {icon}
@@ -59,7 +58,7 @@ export const Footer = () => {
       color="gray.700"
       borderTopWidth={1}
       borderStyle={"solid"}
-      borderColor={useColorModeValue("gray.200", "gray.700")}
+      borderColor={"gray.200"}
     >
       <Container as={Stack} maxW={"6xl"} py={10}>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={8}>

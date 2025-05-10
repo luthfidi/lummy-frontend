@@ -5,11 +5,10 @@ import {
   Heading,
   Text,
   VStack,
-  HStack,
   Select,
   Badge,
-  useColorModeValue,
   SimpleGrid,
+  Divider,
 } from "@chakra-ui/react";
 import {
   LineChart,
@@ -26,6 +25,7 @@ import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
 
+// Modified to group by event name
 export interface SalesData {
   totalRevenue: number;
   soldTickets: number;
@@ -33,6 +33,12 @@ export interface SalesData {
   totalTransactions: number;
   averageTicketPrice: number;
   revenueByTier: { [tierName: string]: number };
+  // Add revenueByEventAndTier for grouped data
+  revenueByEventAndTier?: {
+    [eventName: string]: {
+      [tierName: string]: number;
+    };
+  };
   salesByDay: { date: string; sales: number }[];
   currency: string;
   percentChange: number;
@@ -59,7 +65,7 @@ const StatCard: React.FC<StatCardProps> = ({
   isIncrease,
   icon,
 }) => {
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
   const arrowColor = isIncrease ? "green.500" : "red.500";
   const arrowSymbol = isIncrease ? "↑" : "↓";
 
@@ -77,6 +83,7 @@ const StatCard: React.FC<StatCardProps> = ({
       <MotionText
         fontSize="2xl"
         fontWeight="bold"
+        mt={2}
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -105,16 +112,14 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
   eventName,
 }) => {
   const [timeRange, setTimeRange] = useState<string>("7d");
-  const cardBg = useColorModeValue("white", "gray.700");
+  const cardBg = "white";
+  const purpleColor = "purple.500";
+  const badgeBg = "purple.50";
 
   // In a real implementation, this would update the data based on time range
   const handleTimeRangeChange = (range: string) => {
     setTimeRange(range);
     // Would typically fetch new data here
-  };
-
-  const calculatePercentage = (sold: number, total: number): number => {
-    return total > 0 ? (sold / total) * 100 : 0;
   };
 
   const renderSalesChart = () => {
@@ -125,8 +130,8 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
             data={salesData.salesByDay}
             margin={{
               top: 5,
-              right: 30,
-              left: 20,
+              right: 50,
+              left: 0,
               bottom: 5,
             }}
           >
@@ -192,7 +197,7 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mt={4}>
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
@@ -204,31 +209,33 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               helpText={`${salesData.percentChange || 0}% from previous period`}
               isIncrease={(salesData.percentChange || 0) > 0}
               icon="💰"
-              bgColor={useColorModeValue("green.50", "green.900")}
+              bgColor={"green.50"}
             />
           </MotionBox>
 
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
             <StatCard
               label="Tickets Sold"
               value={(salesData.soldTickets || 0).toLocaleString()}
-              helpText={`${calculatePercentage(
-                salesData.soldTickets || 0,
-                (salesData.soldTickets || 0) + (salesData.availableTickets || 0)
+              helpText={`${(
+                ((salesData.soldTickets || 0) /
+                  ((salesData.soldTickets || 0) +
+                    (salesData.availableTickets || 0))) *
+                100
               ).toFixed(1)}% of total`}
               icon="🎟️"
-              bgColor={useColorModeValue("yellow.50", "yellow.900")}
+              bgColor={"yellow.50"}
             />
           </MotionBox>
 
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
@@ -237,13 +244,13 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               value={(salesData.totalTransactions || 0).toLocaleString()}
               helpText="Total purchases"
               icon="💳"
-              bgColor={useColorModeValue("blue.50", "blue.900")}
+              bgColor={"blue.50"}
             />
           </MotionBox>
 
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
@@ -254,14 +261,14 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               ).toLocaleString()}`}
               helpText="Per ticket"
               icon="📊"
-              bgColor={useColorModeValue("purple.50", "purple.900")}
+              bgColor={"purple.50"}
             />
           </MotionBox>
         </SimpleGrid>
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6} mt={6}>
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
@@ -277,7 +284,7 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
 
           <MotionBox
             border="2px solid"
-            borderColor={useColorModeValue("gray.200", "gray.600")}
+            borderColor={"gray.200"}
             p={4}
             rounded="xl"
           >
@@ -285,25 +292,98 @@ const SalesStatistics: React.FC<SalesStatisticsProps> = ({
               <Heading size="sm" mb={4}>
                 Revenue by Ticket Tier
               </Heading>
-              <VStack spacing={3} align="stretch">
-                {Object.entries(salesData.revenueByTier || {}).map(
-                  ([tier, revenue]) => (
-                    <Flex key={tier} justify="space-between" align="center">
-                      <HStack>
-                        <Badge colorScheme="purple" px={2} py={1}>
-                          {tier}
-                        </Badge>
-                      </HStack>
-                      <Text fontWeight="bold">
-                        {salesData.currency || "IDRX"}{" "}
-                        {revenue.toLocaleString()}
-                      </Text>
-                    </Flex>
+
+              <VStack spacing={2} align="stretch">
+                {salesData.revenueByEventAndTier ? (
+                  // Display revenue grouped by event
+                  Object.entries(salesData.revenueByEventAndTier).map(
+                    ([eventName, tiers], eventIndex) => (
+                      <Box key={eventIndex}>
+                        <Text
+                          fontWeight="bold"
+                          fontSize="md"
+                          color={purpleColor}
+                          mb={2}
+                          borderLeftWidth="3px"
+                          borderLeftColor={purpleColor}
+                          pl={2}
+                        >
+                          {eventName}
+                        </Text>
+                        <VStack spacing={2} align="stretch" mb={3}>
+                          {Object.entries(tiers).map(
+                            ([tierName, revenue], tierIndex) => (
+                              <Flex
+                                key={tierIndex}
+                                justify="space-between"
+                                align="center"
+                              >
+                                <Badge
+                                  bg={badgeBg}
+                                  color={purpleColor}
+                                  px={2}
+                                  py={1}
+                                >
+                                  {tierName}
+                                </Badge>
+                                <Text fontWeight="medium">
+                                  {salesData.currency}{" "}
+                                  {revenue.toLocaleString()}
+                                </Text>
+                              </Flex>
+                            )
+                          )}
+                        </VStack>
+                        {eventIndex <
+                          Object.keys(salesData.revenueByEventAndTier || {})
+                            .length -
+                            1 && <Divider />}
+                      </Box>
+                    )
                   )
+                ) : (
+                  // Fallback to non-grouped display
+                  <Box>
+                    <Text
+                      fontWeight="bold"
+                      fontSize="md"
+                      color={purpleColor}
+                      mb={2}
+                      borderLeftWidth="3px"
+                      borderLeftColor={purpleColor}
+                      pl={2}
+                    >
+                      {eventName}
+                    </Text>
+                    <VStack spacing={2} align="stretch">
+                      {Object.entries(salesData.revenueByTier || {}).map(
+                        ([tierName, revenue], index) => (
+                          <Flex
+                            key={index}
+                            justify="space-between"
+                            align="center"
+                          >
+                            <Badge
+                              bg={badgeBg}
+                              color={purpleColor}
+                              px={2}
+                              py={1}
+                            >
+                              {tierName}
+                            </Badge>
+                            <Text fontWeight="medium">
+                              {salesData.currency} {revenue.toLocaleString()}
+                            </Text>
+                          </Flex>
+                        )
+                      )}
+                    </VStack>
+                  </Box>
                 )}
-                {Object.keys(salesData.revenueByTier || {}).length === 0 && (
-                  <Text color="gray.500">No revenue data available</Text>
-                )}
+                {!salesData.revenueByEventAndTier &&
+                  Object.keys(salesData.revenueByTier || {}).length === 0 && (
+                    <Text color="gray.500">No revenue data available</Text>
+                  )}
               </VStack>
             </Box>
           </MotionBox>

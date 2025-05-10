@@ -14,10 +14,7 @@ import {
   CreateEventForm,
   EventManagement,
 } from "./pages/Admin";
-import {
-  CheckInDashboard,
-  ScannerPage,
-} from "./pages/TicketManagement";
+import { CheckInDashboard, ScannerPage } from "./pages/TicketManagement";
 import { Web3Provider } from "./services/Web3Provider";
 
 function App() {
@@ -26,7 +23,7 @@ function App() {
       <Box minH="100vh" display="flex" flexDirection="column">
         <Navbar />
         <Box flex="1">
-        <Routes>
+          <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/event/:id" element={<EventDetailPage />} />
@@ -40,10 +37,16 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/events/create" element={<CreateEventForm />} />
             <Route path="/admin/events/:id" element={<EventManagement />} />
-            
+
             {/* Ticket Management routes */}
-            <Route path="/admin/events/:eventId/check-in" element={<CheckInDashboard />} />
-            <Route path="/admin/events/:eventId/scanner" element={<ScannerPage />} />
+            <Route
+              path="/admin/events/:eventId/check-in"
+              element={<CheckInDashboard />}
+            />
+            <Route
+              path="/admin/events/:eventId/scanner"
+              element={<ScannerPage />}
+            />
           </Routes>
         </Box>
         <Footer />

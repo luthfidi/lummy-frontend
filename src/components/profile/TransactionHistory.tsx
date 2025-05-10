@@ -14,7 +14,6 @@ import {
   IconButton,
   Link,
   HStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   ExternalLinkIcon,
@@ -35,24 +34,44 @@ interface Transaction {
 
 interface TransactionHistoryProps {
   transactions: Transaction[];
+  isConnected: boolean;
 }
 
 const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   transactions,
+  isConnected,
 }) => {
   const [filter, setFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
 
-  const bgColor = useColorModeValue("white", "gray.700");
-  const headerBg = useColorModeValue("gray.50", "gray.700");
+  const bgColor = "white";
+  const headerBg = "gray.50";
 
-  // Filter transactions based on selected type
+  if (!isConnected) {
+    return (
+      <Box
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        bg="white"
+        p={6}
+        textAlign="center"
+      >
+        <Text fontSize="lg" fontWeight="medium" mb={2}>
+          Wallet Not Connected
+        </Text>
+        <Text color="gray.500">
+          Please connect your wallet to view your transaction history.
+        </Text>
+      </Box>
+    );
+  }
+
   const filteredTransactions = transactions.filter(
     (tx) => filter === "all" || tx.type === filter
   );
 
-  // Paginate transactions
   const paginatedTransactions = filteredTransactions.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
@@ -60,15 +79,14 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -110,13 +128,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
   };
 
   return (
-    <Box
-      borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      bg={bgColor}
-      p={0}
-    >
+    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={bgColor} p={0}>
       <Flex p={4} justify="space-between" align="center" bg={headerBg}>
         <Text fontSize="xl" fontWeight="bold">
           Transaction History
@@ -126,7 +138,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
           value={filter}
           onChange={(e) => {
             setFilter(e.target.value);
-            setPage(1); // Reset to first page on filter change
+            setPage(1);
           }}
         >
           <option value="all">All Transactions</option>
@@ -172,8 +184,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                   <Td>
                     <HStack spacing={1}>
                       <Text fontSize="xs" fontFamily="monospace">
-                        {tx.txHash.substring(0, 8)}...
-                        {tx.txHash.substring(tx.txHash.length - 6)}
+                        {tx.txHash.slice(0, 8)}...{tx.txHash.slice(-6)}
                       </Text>
                       <Link
                         href={`https://explorer.lisk.com/tx/${tx.txHash}`}

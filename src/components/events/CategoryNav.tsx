@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Flex,
-  Text,
-  Icon,
-  SimpleGrid,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Icon, SimpleGrid } from "@chakra-ui/react";
 import {
   FaMusic,
   FaLaptopCode,
@@ -40,16 +33,16 @@ const CategoryNav: React.FC<CategoryNavProps> = ({ onCategorySelect }) => {
     { name: "Theater", icon: FaTheaterMasks, color: "teal.500" },
   ];
 
-  const borderColor = useColorModeValue("gray.200", "gray.600");
-  const hoverBorder = useColorModeValue("gray.400", "gray.500");
-  const bgHover = useColorModeValue("gray.50", "gray.700");
+  const borderColor = "gray.300";
+  const hoverBorder = "gray.500";
+  const bgHover = "gray.50";
 
   return (
     <SimpleGrid columns={{ base: 2, md: 4, lg: 8 }} spacing={4}>
       {categories.map((category) => (
         <Box
           key={category.name}
-          border="2px solid"
+          border="1px solid"
           borderColor={borderColor}
           borderRadius="lg"
           p={4}
