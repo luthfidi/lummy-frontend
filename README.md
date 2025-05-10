@@ -1,14 +1,19 @@
 # Lummy - Decentralized Ticket Platform
 
+<div align="center">
+  <img src="public/lummy-icon.png" alt="Lummy Logo" width="80px" style="vertical-align: middle; margin-bottom: 15px;"> <span style="font-size: 36px; font-weight: bold; background: linear-gradient(90deg, #8A6EF7 0%, #FF5C9A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Lummy</span>
+</div>
+
 Lummy is a revolutionary decentralized ticket platform built on the Lisk blockchain. Using NFT technology and IDRX stablecoin payments, Lummy eliminates common issues in the traditional ticketing industry such as counterfeiting, scalping, and complex verification processes. The platform securely and transparently connects event organizers with ticket buyers, ensuring ticket authenticity and giving more control to event organizers.
 
 ## Lisk Builders Challenge Submission
 
-This project is being developed for the Lisk Builders Challenge hackathon (March-May 2025). 
+This project is being developed for the Lisk Builders Challenge hackathon (March-May 2025).
 
 The Lisk Builders Challenge is an opportunity for developers to turn innovative blockchain ideas into reality. With a 3-month development period featuring workshops and mentorship, the challenge culminates in a Demo Day in Jakarta where the 10 best projects will compete.
 
 ### Key Tech Requirements:
+
 - Smart Contract(s) deployed on Lisk Sepolia Testnet or Lisk Mainnet
 - Integration with IDRX Stablecoin on Lisk Mainnet or Testnet
 - Built with Xellar Kit for wallet integration
@@ -25,6 +30,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 ## Core Features
 
 ### 1. User Features
+
 - Browse events by category, location, date, and price
 - Purchase tickets securely using IDRX
 - Receive NFT tickets in wallet
@@ -34,6 +40,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 - View ticket history and ownership records
 
 ### 2. Event Organizer Features
+
 - Create and manage events
 - Set up ticket tiers with customizable pricing
 - Control reselling parameters (max markup %)
@@ -42,6 +49,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 - Receive royalties from resales
 
 ### 3. Anti-Fraud & Anti-Scalping Features
+
 - Blockchain verification ensures ticket authenticity
 - QR codes change dynamically to prevent screenshots
 - Price ceiling on resales to prevent scalping
@@ -51,6 +59,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 ## Project Structure
 
 ### Frontend Pages
+
 - **Home Page**: Featured events, category navigation, search functionality
 - **Events Page**: Browse and filter events with comprehensive search options
 - **Event Detail Page**: Complete event information and ticket purchasing
@@ -62,6 +71,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 - **Ticket Management**: Check-in system with QR code scanning for event staff
 
 ### Key Components
+
 - Event catalog with filtering and search
 - Wallet connection and management
 - NFT ticket minting and transfer
@@ -79,8 +89,8 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 - ✅ Events browsing and filtering system
 - ✅ Ticket Management system for check-ins
 - ✅ Category navigation and filtering
+- ✅ Wallet integration with Xellar Kit
 - 🔄 Event detail page (in progress)
-- 🔄 Wallet integration with Xellar (in progress)
 - 🔄 Smart contract development (in progress)
 - ⬜ Checkout process
 - ⬜ NFT ticket issuance
@@ -90,6 +100,7 @@ The Lisk Builders Challenge is an opportunity for developers to turn innovative 
 ## Unique Value Proposition
 
 Lummy transforms the ticketing experience by:
+
 - **Eliminating fraud**: Blockchain-verified NFT tickets cannot be counterfeited
 - **Fair reselling**: Price caps prevent excessive scalping while allowing legitimate transfers
 - **Transparent ownership**: Complete history of ticket ownership and transfers
