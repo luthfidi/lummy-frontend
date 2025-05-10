@@ -10,77 +10,44 @@ import {
   Icon,
   useClipboard,
   Tooltip,
+  Spinner,
 } from "@chakra-ui/react";
-import {
-  CopyIcon,
-  CheckIcon,
-  ExternalLinkIcon,
-} from "@chakra-ui/icons";
-import {
-  FaWallet,
-  FaCoins,
-  FaExchangeAlt,
-  FaTicketAlt,
-} from "react-icons/fa";
-import { useWallet } from "../../hooks/useWallet";
-import { ConnectButton } from "@xellar/kit";
-// import { Address } from "viem";
+import { CopyIcon, CheckIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { FaWallet, FaCoins, FaExchangeAlt, FaTicketAlt } from "react-icons/fa";
+import { useAccount } from "wagmi";
 
-// Temporary display for token balance
-const TokenDisplay = () => {
-  return <Text fontWeight="medium">1000 IDRX</Text>; // Placeholder
-};
+// Interface for balance data
+interface WalletDetailsProps {
+  balanceData?: {
+    formatted: string;
+    symbol: string;
+    value: bigint;
+  };
+}
 
-const WalletDetails: React.FC = () => {
-  const { wallet, isConnected, formatAddress } = useWallet();
-  const { hasCopied, onCopy } = useClipboard(wallet?.address || "");
+const WalletDetails: React.FC<WalletDetailsProps> = ({ balanceData }) => {
+  const { address } = useAccount();
+  const { hasCopied, onCopy } = useClipboard(address || "");
 
   const bgColor = "white";
   const cardBg = "gray.50";
 
-  if (!isConnected || !wallet) {
-    return (
-      <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={bgColor} p={6}>
-        <Flex direction="column" align="center" justify="center" py={10}>
-          <Icon as={FaWallet} boxSize={12} color="gray.300" mb={4} />
-          <Text fontSize="lg" fontWeight="medium" mb={2}>
-            No Wallet Connected
-          </Text>
-          <Text color="gray.500" mb={6} textAlign="center">
-            Connect your Xellar wallet to view your balance and transaction history
-          </Text>
-          <ConnectButton.Custom>
-            {({ openConnectModal, isConnected, openProfileModal, account }) => {
-              if (!isConnected) {
-                return (
-                  <Button
-                    colorScheme="purple"
-                    onClick={openConnectModal}
-                  >
-                    Connect Wallet
-                  </Button>
-                );
-              }
-
-              return (
-                <Button
-                  variant="solid"
-                  colorScheme="purple"
-                  borderRadius="lg"
-                  onClick={openProfileModal}
-                >
-                  {account?.address}
-                </Button>
-              );
-            }}
-          </ConnectButton.Custom>
-        </Flex>
-      </Box>
-    );
-  }
+  // Format address for display
+  const formatAddress = (address?: string, length = 6) => {
+    if (!address) return "";
+    return `${address.substring(0, length)}...${address.substring(
+      address.length - 4
+    )}`;
+  };
 
   return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={bgColor} p={6}>
+    <Box
+      borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      bg={bgColor}
+      p={6}
+    >
       <Text fontSize="xl" fontWeight="bold" mb={6}>
         Wallet Details
       </Text>
@@ -100,7 +67,7 @@ const WalletDetails: React.FC = () => {
           </HStack>
           <HStack>
             <Text fontFamily="monospace" fontSize="sm">
-              {formatAddress(wallet.address, 6)}
+              {formatAddress(address)}
             </Text>
             <Tooltip label={hasCopied ? "Copied!" : "Copy address"}>
               <Button
@@ -115,7 +82,7 @@ const WalletDetails: React.FC = () => {
             <Tooltip label="View on explorer">
               <Button
                 as="a"
-                href={`https://explorer.lisk.com/address/${wallet.address}`}
+                href={`https://explorer.lisk.com/address/${address}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 size="xs"
@@ -147,7 +114,14 @@ const WalletDetails: React.FC = () => {
                 <Icon as={FaCoins} color="blue.500" />
                 <Text>IDRX Balance</Text>
               </HStack>
-              <TokenDisplay />
+              {balanceData ? (
+                <Text fontWeight="medium">
+                  {parseFloat(balanceData.formatted).toLocaleString()}{" "}
+                  {balanceData.symbol}
+                </Text>
+              ) : (
+                <Spinner size="sm" color="blue.500" />
+              )}
             </Flex>
 
             <Flex
