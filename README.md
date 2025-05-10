@@ -1,7 +1,7 @@
 # Lummy - Decentralized Ticket Platform
 
 <div>
-  <img src="public/lummy-icon.png" alt="Lummy Logo" width="80px" style="vertical-align: middle; margin-bottom: 15px;"> <span style="font-size: 36px; font-weight: bold; background: linear-gradient(90deg, #8A6EF7 0%, #FF5C9A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Lummy</span>
+  <img src="public/lummy-icon.png" alt="Lummy Logo" width="80px" style="vertical-align: middle; margin-bottom: 15px;"> <strong style="font-size: 36px;">Lummy</strong>
 </div>
 
 Lummy is a revolutionary decentralized ticket platform built on the Lisk blockchain. Using NFT technology and IDRX stablecoin payments, Lummy eliminates common issues in the traditional ticketing industry such as counterfeiting, scalping, and complex verification processes. The platform securely and transparently connects event organizers with ticket buyers, ensuring ticket authenticity and giving more control to event organizers.
