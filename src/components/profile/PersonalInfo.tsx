@@ -6,13 +6,11 @@ import {
   FormLabel,
   Input,
   Button,
-  Avatar,
   Flex,
   Text,
   useToast,
   HStack,
   IconButton,
-  Tooltip,
 } from "@chakra-ui/react";
 import { EditIcon, CloseIcon, CheckIcon } from "@chakra-ui/icons";
 import { ConnectButton } from "@xellar/kit";
