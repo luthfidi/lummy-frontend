@@ -15,9 +15,6 @@ import {
   CopyIcon,
   CheckIcon,
   ExternalLinkIcon,
-  HamburgerIcon,
-  CloseIcon,
-  RepeatIcon,
 } from "@chakra-ui/icons";
 import {
   FaWallet,
@@ -27,7 +24,7 @@ import {
 } from "react-icons/fa";
 import { useWallet } from "../../hooks/useWallet";
 import { ConnectButton } from "@xellar/kit";
-import { Address } from "viem";
+// import { Address } from "viem";
 
 // Temporary display for token balance
 const TokenDisplay = () => {
