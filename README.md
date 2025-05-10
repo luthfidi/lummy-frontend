@@ -1,6 +1,6 @@
 # Lummy - Decentralized Ticket Platform
 
-<div align="center">
+<div>
   <img src="public/lummy-icon.png" alt="Lummy Logo" width="80px" style="vertical-align: middle; margin-bottom: 15px;"> <span style="font-size: 36px; font-weight: bold; background: linear-gradient(90deg, #8A6EF7 0%, #FF5C9A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Lummy</span>
 </div>
 
