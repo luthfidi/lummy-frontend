@@ -332,4 +332,4 @@ Dengan arsitektur smart contract ini, Lummy akan menjadi platform tiket yang sep
 
 Pendekatan modular dengan kontrak terpisah untuk factory, event, dan tiket NFT memungkinkan fleksibilitas dan upgradability, memastikan platform dapat berkembang seiring waktu. Fitur anti-scalping melindungi nilai tiket dan memastikan akses yang adil bagi semua, sementara sistem verifikasi yang canggih memastikan hanya tiket yang sah yang dapat digunakan.
 
-Untuk MVP, fokus pada fungsi inti (pembuatan event, pembelian tiket, verifikasi) dengan arsitektur yang memungkinkan ekspansi fitur di masa depan, seperti marketplace sekunder, integrasi dengan ekosistem DeFi yang lebih luas, dan kemungkinan model token ekonomi lanjutan.
+Untuk MVP, fokus pada fungsi inti (pembuatan event, pembelian tiket, verifikasi) dengan arsitektur yang memungkinkan ekspansi fitur di masa depan, seperti marketplace sekunder, integrasi dengan ekosistem DeFi yang lebih luas, dan kemungkinan model token ekonomi lanjutan
