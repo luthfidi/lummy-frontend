@@ -1,3 +1,4 @@
+// src/pages/EventDetail/EventDetailPage.tsx
 import React, { useState, useEffect, useRef, JSX } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -31,6 +32,9 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   SimpleGrid,
+  Skeleton,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
 import {
@@ -43,19 +47,10 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import { mockEvents } from "../../data/mockEvents";
-import { Event } from "../../types/Event";
+import { Event, TicketTier } from "../../types/Event";
 import { CountdownTimer } from "../../components/core/CountdownTimer";
 import { TicketTierCard } from "../../components/composite/TicketTierCard";
-
-// This will be replaced with an actual API call in a real application
-const fetchEventById = (id: string): Promise<Event | undefined> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const event = mockEvents.find((e) => e.id === id);
-      resolve(event);
-    }, 500);
-  });
-};
+import { useSmartContract } from "../../hooks/useSmartContract"; // Import hook smart contract
 
 // Helper function to format date
 const formatDate = (dateString: string): string => {
@@ -129,7 +124,16 @@ export const EventDetailPage: React.FC = () => {
     id: string;
     quantity: number;
   } | null>(null);
-  const [, setShowStickyButton] = useState(false);
+  const [_showStickyButton, setShowStickyButton] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Import smart contract hooks
+  const {
+    getEventDetails,
+    getTicketTiers,
+    loading: contractLoading,
+    error: contractError,
+  } = useSmartContract();
 
   // State for tier change confirmation dialog
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -139,29 +143,126 @@ export const EventDetailPage: React.FC = () => {
     name: string;
   } | null>(null);
   const [currentTierName, setCurrentTierName] = useState<string>("");
+  const [ticketTiers, setTicketTiers] = useState<TicketTier[]>([]);
 
+  // Fetch event details from blockchain
   useEffect(() => {
-    const getEvent = async () => {
-      if (id) {
-        try {
-          const eventData = await fetchEventById(id);
-          setEvent(eventData || null);
-          setLoading(false);
-        } catch (error) {
-          console.error("Error fetching event:", error);
-          toast({
-            title: "Error loading event",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-          setLoading(false);
+    const fetchEventDetails = async () => {
+      if (!id) return;
+
+      setLoading(true);
+      setErrorMsg(null);
+
+      try {
+        // Check if id is a blockchain address
+        if (id.startsWith("0x") && id.length === 42) {
+          // Get event details from blockchain
+          const details = await getEventDetails(id);
+
+          if (details) {
+            // Convert blockchain data to Event
+            const blockchainEvent: Event = {
+              id,
+              title: details.name,
+              description: details.description,
+              longDescription: details.description, // Use same description for now
+              date: new Date(Number(details.date) * 1000).toISOString(),
+              time: new Date(Number(details.date) * 1000).toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }
+              ),
+              location: details.venue,
+              venue: details.venue,
+              imageUrl:
+                "https://images.unsplash.com/photo-1459865264687-595d652de67e", // Default image
+              bannerUrl:
+                "https://images.unsplash.com/photo-1459865264687-595d652de67e", // Default banner
+              price: 0, // Will be updated from ticket tiers
+              currency: "IDRX",
+              category: "Event", // Default category
+              status: "available",
+              organizer: {
+                id: details.organizer,
+                name: "Event Organizer",
+                verified: true,
+                description: "Organizer of this event",
+              },
+              ticketsAvailable: 0, // Will be updated from ticket tiers
+              ticketTiers: [], // Will be fetched separately
+            };
+
+            // Fetch ticket tiers
+            const tiers = await getTicketTiers(id);
+
+            if (tiers && tiers.length > 0) {
+              // Convert blockchain ticket tiers to frontend format
+              const formattedTiers: TicketTier[] = tiers.map((tier, index) => ({
+                id: index.toString(),
+                name: tier.name,
+                price: Number(tier.price),
+                currency: "IDRX",
+                description: tier.name, // No description in contract, use name
+                available: Number(tier.available) - Number(tier.sold),
+                maxPerPurchase: Number(tier.maxPerPurchase),
+                benefits: [], // No benefits in contract data
+              }));
+
+              // Update event with tiers and lowest price
+              blockchainEvent.ticketTiers = formattedTiers;
+              setTicketTiers(formattedTiers);
+
+              // Update event price to lowest tier price
+              if (formattedTiers.length > 0) {
+                const lowestPrice = Math.min(
+                  ...formattedTiers.map((t) => t.price)
+                );
+                blockchainEvent.price = lowestPrice;
+
+                // Update total available tickets
+                blockchainEvent.ticketsAvailable = formattedTiers.reduce(
+                  (total, tier) => total + tier.available,
+                  0
+                );
+              }
+            }
+
+            setEvent(blockchainEvent);
+          } else {
+            throw new Error("Event not found on blockchain");
+          }
+        } else {
+          // Fallback to mock events for non-blockchain IDs
+          const mockEvent = mockEvents.find((e) => e.id === id);
+          setEvent(mockEvent || null);
+
+          if (mockEvent?.ticketTiers) {
+            setTicketTiers(mockEvent.ticketTiers);
+          }
         }
+      } catch (error) {
+        console.error("Error fetching event:", error);
+        setErrorMsg(
+          contractError ||
+            "Failed to load event from blockchain. Using sample data if available."
+        );
+
+        // Fallback to mock events
+        const mockEvent = mockEvents.find((e) => e.id === id);
+        setEvent(mockEvent || null);
+
+        if (mockEvent?.ticketTiers) {
+          setTicketTiers(mockEvent.ticketTiers);
+        }
+      } finally {
+        setLoading(false);
       }
     };
 
-    getEvent();
-  }, [id, toast]);
+    fetchEventDetails();
+  }, [id, getEventDetails, getTicketTiers, contractError]);
 
   // Add scroll listener for sticky button
   useEffect(() => {
@@ -203,7 +304,7 @@ export const EventDetailPage: React.FC = () => {
 
     // If different tier, show confirmation dialog
     setCurrentTierName(
-      event?.ticketTiers?.find((t) => t.id === selectedTier.id)?.name || ""
+      ticketTiers?.find((t) => t.id === selectedTier.id)?.name || ""
     );
     setNewTierSelection({ id: tierId, quantity, name: tierName });
     onOpen();
@@ -243,19 +344,22 @@ export const EventDetailPage: React.FC = () => {
   };
 
   const calculateTotalPrice = () => {
-    if (!selectedTier || !event?.ticketTiers) return 0;
+    if (!selectedTier || !ticketTiers) return 0;
 
-    const tier = event.ticketTiers.find((t) => t.id === selectedTier.id);
+    const tier = ticketTiers.find((t) => t.id === selectedTier.id);
     if (!tier) return 0;
 
     return tier.price * selectedTier.quantity;
   };
 
-  if (loading) {
+  if (loading || contractLoading) {
     return (
       <Container maxW="container.xl" py={10}>
         <VStack spacing={4}>
-          <Text>Loading event details...</Text>
+          <Skeleton height="400px" width="100%" />
+          <Skeleton height="40px" width="60%" />
+          <Skeleton height="20px" width="40%" />
+          <Skeleton height="300px" width="100%" />
         </VStack>
       </Container>
     );
@@ -278,12 +382,22 @@ export const EventDetailPage: React.FC = () => {
     );
   }
 
-  const selectedTicketTier = event.ticketTiers?.find(
+  const selectedTicketTier = ticketTiers?.find(
     (tier) => tier.id === selectedTier?.id
   );
 
   return (
     <Box>
+      {/* Display error message if any */}
+      {errorMsg && (
+        <Container maxW="container.xl" mt={4}>
+          <Alert status="warning" borderRadius="md">
+            <AlertIcon />
+            {errorMsg}
+          </Alert>
+        </Container>
+      )}
+
       {/* Hero Section with Event Banner */}
       <Box position="relative" height="400px" overflow="hidden">
         <Image
@@ -465,9 +579,9 @@ export const EventDetailPage: React.FC = () => {
                 Select Tickets
               </Heading>
 
-              {event.ticketTiers && event.ticketTiers.length > 0 ? (
+              {ticketTiers && ticketTiers.length > 0 ? (
                 <VStack spacing={6} align="stretch">
-                  {event.ticketTiers.map((tier) => (
+                  {ticketTiers.map((tier) => (
                     <TicketTierCard
                       key={tier.id}
                       tier={tier}
@@ -662,8 +776,6 @@ export const EventDetailPage: React.FC = () => {
           </Box>
         </Flex>
       </Container>
-
-      {/* Sticky Buy Button - removed as per client request */}
 
       {/* Tier Change Confirmation Dialog */}
       <AlertDialog

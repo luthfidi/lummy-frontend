@@ -25,6 +25,7 @@ import TicketTierCreator, {
 import ResellSettings, {
   ResellSettingsData,
 } from "../../components/admin/ResellSettings";
+import { useSmartContract } from "../../hooks/useSmartContract";
 
 const CreateEventForm: React.FC = () => {
   const navigate = useNavigate();
@@ -87,11 +88,13 @@ const CreateEventForm: React.FC = () => {
     }
   };
 
+  const { createEvent, loading, error } = useSmartContract();
+
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form
+    // Validasi form
     if (
       !eventData.title ||
       !eventData.date ||
@@ -106,6 +109,49 @@ const CreateEventForm: React.FC = () => {
         isClosable: true,
       });
       return;
+    }
+
+    const eventDate = new Date(`${eventData.date}T${eventData.time}`);
+
+    // Panggil fungsi createEvent dari hook
+    try {
+      const eventAddress = await createEvent(
+        eventData.title,
+        eventData.description,
+        eventDate,
+        eventData.venue || eventData.address,
+        "" // ipfsMetadata (kosong untuk saat ini)
+      );
+
+      if (eventAddress) {
+        toast({
+          title: "Event created",
+          description: `Your event has been created successfully at ${eventAddress}`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+
+        // Untuk demo, kita langsung redirect ke dashboard
+        navigate("/admin");
+      } else {
+        toast({
+          title: "Error creating event",
+          description: "There was an error creating your event",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (err) {
+      console.error("Error creating event:", err);
+      toast({
+        title: "Transaction failed",
+        description: error || "There was an error processing your transaction",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
 
     // Would handle actual form submission to API in real application
@@ -310,7 +356,7 @@ const CreateEventForm: React.FC = () => {
               <Button variant="outline" onClick={() => navigate("/admin")}>
                 Cancel
               </Button>
-              <Button colorScheme="purple" type="submit">
+              <Button colorScheme="purple" type="submit" isLoading={loading}>
                 Create Event
               </Button>
             </HStack>
