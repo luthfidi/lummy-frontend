@@ -102,7 +102,7 @@ export const Footer = () => {
               <SocialIcon
                 icon={<FaInstagram size="20px" />}
                 label="Instagram"
-                href="#"
+                href="https://www.instagram.com/lummy.ticket/"
               />
               <SocialIcon
                 icon={<FaFacebook size="20px" />}
